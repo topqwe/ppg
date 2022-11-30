@@ -1,0 +1,189 @@
+name: liandan_flutter
+description: A new Flutter project.
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.5 <3.0.0"
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.2
+  # 空安全版本 最新版本请查看  https://pub.flutter-io.cn/packages/get
+  get: ^4.6.5
+  get_storage: any
+  httpplugin:
+    git: https://gitee.com/Tonight_embrace/http_manager.git
+  #网络请求
+  #dio: ^4.0.6
+  shared_preferences: ^2.0.15
+  pretty_dio_logger: ^1.1.1
+  #图片上传
+  image_picker: ^0.8.5+3
+  flutter_image_compress: ^1.1.2
+  image_cropper: ^3.0.0
+  #屏幕适配
+  flutter_screenutil: ^5.5.3+2
+  #下拉刷新
+  flutter_easyrefresh: ^2.2.1
+  #轮播图
+  flutter_swiper_view: ^1.1.8
+  marquee: ^2.2.3
+  marquee_vertical: ^1.0.0
+  infinite_listview: ^1.1.0
+  #二维码生成
+  qr_flutter: ^4.0.0
+  #保存二维码到相册
+  image_gallery_saver: ^1.7.1
+  permission_handler: ^10.0.0
+  tapped: ^2.0.0
+  #ui框架
+  bruno: ^3.0.0
+  #开屏
+  flutter_native_splash: ^2.2.0+1
+  #tab切换
+  container_tab_indicator: ^0.3.0
+  #验证码输入框
+  pin_code_fields: ^7.4.0
+  #消息提示
+  toast: ^0.3.0
+  ftoast: ^2.0.0
+  flutter_easyloading: ^3.0.3
+  image_picker_web: ^2.1.1
+  universal_html: ^2.0.8
+  url_launcher: ^6.1.2
+  extended_image: ^6.2.1
+  event_bus: ^2.0.0
+  flutter_timer_countdown: ^1.0.3
+  flutter_slidable: ^2.0.0
+  pay_pwd: ^0.0.2+1
+  flutter_pickers: ^2.1.9
+  keyboard_dismisser: ^3.0.0
+  photo_view: ^0.14.0
+  share_plus: ^4.0.10+1
+  package_info: ^2.0.2
+  throttling: ^1.0.0
+  dart_des: ^1.0.2
+  contacts_service: ^0.6.3
+  convert: ^3.0.2
+
+  flex_grid: ^3.0.1
+  step_progress_indicator: ^1.0.2
+  flutter_html: ^3.0.0-alpha.5
+  scroll_to_index: ^3.0.1
+  webviewx: any
+  #webview_flutter ^3.0.4
+  high_chart: any
+  vibration: ^1.7.6
+  sticky_headers: ^0.3.0+2
+  azlistview: ^2.0.0
+    # 侧滑删除 https://github.com/letsar/flutter_slidable
+  #flutter_slidable
+  #vibration: ^1.7.6
+  #timer_count_down
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^2.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/
+    - assets/data/
+    - assets/images/
+    - assets/images/home/
+    - assets/images/bottom/
+    - assets/images/me/
+    - assets/images/login/
+    - assets/images/country/
+    - assets/images/public/
+    - assets/images/chat/
+     #- assets/images/home/homeSub/
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
+flutter_native_splash:
+  image: assets/images/lunchIcon.png
+  color: "#F3F5F9"
+  android: true
+  ios: true
+  web: true
+  android_12:
+    image: assets/images/lunchIcon.png
+    color: "#F3F5F9"
+# 换后记得：flutter pub run flutter_native_splash:create
+#https://github.com/aeyrium/bezier-chart
+#https://github.com/apgapg/pie_chart
+#https://simplezhli.github.io/flutter_deer/
+#https://github.com/CarGuo/GSYGithubAppFlutter
+
+#    background_image: assets/images/logo_download.png
+#    icon_background_color: "#F3F5F9"
