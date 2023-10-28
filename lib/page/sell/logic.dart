@@ -4,10 +4,9 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
 import '../../../util/PagingMixin.dart';
+import '../../services/api/api_basic.dart';
+import '../../services/responseHandle/request.dart';
 import 'SellView.dart';
 
 class SellLogic extends GetxController with GetSingleTickerProviderStateMixin,PagingMixin{
@@ -31,8 +30,7 @@ class SellLogic extends GetxController with GetSingleTickerProviderStateMixin,Pa
   }
 
   void getUserWallet() => request(() async {
-    var data = await requestClient.post(APIS.getWallet,
-        data:{});
+    var data = await ApiBasic().home({});
     userWallet = double.parse(data['money'].toString()).toString();
   });
 
@@ -69,8 +67,7 @@ class SellLogic extends GetxController with GetSingleTickerProviderStateMixin,Pa
       'pageNum': '$page',
       'pageSize': '$pageSize',
     };
-    var data = await requestClient.post(APIS.home,
-        data:params);
+    var data = await ApiBasic().home({});
 
     List lst = data['pageList'] ?? [];
     if(isRefresh){

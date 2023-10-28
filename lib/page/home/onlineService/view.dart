@@ -44,7 +44,7 @@ class OnlineServicePage extends StatelessWidget {
                         logic.webViewController.loadContent(
                           logic.urlStr,
                           // 'https://flutter.dev',
-                          SourceType.url,
+                          SourceType.URL,
                         );
                       },
                     ),

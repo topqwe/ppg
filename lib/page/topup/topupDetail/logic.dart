@@ -9,9 +9,8 @@ import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../store/EventBus.dart';
 import '../../../util/PagingMixin.dart';
 
@@ -59,8 +58,7 @@ class TopupDetailLogic extends GetxController with GetSingleTickerProviderStateM
        'order_no': Get.arguments,
      };
 
-     var data = await requestClient.post(APIS.home,
-         data:params);
+     var data = await ApiBasic().home({});
 
      // List lst = data['pageList'] ?? [];
    if (data != null) {

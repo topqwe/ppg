@@ -1,20 +1,35 @@
 library utils;
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
+import 'package:crypto/crypto.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import '../api/request/apis.dart';
-import '../api/request/request.dart';
-import '../api/request/request_client.dart';
+import 'package:image_compression_flutter/image_compression_flutter.dart';
+import 'package:liandan_flutter/services/api/api_basic.dart';
+import 'package:liandan_flutter/services/newReq/http.dart';
+
+import '../main.dart';
+import '../services/request/http_utils.dart';
+import '../services/responseHandle/request.dart';
 import '../store/AppCacheManager.dart';
 import '../style/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../lang/LanguageManager.dart';
+import '../util/InAppWV.dart';
+import '../util/JCHub.dart';
+import '../util/UpdatePage.dart';
+import '../../../vendor/platform/platform_universial.dart'
+if (dart.library.io) '../../../vendor/platform/platform_native.dart'
+if (dart.library.html) '../../../vendor/platform/platform_web.dart'
+as platformutil;
 class SliverSectionHeaderDelegate extends SliverPersistentHeaderDelegate {
   SliverSectionHeaderDelegate(this.widget, this.height);
   final Widget widget;
@@ -70,14 +85,98 @@ class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => widget.preferredSize.height; //100.0
 }
 
+void fetchOSSDomainList() async {
+  try {
+    final response = await Dio().get(
+      configEnv.domainListPath,
+      options: Options(responseType: ResponseType.plain),
+    );
+    print('resquest1');
+    print(response);
+    // if (response.statusCode == 200) {
+    String val = response.toString();
+    var result = jsonDecode(val);
+    print('before'+configEnv.appBaseUrl);
+    print('result'+result['mainDomain']);
+    configEnv.appBaseUrl = result['mainDomain'] ?? configEnv.appBaseUrl;
+    AppCacheManager.instance.setCurrentDomainKey('${result['mainDomain']}');
+    print('after'+AppCacheManager.instance.getCurrentDomainKey());
+    // HttpUtil.init(baseUrl: configEnv.appBaseUrl);
+    HttpV1().init(baseUrl: configEnv.appBaseUrl);
+    if (!kIsWeb)checkAppUpdate(result);
+    try {
+
+      // if (json?["http"] != null) {
+      // List domains = json?["http"];
+      // domainList = domains.map((e) => e as String).toList();
+      // startTest();
+      // }
+    } catch (error) {
+      // rethrow;
+    }
+    // }
+  } catch (e) {
+
+  }
+}
+
+void checkAppUpdate(var res) async {
+  if (res != null) {
+    var v = res['version'];
+    if (( v['release'] ?? "").isEmpty) {
+      return;
+    }
+    bool showAlert = needUpdate(configEnv.localversion, v['release']);
+    if (showAlert ) {
+      showAppUpdatePopup(res);
+    }
+  }
+}
+
+bool needUpdate(String currentVersion, String newVersion) {
+  List<String> current = currentVersion.split('.');
+  List<String> latest = newVersion.split('.');
+
+  for (int i = 0; i < 3; i++) {
+    int a = int.parse(current[i]);
+    int b = int.parse(latest[i]);
+
+    if (a < b) {
+      return true;
+    } else if (a > b) {
+      return false;
+    }
+  }
+
+  return false;
+}
+
+Future<Uint8List?> compressImage(Uint8List imgBytes,
+{required String path, int quality = 70}) async {
+final input = ImageFile(
+rawBytes: imgBytes,
+filePath: path,
+);
+Configuration config = Configuration(
+outputType: ImageOutputType.jpg,
+// can only be true for Android and iOS while using ImageOutputType.jpg or ImageOutputType.pngÏ
+useJpgPngNativeCompressor: !kIsWeb,
+// set quality between 0-100
+quality: quality,
+);
+final param = ImageFileConfiguration(input: input, config: config);
+final output = await compressor.compress(param);
+return output.rawBytes;
+}
+
+
 postUserInfo()=> request(() async {
-  var user = await requestClient.post(APIS.userInfo,data: {
-  });
+  var user = await ApiBasic().home({});
   AppCacheManager.instance.setValueForKey(kUserInfo, json.encode(user));
 });
 
 postCheckFundSW()=> request(() async {
-  var user = await requestClient.post(APIS.home,data: {});
+  var user = await ApiBasic().home({});
   AppCacheManager.instance.setValueForKey(kFSW, '${user['safeword']}');
 });
 
@@ -100,6 +199,50 @@ Future<void> launchWebURL(appStoreUrl) async {
   Uri onlineUrl = Uri.parse(url);
   // if (!await launchUrl(onlineUrl)) throw 'Could not launch $onlineUrl';
   if (!await launch(url)) throw 'Could not launch $url';
+}
+
+String toMD5(String data) {
+Uint8List content = const Utf8Encoder().convert(data);
+Digest digest = md5.convert(content);
+return digest.toString();
+}
+
+void copyText({String? text, bool showToast = false}) {
+  platformutil.PlatformUtils.copyText(text: text, showToast: showToast);
+}
+
+bool noUppercaseLetter(String pwd,) {
+  if (!pwd.contains(RegExp("[A-Z]+"))) {
+    JCHub.showmsg("登陆密码必须包含1个大写字母", Get.context!);
+    return false;
+  }
+  return true;
+}
+
+bool noContinuouslyTheSame(String pwd,) {
+bool judgeContinuouslyTheSameDigits(String str) {
+RegExp sameDigits = RegExp(r'^(\d)\1{5}$');
+var string = '0123456789_9876543210';
+
+return sameDigits.hasMatch(str) || string.contains(str);
+}
+
+bool result = judgeContinuouslyTheSameDigits(pwd);
+if (result) {
+JCHub.showmsg("不可使用连续数字或6位相同的数字", Get.context!);
+}
+return !result;
+}
+
+String enumType({required String type}) {
+  if (type == "1") {
+    return '1';
+  } else if (type == "2") {
+    return '2';
+  } else if (type == "3") {
+    return '3';
+  }
+  return '0';
 }
 /**
  * 字符串转为double
@@ -167,28 +310,54 @@ String getRandomStr(bool isPureNum, int strlenght) {
   return left;
 }
 
+String visibleString(String str) {
+  if (str.length < 2) {
+    return str;
+  }
+  if (str.length == 2) {
+    String first = str.substring(0, 1);
+    return "$first*";
+  } else {
+    String first = str.substring(0, 1);
+    String last = str.substring(str.length - 1, str.length);
+    return "$first*$last";
+  }
+}
+
 
 showAlertDialog(BuildContext context, VoidCallback okcb, VoidCallback canclecb,
     String title, String content) {
   //设置按钮
 
-  Widget cancelButton = FlatButton(
+  Widget cancelButton = TextButton(
     child: Text(("取消")),
     onPressed: () {
       Get.back();
       canclecb();
 
     },
-    color: AppTheme.themeGreyColor,
+    // color: AppTheme.themeGreyColor,
+        style: TextButton.styleFrom(foregroundColor:AppTheme.themeGreyColor, // foreground
+            // minimumSize: Size(50, 50),
+            // padding: EdgeInsets.only(left: 25, right: 25),
+            // shape: const RoundedRectangleBorder(
+            //   borderRadius: BorderRadius.all(Radius.circular(2)),
+            ),
   );
-  Widget continueButton = FlatButton(
+  Widget continueButton = TextButton(
     child: Text(("确定")),
     onPressed: () {
       // popPage(context);
       Get.back();
       okcb();
     },
-    color: AppTheme.themeHightColor,
+    // color: AppTheme.themeGreyColor,
+    style: TextButton.styleFrom(foregroundColor:AppTheme.themeGreyColor, // foreground
+      // minimumSize: Size(50, 50),
+      // padding: EdgeInsets.only(left: 25, right: 25),
+      // shape: const RoundedRectangleBorder(
+      //   borderRadius: BorderRadius.all(Radius.circular(2)),
+    ),
   );
 
   //设置对话框
@@ -241,6 +410,26 @@ openPage(Widget widget, BuildContext context) {
       return widget;
     }),
   );
+}
+
+openCustomWebView(BuildContext context, var settings) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) {
+      List<dynamic> args = settings as List;
+      bool showAppbar = false;
+      if (args.length == 3) {
+        showAppbar = args[2] as bool;
+      }
+      return InAppWV(
+        title: args[0],
+        url: args[1],
+        showAppBar: showAppbar,
+      );
+    }),
+  );
+
+
 }
 
 int lastclickTime = 0;

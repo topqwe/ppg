@@ -34,7 +34,7 @@ class RegisterPage extends StatelessWidget {
                 centerTitle: true,
                 // 标题居中
                 // title: const Text("登录"),
-                // backgroundColor: const Color(0xff1D223A),
+                backgroundColor: const Color(0xffffffff),
                 elevation: 0,
                 actions: [
                   IconButton(
@@ -78,11 +78,17 @@ class RegisterPage extends StatelessWidget {
                                             height: 34,
                                             margin: EdgeInsets.only(
                                                 top: 30),
-                                            child: FlatButton(
-                                              color: logic.tab_show.value==1?AppTheme.themeHightColor:Color(0xffEEEEEE),
-                                              minWidth: 50,
-                                              padding:
-                                              EdgeInsets.only(left: 25, right: 25),
+                                            child: TextButton(//FlatButton
+                                              style: TextButton.styleFrom(backgroundColor:logic.tab_show.value==1?AppTheme.themeHightColor:Color(0xffEEEEEE), // foreground
+                                                  minimumSize: Size(50, 50),
+                                                padding: EdgeInsets.only(left: 25, right: 25),
+                                                shape: const RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.all(Radius.circular(2)),
+                                                )),
+                                              // color: logic.tab_show.value==1?AppTheme.themeHightColor:Color(0xffEEEEEE),
+                                              // minWidth: 50,
+                                              // padding:
+                                              // EdgeInsets.only(left: 25, right: 25),
                                               child: Text(
                                                 '账号'.tr,
                                                 style: logic.tab_show.value==1?TextStyle(color: Colors.white):TextStyle(color: Colors.black),
@@ -99,11 +105,13 @@ class RegisterPage extends StatelessWidget {
                                             height: 34,
                                             margin: EdgeInsets.only(left: 10,
                                                 top: 30),
-                                            child: FlatButton(
-                                              color: logic.tab_show.value==2?AppTheme.themeHightColor:Color(0xffEEEEEE),
-                                              minWidth: 50,
-                                              padding:
-                                              EdgeInsets.only(left: 25, right: 25),
+                                            child: TextButton(//FlatButton
+                                              style: TextButton.styleFrom(backgroundColor:logic.tab_show.value==2?AppTheme.themeHightColor:Color(0xffEEEEEE), // foreground
+                                                  minimumSize: Size(50, 50),
+                                                  padding: EdgeInsets.only(left: 25, right: 25),
+                                                  shape: const RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.all(Radius.circular(2)),
+                                                  )),
                                               child: Text(
                                                 '手机号'.tr,
                                                 style: logic.tab_show.value==2?TextStyle(color: Colors.white):TextStyle(color: Colors.black),
@@ -401,7 +409,7 @@ class RegisterPage extends StatelessWidget {
                                               child: Text(
                                                 '去登录'.tr,
                                                 style: TextStyle(
-                                                    color: Colors.blue),
+                                                    color: AppTheme.themeHightColor),
                                               ),
                                             )
                                           ],

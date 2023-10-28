@@ -1,12 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
+import 'package:liandan_flutter/services/newReq/ApiService.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../store/AppCacheManager.dart';
+import '../../../store/EventBus.dart';
 import '../../../widgets/helpTools.dart';
 import '../../../util/SafeValidWidget.dart';
 
@@ -19,16 +20,24 @@ class LoginLogic extends GetxController {
   var cTxt2 = ''.obs;
   var cTxt3 = ''.obs;
   var tab_show = 1.obs;
+
+  var isObscureText = true.obs;
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    controller = TextEditingController();
+
+    controller = TextEditingController(text: '');
+    cTxt.value = controller.text;
     controller.addListener(() {cTxt.value = controller.text;
     update();});
-    controller2 = TextEditingController();
-    controller2.addListener(() {cTxt2.value = controller2.text;
-    update();});
+    controller2 = TextEditingController(text: '',);
+    cTxt2.value = controller2.text;
+    controller2.addListener(() {
+      cTxt2.value = controller2.text;
+    // update();
+    });
     controller3 = TextEditingController();
+    cTxt3.value = controller3.text;
     controller3.addListener(() {cTxt3.value = controller3.text;
     update();});
   }
@@ -57,20 +66,27 @@ class LoginLogic extends GetxController {
       phoneLogin(context, true);
     }, () {}));
   }
+
+
+
   void phoneLogin(context,showLoading)=> request(() async {
 
-    var url = APIS.loginP;
     var data = {
       'phone':controller.text,
       'password':controller2.text,
     };
-    var user = await requestClient.post(url,data: data);
+  var response = await ApiBasic().login(data);
+  if (response['code'] == 0) {
     FToast.toast(context, msg: "登录成功".tr);
-    AppCacheManager.instance.setUserToken('${user['token']}');
+    AppCacheManager.instance.setUserToken('${response['data']['token']}');
+    AppCacheManager.instance.setUserId(response['data']['uid']);
     postUserInfo();
     postCheckFundSW();
     Get.toNamed('/index');
     return;
+  }else{
+    FToast.toast(Get.context!, msg: '${response['msg']}');
+  }
   }, showLoading: showLoading);
 
   void accountLoginForm(context) {
@@ -82,31 +98,36 @@ class LoginLogic extends GetxController {
       FToast.toast(context, msg: "请输入密码".tr);
       return;
     }
-    (showSafeValidPage(context, ()
-    {
+    // (showSafeValidPage(context, ()
+    // {
       accountLogin(context, true);
-    }, () {}));
+    // }, () {}));
   }
 
   void accountLogin(context,showLoading) => request(() async {
-        var url = APIS.login;
+
         var data = {
           'username': controller.text,
           'password': controller2.text,
         };
-        var user = await requestClient.post(url, data: data);
-        FToast.toast(context, msg: "登录成功".tr);
-        AppCacheManager.instance.setUserToken('${user['token']}');
-        postUserInfo();
-        postCheckFundSW();
-        Get.toNamed('/index');
-        return;
-        update();
+        var data0 = await ApiService.login(data);
+        // var response = await ApiBasic().login(data);
+        if (0 == 0) {
+          var data = data0;
+          //response['data'];
+          FToast.toast(context, msg: "登录成功".tr);
+          AppCacheManager.instance.setUserToken('${data['token']}');
+          AppCacheManager.instance.setUserId(data['uid']);
+          postUserInfo();
+          postCheckFundSW();
+          mainEventBus.emit(
+            EventBusConstants.loginSuccessEvent,
+            '1',
+          );
+          Get.toNamed('/index');
+          return;
+        }else{
+          // FToast.toast(Get.context!, msg: '${response['msg']}');
+        }
       }, showLoading: showLoading);
-
-
-
-
-
-
 }

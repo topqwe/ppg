@@ -64,6 +64,7 @@ class _InputTextPageState extends State<InputTextPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar:
       DefaultAppBar(titleStr: widget.title, actions: [
         buttonText(w: 100, h: 50, text: '完成'.tr,textColor: Color(0xff999999),textSize:16, onPressed:(){

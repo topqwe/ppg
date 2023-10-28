@@ -1,11 +1,12 @@
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:get/get.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../util/PagingMixin.dart';
 
 class TopupRecordLogic extends GetxController with GetSingleTickerProviderStateMixin,PagingMixin{
@@ -19,6 +20,7 @@ class TopupRecordLogic extends GetxController with GetSingleTickerProviderStateM
   @override
   void onInit() {
     easyRefreshController = EasyRefreshController();
+    listDataFirst.addAll(ApiBasic().initCus());
     requestData();
     super.onInit();
   }
@@ -43,8 +45,7 @@ class TopupRecordLogic extends GetxController with GetSingleTickerProviderStateM
     var params = {
       'page_no': '$page',
     };
-    var data = await requestClient.post(APIS.home,
-        data:params);
+    var data = await ApiBasic().dummy({});
 
     List lst = data ?? [];
     if(isRefresh){

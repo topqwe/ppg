@@ -3,9 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:get/get.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../util/PagingMixin.dart';
 
 class StickyRecordLogic extends GetxController with GetSingleTickerProviderStateMixin,PagingMixin{
@@ -30,6 +29,7 @@ class StickyRecordLogic extends GetxController with GetSingleTickerProviderState
     }.obs;
     scrollController= ScrollController(initialScrollOffset: 0);
     easyRefreshController = EasyRefreshController();
+
     requestData();
     super.onInit();
   }
@@ -60,8 +60,7 @@ class StickyRecordLogic extends GetxController with GetSingleTickerProviderState
       'page_no': '$page',
       'content_type':'${choseType.value}',
     };
-    var data = await requestClient.post(APIS.recordLists,
-        data:params);
+    var data = await ApiBasic().home({});
 
     List lst = data ?? [];
     if(isRefresh){

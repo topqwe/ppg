@@ -2,10 +2,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:get/get.dart';
+import 'package:liandan_flutter/services/api/api_basic.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../util/PagingMixin.dart';
 
 class StatRecordLogic extends GetxController with GetSingleTickerProviderStateMixin,PagingMixin{
@@ -30,6 +29,11 @@ class StatRecordLogic extends GetxController with GetSingleTickerProviderStateMi
     }.obs;
     scrollController= ScrollController(initialScrollOffset: 0);
     easyRefreshController = EasyRefreshController();
+    for (int i = 0; i < 11; i++) {
+      var vv = {'name': '$i'+'dfhdf',
+        'iconBig': '$i','prize':i+900.9,'progress':0.82};
+      listDataFirst.add(vv);
+    }
     requestData();
     super.onInit();
   }
@@ -60,8 +64,7 @@ class StatRecordLogic extends GetxController with GetSingleTickerProviderStateMi
       'page_no': '$page',
       'content_type':'${choseType.value}',
     };
-    var data = await requestClient.post(APIS.recordLists,
-        data:params);
+    var data = await ApiBasic().home({});
 
     List lst = data ?? [];
     if(isRefresh){

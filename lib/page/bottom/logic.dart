@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../page/verticalCategory/view.dart';
 import '../../store/AppCacheManager.dart';
 import '../../page/category/view.dart';
 import '../../util/DropSelectMenu/drop_select_demo_page.dart';
@@ -21,7 +22,11 @@ class BottomLogic extends GetxController
   final currentIndex = 0.obs;
   final pages = [
     HomePage(),
-    DropSelectDemoPage(),
+    VerticalCategoryPage(),
+    // DropSelectDemoPage(),
+    MallPage(),
+    CategoryPage(),
+    MePage()
   ].obs;
 
   late AnimationController animationController;
@@ -73,7 +78,7 @@ class BottomLogic extends GetxController
     }
 
     if (index == 4) {
-      meLogic.clickBottomIndex();
+      // meLogic.clickBottomIndex();
     }
 
     if (index != currentIndex.value) {

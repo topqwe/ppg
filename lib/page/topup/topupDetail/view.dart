@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../style/theme.dart';
 
-import '../../../api/request/config.dart';
 import '../../../util/DefaultAppBar.dart';
 import '../../../util/FadeRoute.dart';
 import '../../../util/PhotoViewGalleryScreen.dart';
@@ -121,9 +120,12 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                         height: 150,
                         width: 150,
                         color: Colors.white,
-                        child: QrImage(
+                        child: QrImageView(
                           data: txt,
-                          foregroundColor: Colors.black,
+                          dataModuleStyle:  QrDataModuleStyle(
+                            dataModuleShape: QrDataModuleShape.square,
+                            color: Colors.black,
+                          ),
                           size: 132,
                         ),
                       )),
@@ -147,8 +149,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
     String orderId = '${listModel['order_no']}';
 
 
-    String imgStr =
-        RequestConfig.baseUrl + RequestConfig.imagePath + listModel['img'];
+    String imgStr = listModel['img'];
 
     return
         // Padding(

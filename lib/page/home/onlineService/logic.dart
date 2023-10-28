@@ -3,11 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webviewx/webviewx.dart';
-import '../../../api/request/apis.dart';
-import '../../../api/request/config.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
 import '../../../lang/LanguageManager.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../store/AppCacheManager.dart';
 
 class OnlineServiceLogic extends GetxController {

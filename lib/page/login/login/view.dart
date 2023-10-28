@@ -5,9 +5,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 import '../../../style/theme.dart';
+import '../../../util/TextFieldView.dart';
 import 'logic.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-
+import '../../../vendor/platform/platform_universial.dart'
+if (dart.library.io) '../../../vendor/platform/platform_native.dart'
+if (dart.library.html) '../../../vendor/platform/platform_web.dart'
+as platformutil;
 class LoginPage extends StatelessWidget {
   final logic = Get.put(LoginLogic());
 
@@ -54,107 +58,93 @@ class LoginPage extends StatelessWidget {
                                                         FontWeight.w700),
                                               ),
                                             ),
-                                            // Obx(() => Row(
-                                            //       crossAxisAlignment:
-                                            //           CrossAxisAlignment.start,
-                                            //       mainAxisAlignment:
-                                            //           MainAxisAlignment.start,
-                                            //       children: [
-                                            //         Container(
-                                            //           height: 34,
-                                            //           margin: EdgeInsets.only(
-                                            //               top: 30),
-                                            //           child: FlatButton(
-                                            //             color:
-                                            //                 logic.tab_show
-                                            //                             .value ==
-                                            //                         1
-                                            //                     ? AppTheme
-                                            //                         .themeHightColor
-                                            //                     : Color(
-                                            //                         0xffEEEEEE),
-                                            //             minWidth: 50,
-                                            //             padding:
-                                            //                 EdgeInsets.only(
-                                            //                     left: 25,
-                                            //                     right: 25),
-                                            //             child: Text(
-                                            //               '账号'.tr,
-                                            //               style: logic.tab_show
-                                            //                           .value ==
-                                            //                       1
-                                            //                   ? TextStyle(
-                                            //                       color: Colors
-                                            //                           .white)
-                                            //                   : TextStyle(
-                                            //                       color: Colors
-                                            //                           .black),
-                                            //             ),
-                                            //             onPressed: () async {
-                                            //               logic.controller
-                                            //                   .text = "";
-                                            //               logic.controller2
-                                            //                   .text = "";
-                                            //               logic.controller3
-                                            //                   .text = "";
-                                            //               logic.tab_show.value =
-                                            //                   1;
-                                            //             },
-                                            //           ),
-                                            //         ),
-                                            //         Container(
-                                            //           height: 34,
-                                            //           margin: EdgeInsets.only(
-                                            //               left: 10, top: 30),
-                                            //           child: FlatButton(
-                                            //             color:
-                                            //                 logic.tab_show
-                                            //                             .value ==
-                                            //                         2
-                                            //                     ? AppTheme
-                                            //                         .themeHightColor
-                                            //                     : Color(
-                                            //                         0xffEEEEEE),
-                                            //             minWidth: 50,
-                                            //             padding:
-                                            //                 EdgeInsets.only(
-                                            //                     left: 25,
-                                            //                     right: 25),
-                                            //             child: Text(
-                                            //               '手机号'.tr,
-                                            //               style: logic.tab_show
-                                            //                           .value ==
-                                            //                       2
-                                            //                   ? TextStyle(
-                                            //                       color: Colors
-                                            //                           .white)
-                                            //                   : TextStyle(
-                                            //                       color: Colors
-                                            //                           .black),
-                                            //             ),
-                                            //             onPressed: () async {
-                                            //               logic.controller
-                                            //                   .text = "";
-                                            //               logic.controller2
-                                            //                   .text = "";
-                                            //               logic.controller3
-                                            //                   .text = "";
-                                            //               logic.tab_show.value =
-                                            //                   2;
-                                            //             },
-                                            //           ),
-                                            //         )
-                                            //       ],
-                                            //     )),
-                                            // Obx(() => Container(
-                                            //       margin: EdgeInsets.only(
-                                            //           top: 20, bottom: 10),
-                                            //       child: Text(
-                                            //         logic.tab_show.value == 1
-                                            //             ? '账号'.tr
-                                            //             : '手机号'.tr,
-                                            //       ),
-                                            //     )),
+                                            Obx(() => Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      height: 34,
+                                                      margin: EdgeInsets.only(
+                                                          top: 30),
+                                                      child: TextButton(//FlatButton
+                                                        style: TextButton.styleFrom(backgroundColor:logic.tab_show.value==1?AppTheme.themeHightColor:Color(0xffEEEEEE), // foreground
+                                                            minimumSize: Size(50, 50),
+                                                            padding: EdgeInsets.only(left: 25, right: 25),
+                                                            shape: const RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.all(Radius.circular(2)),
+                                                            )),
+                                                        child: Text(
+                                                          '账号'.tr,
+                                                          style: logic.tab_show
+                                                                      .value ==
+                                                                  1
+                                                              ? TextStyle(
+                                                                  color: Colors
+                                                                      .white)
+                                                              : TextStyle(
+                                                                  color: Colors
+                                                                      .black),
+                                                        ),
+                                                        onPressed: () async {
+                                                          logic.controller
+                                                              .text = "";
+                                                          logic.controller2
+                                                              .text = "";
+                                                          logic.controller3
+                                                              .text = "";
+                                                          logic.tab_show.value =
+                                                              1;
+                                                        },
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      height: 34,
+                                                      margin: EdgeInsets.only(
+                                                          left: 10, top: 30),
+                                                      child: TextButton(//FlatButton
+                                                        style: TextButton.styleFrom(backgroundColor:logic.tab_show.value==2?AppTheme.themeHightColor:Color(0xffEEEEEE), // foreground
+                                                            minimumSize: Size(50, 50),
+                                                            padding: EdgeInsets.only(left: 25, right: 25),
+                                                            shape: const RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.all(Radius.circular(2)),
+                                                            )),
+                                                        child: Text(
+                                                          '手机号'.tr,
+                                                          style: logic.tab_show
+                                                                      .value ==
+                                                                  2
+                                                              ? TextStyle(
+                                                                  color: Colors
+                                                                      .white)
+                                                              : TextStyle(
+                                                                  color: Colors
+                                                                      .black),
+                                                        ),
+                                                        onPressed: () async {
+                                                          logic.controller
+                                                              .text = "";
+                                                          logic.controller2
+                                                              .text = "";
+                                                          logic.controller3
+                                                              .text = "";
+                                                          logic.tab_show.value =
+                                                              2;
+                                                        },
+                                                      ),
+                                                    )
+                                                  ],
+                                                )),
+                                            Obx(() => Container(
+                                                  margin: EdgeInsets.only(
+                                                      top: 20, bottom: 10),
+                                                  child: Text(
+                                                    logic.tab_show.value == 1
+                                                        ? '账号'.tr
+                                                        : '手机号'.tr,
+                                                  ),
+                                                )),
                                             Obx(() => Container(
                                                 height: 44,
                                                 child: TextField(
@@ -254,128 +244,175 @@ class LoginPage extends StatelessWidget {
                                                       logic.textFieldChanged,
                                                   autofocus: false,
                                                 ))),
-                                            Container(
-                                              margin: EdgeInsets.only(
-                                                  top: 25, bottom: 10),
-                                              child: Text(
-                                                '密码'.tr,
-                                              ),
-                                            ),
-                                            Obx(
-                                              () => Container(
-                                                  height: 44,
-                                                  child: TextField(
-                                                    controller:
-                                                        logic.controller2,
-                                                    keyboardType:
-                                                        TextInputType.text,
-                                                    obscureText: true,
-                                                    decoration: InputDecoration(
-                                                        // fillColor: Color(0xff2F375B),
-                                                        contentPadding:
-                                                            EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        8,
-                                                                    vertical:
-                                                                        10),
-                                                        hintText: '请输入密码'.tr,
-                                                        hintStyle: TextStyle(
-                                                            color: Color(
-                                                                0xff999999)),
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          5)),
-                                                        ),
 
-                                                        ///设置输入框可编辑时的边框样式
-                                                        enabledBorder:
-                                                            OutlineInputBorder(
-                                                          ///设置边框四个角的弧度
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          5)),
 
-                                                          ///用来配置边框的样式
-                                                          borderSide:
-                                                              BorderSide(
-                                                            ///设置边框的颜色
-                                                            color: Color(
-                                                                0xffDDDDDD),
-
-                                                            ///设置边框的粗细
-                                                            width: 1.0,
-                                                          ),
-                                                        ),
-
-                                                        ///用来配置输入框获取焦点时的颜色
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          ///设置边框四个角的弧度
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          5)),
-
-                                                          ///用来配置边框的样式
-                                                          borderSide:
-                                                              BorderSide(
-                                                            ///设置边框的颜色
-                                                            color: AppTheme
-                                                                .themeHightColor,
-
-                                                            ///设置边框的粗细
-                                                            width: 1.0,
-                                                          ),
-                                                        ),
-                                                        counterText: '',
-                                                        suffixIcon: IconButton(
-                                                            icon: Icon(
-                                                                Icons.cancel,
-                                                                size: 18,
-                                                                color: logic
-                                                                        .cTxt2
-                                                                        .value
-                                                                        .isNotEmpty
-                                                                    ? Color(
-                                                                        0xffCCCCCC)
-                                                                    : Colors
-                                                                        .transparent),
-                                                            onPressed: () {
-                                                              logic.controller2
-                                                                  .text = '';
-                                                            })),
-                                                    style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14),
-                                                    maxLength: 20,
-                                                    onChanged:
-                                                        logic.textFieldChanged,
-                                                    autofocus: false,
-                                                  )),
-                                            ),
-                                            // GestureDetector(
-                                            //   onTap: () {
-                                            //     Get.toNamed('/chatService');
-                                            //   },
-                                            //   child: Container(
-                                            //     margin:
-                                            //         EdgeInsets.only(top: 10),
-                                            //     child: Text(
-                                            //       '忘记密码？'.tr,
-                                            //       style: TextStyle(
-                                            //           color: Color(0xff1D91FF),
-                                            //           fontSize: 14),
-                                            //     ),
+                                            // Container(
+                                            //   margin: EdgeInsets.only(
+                                            //       top: 25, bottom: 10),
+                                            //   child: Text(
+                                            //     '密码'.tr,
                                             //   ),
                                             // ),
+                                            // Obx(
+                                            //   () => Container(
+                                            //       height: 44,
+                                            //       child: TextField(
+                                            //         controller:
+                                            //             logic.controller2,
+                                            //         keyboardType:
+                                            //             TextInputType.text,
+                                            //         obscureText: logic.isObscureText.value,
+                                            //         decoration: InputDecoration(
+                                            //             // fillColor: Color(0xff2F375B),
+                                            //             contentPadding:
+                                            //                 EdgeInsets
+                                            //                     .symmetric(
+                                            //                         horizontal:
+                                            //                             8,
+                                            //                         vertical:
+                                            //                             10),
+                                            //             hintText: '请输入密码'.tr,
+                                            //             hintStyle: TextStyle(
+                                            //                 color: Color(
+                                            //                     0xff999999)),
+                                            //             border:
+                                            //                 OutlineInputBorder(
+                                            //               borderRadius:
+                                            //                   BorderRadius.all(
+                                            //                       Radius
+                                            //                           .circular(
+                                            //                               5)),
+                                            //             ),
+                                            //
+                                            //             ///设置输入框可编辑时的边框样式
+                                            //             enabledBorder:
+                                            //                 OutlineInputBorder(
+                                            //               ///设置边框四个角的弧度
+                                            //               borderRadius:
+                                            //                   BorderRadius.all(
+                                            //                       Radius
+                                            //                           .circular(
+                                            //                               5)),
+                                            //
+                                            //               ///用来配置边框的样式
+                                            //               borderSide:
+                                            //                   BorderSide(
+                                            //                 ///设置边框的颜色
+                                            //                 color: Color(
+                                            //                     0xffDDDDDD),
+                                            //
+                                            //                 ///设置边框的粗细
+                                            //                 width: 1.0,
+                                            //               ),
+                                            //             ),
+                                            //
+                                            //             ///用来配置输入框获取焦点时的颜色
+                                            //             focusedBorder:
+                                            //                 OutlineInputBorder(
+                                            //               ///设置边框四个角的弧度
+                                            //               borderRadius:
+                                            //                   BorderRadius.all(
+                                            //                       Radius
+                                            //                           .circular(
+                                            //                               5)),
+                                            //
+                                            //               ///用来配置边框的样式
+                                            //               borderSide:
+                                            //                   BorderSide(
+                                            //                 ///设置边框的颜色
+                                            //                 color: AppTheme
+                                            //                     .themeHightColor,
+                                            //
+                                            //                 ///设置边框的粗细
+                                            //                 width: 1.0,
+                                            //               ),
+                                            //             ),
+                                            //             counterText: '',
+                                            //             suffixIcon: IconButton(
+                                            //                 icon: Icon(!logic.isObscureText.value?Icons.visibility
+                                            //                     :Icons.visibility_off,
+                                            //                   size: 18,
+                                            //                   // color: widget.initValue.isNotEmpty
+                                            //                   //     ? Color(0xffCCCCCC)
+                                            //                   //     : Colors.transparent
+                                            //                 ),
+                                            //                 onPressed: () {
+                                            //                   logic.isObscureText.value = ! logic.isObscureText.value;
+                                            //
+                                            //                   // widget.obscureTap!();
+                                            //                   // widget.initValue = '';
+                                            //                   // _inputController.text = '';
+                                            //                 })
+                                            //             // suffixIcon: IconButton(
+                                            //             //     icon: Icon(
+                                            //             //         Icons.cancel,
+                                            //             //         size: 18,
+                                            //             //         color: logic
+                                            //             //                 .cTxt2
+                                            //             //                 .value
+                                            //             //                 .isNotEmpty
+                                            //             //             ? Color(
+                                            //             //                 0xffCCCCCC)
+                                            //             //             : Colors
+                                            //             //                 .transparent),
+                                            //             //     onPressed: () {
+                                            //             //       logic.controller2
+                                            //             //           .text = '';
+                                            //             //     })
+                                            //         ),
+                                            //         style: const TextStyle(
+                                            //             color: Colors.black,
+                                            //             fontSize: 14),
+                                            //         maxLength: 20,
+                                            //         onChanged:
+                                            //             logic.textFieldChanged,
+                                            //         autofocus: false,
+                                            //       )),
+                                            // ),
+
+
+                                            Obx(() => TextFieldView(
+                                              key: const ValueKey('code'),
+                                              title: '密码'.tr,
+                                              hintText:'请输入密码'.tr,
+                                              isObscureType: true,
+                                              isObscureText: logic.isObscureText.value,
+                                              // isRTextField: true,
+                                              // keyboardType: TextInputType.phone,
+                                              initValue:logic.cTxt2.value,
+                                              inputFormatters: [
+                                                LengthLimitingTextInputFormatter(30),//11
+                                                // FilteringTextInputFormatter.allow(RegExp("[0-9]")),//数字
+                                              ],
+                                              onObscured: (){
+                                                logic.isObscureText.value = ! logic.isObscureText.value;
+                                              },
+                                              onChanged: (value){
+                                                logic.textFieldChanged;
+                                                logic.cTxt2.value = value;
+                                                logic.controller2.text = value;
+                                                // setState(() {
+                                                // });
+                                              },),),
+
+
+
+
+                                            GestureDetector(
+                                              onTap: () {
+                                                Get.toNamed('/chatService');
+                                              },
+                                              child: Container(
+                                                margin:
+                                                    EdgeInsets.only(top: 10),
+                                                child: Text(
+                                                  '忘记密码？'.tr,
+                                                  style: TextStyle(
+                                                      color: AppTheme.themeHightColor,
+                                                      fontSize: 14),
+                                                ),
+                                              ),
+                                            ),
                                             // Container(
                                             //     margin:
                                             //         EdgeInsets.only(top: 20),
@@ -434,77 +471,80 @@ class LoginPage extends StatelessWidget {
                                             //         )),
                                             //       ),
                                             //     )),
-                                            // Container(
-                                            //   margin: EdgeInsets.only(top: 25),
-                                            //   child: Row(
-                                            //     crossAxisAlignment:
-                                            //         CrossAxisAlignment.center,
-                                            //     mainAxisAlignment:
-                                            //         MainAxisAlignment.center,
-                                            //     children: [
-                                            //       Container(
-                                            //         child: Text(
-                                            //           '还没有账号？'.tr,
-                                            //           style: TextStyle(),
-                                            //         ),
-                                            //       ),
-                                            //       GestureDetector(
-                                            //         onTap: () {
-                                            //           Navigator.of(context)
-                                            //               .pushReplacementNamed(
-                                            //                   "/register");
-                                            //         },
-                                            //         child: Text(
-                                            //           '去注册'.tr,
-                                            //           style: TextStyle(
-                                            //               color: Colors.blue),
-                                            //         ),
-                                            //       )
-                                            //     ],
-                                            //   ),
-                                            // ),
+                                            Container(
+                                              margin: EdgeInsets.only(top: 25),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    child: Text(
+                                                      '还没有账号？'.tr,
+                                                      style: TextStyle(),
+                                                    ),
+                                                  ),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.of(context)
+                                                          .pushReplacementNamed(
+                                                              "/register");
+                                                    },
+                                                    child: Text(
+                                                      '去注册'.tr,
+                                                      style: TextStyle(
+                                                          color: AppTheme.themeHightColor),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
                                             Container(
                                               width: double.infinity,
                                               height:
                                                   ScreenUtil().setHeight(100),
                                             )
                                           ])))))),
-                  // Positioned(
-                  //     top: 30,
-                  //     right: 8,
-                  //     child: IconButton(
-                  //       icon: const Icon(
-                  //         Icons.language,
-                  //         color: Color(0xff333333),
-                  //         size: 25,
-                  //       ),
-                  //       onPressed: () {
-                  //         Get.offNamed('/langSetting',
-                  //             parameters: {'path': '0'});
-                  //       },
-                  //     )),
-                  // Positioned(
-                  //     bottom: 0,
-                  //     right: 20,
-                  //     // child: IconButton(
-                  //     //   icon: const Icon(
-                  //     //     Icons.language,
-                  //     //     color: Color(0xff333333),
-                  //     //     size: 25,
-                  //     //   ),
-                  //     //   onPressed: () {
-                  //     //     print(111);
-                  //     //   },
-                  //     // )
-                  //     child: GestureDetector(
-                  //       onTap: () {
-                  //         Get.toNamed('/chatService');
-                  //       },
-                  //       child: Image.asset(
-                  //         'assets/images/chat/server.png',
-                  //         width: 50,
-                  //       ),
-                  //     )),
+                  Positioned(
+                      top: 30,
+                      right: 8,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.language,
+                          color: Color(0xff333333),
+                          size: 25,
+                        ),
+                        onPressed: () {
+                          Get.offNamed('/langSetting',
+                              parameters: {'path': '0'});
+                        },
+                      )),
+                  Positioned(
+                      bottom: 0,
+                      right: 20,
+                      // child: IconButton(
+                      //   icon: const Icon(
+                      //     Icons.language,
+                      //     color: Color(0xff333333),
+                      //     size: 25,
+                      //   ),
+                      //   onPressed: () {
+                      //     print(111);
+                      //   },
+                      // )
+                      child: GestureDetector(
+                        onTap: () {
+                          // Get.toNamed('/chatService');
+
+                          platformutil.PlatformUtils.toWebView(
+                              title: '百度', url: 'https://baidu.com');
+                        },
+                        child: Image.asset(
+                          'assets/images/chat/server.png',
+                          width: 50,
+                        ),
+                      )),
                 ]))));
   }
 }

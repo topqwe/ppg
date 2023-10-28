@@ -4,9 +4,8 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../store/EventBus.dart';
 import '../../../util/PagingMixin.dart';
 
@@ -23,7 +22,8 @@ class SetAddrListLogic extends GetxController with GetSingleTickerProviderStateM
      easyRefreshController = EasyRefreshController();
 
      requestData();
-     eventBus.on<GrabRefreshAddrListEvent>().listen((event){
+     mainEventBus.on(EventBusConstants.grabRefreshAddrListEvent,
+             (arg) {
        requestData();
      });
      super.onInit();
@@ -51,8 +51,7 @@ class SetAddrListLogic extends GetxController with GetSingleTickerProviderStateM
        // 'pageSize':'$pageSize'
      };
 
-     var data = await requestClient.post(APIS.listAddress,
-         data:params);
+     var data = await ApiBasic().home({});;
 
      List lst = data['pageList'] ?? [];
      if(isRefresh){
@@ -85,8 +84,11 @@ class SetAddrListLogic extends GetxController with GetSingleTickerProviderStateM
      // FToast.toast(context, msg: "添加成功");
      // Get.back();
      params['orderId']= Get.arguments;
-     var data2 = await requestClient.post(APIS.home, data: params);
-     eventBus.fire(BindAddrRefreshDetailEvent(Get.arguments));
+     var data2 = await ApiBasic().home({});
+     mainEventBus.emit(
+       EventBusConstants.bindAddrRefreshDetailEvent,
+       Get.arguments,
+     );
      // FToast.toast(context, msg: "添加成功");
      // Get.offNamed('/taskDetail',arguments: orderId);
      Get.back();
@@ -96,7 +98,7 @@ class SetAddrListLogic extends GetxController with GetSingleTickerProviderStateM
      var params = {
        'id': listModel['id'],
      };
-     var data = await requestClient.post(APIS.delAddress, data: params);
+     var data = await  ApiBasic().home({});
 
      FToast.toast(context, msg: "删除成功".tr);
      requestData();

@@ -4,9 +4,8 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../store/EventBus.dart';
 import '../../../util/PagingMixin.dart';
 
@@ -23,9 +22,10 @@ class BankListLogic extends GetxController with GetSingleTickerProviderStateMixi
      easyRefreshController = EasyRefreshController();
 
      requestData();
-     eventBus.on<GrabRefreshBkListEvent>().listen((event){
-       requestData();
-     });
+     mainEventBus.on(EventBusConstants.grabRefreshBkListEvent,
+             (arg) {
+           requestData();
+         });
      super.onInit();
    }
 
@@ -51,8 +51,7 @@ class BankListLogic extends GetxController with GetSingleTickerProviderStateMixi
        // 'pageSize':'$pageSize'
      };
 
-     var data = await requestClient.post(APIS.listAddress,
-         data:params);
+     var data = await ApiBasic().home({});
 
      List lst = data['pageList'] ?? [];
      if(isRefresh){
@@ -94,7 +93,7 @@ class BankListLogic extends GetxController with GetSingleTickerProviderStateMixi
      var params = {
        'id': listModel['id'],
      };
-     var data = await requestClient.post(APIS.delAddress, data: params);
+     var data = await ApiBasic().home({});
 
      FToast.toast(context, msg: "删除成功".tr);
      requestData();

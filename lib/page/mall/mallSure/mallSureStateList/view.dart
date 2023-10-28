@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:get/get.dart';
-import '../../../../api/request/config.dart';
 import '../../../../style/theme.dart';
 import '../../../setting/setAddrList/view.dart';
 import 'logic.dart';
@@ -130,8 +129,8 @@ class _MallSureStateListPageState extends State<MallSureStateListPage>
   }
 
   Widget cellForRow(var listModel, int type, int index) {
-    String addr = '${listModel['address']}';
-    String orderId = '${listModel['orderId']}';
+    String addr = '${listModel['name']}';
+    String orderId = '${listModel['id']}';
 
     return
         // Padding(
@@ -318,9 +317,7 @@ class _MallSureStateListPageState extends State<MallSureStateListPage>
                       // margin: const EdgeInsets.only(left: 8, right: 8,top: 8),
                         child: Row(children: [
                           ExtendedImage.network(
-                            RequestConfig.baseUrl +
-                                RequestConfig.imagePath +
-                                listModel['iconImg'],
+                                listModel['iconBig'],
                             fit: BoxFit.cover,
                             height: 100,
                             width: 100,
@@ -351,7 +348,7 @@ class _MallSureStateListPageState extends State<MallSureStateListPage>
                                       overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.left,
                                       text: TextSpan(
-                                        text: listModel['goodsName'],
+                                        text: listModel['name'],
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 14,
@@ -374,12 +371,12 @@ class _MallSureStateListPageState extends State<MallSureStateListPage>
 
                                           '：' +
                                           '' +
-                                          double.parse(listModel['rebate']
+                                          double.parse(listModel['prize']
                                               .toString())
                                               .toString() +
                                           '(' +
                                           '比例'.tr +
-                                          '${(listModel['rebateOdd'] * 100).toStringAsFixed(1)}%' +
+                                          '${(listModel['prize'] * 100).toStringAsFixed(1)}%' +
                                           ')',
                                       textAlign: TextAlign.left,
                                       continerAlign: Alignment.bottomLeft),
@@ -391,7 +388,7 @@ class _MallSureStateListPageState extends State<MallSureStateListPage>
                                             color: AppTheme.themeHightColor,
                                             text: '\n' +
                                                 double.parse(listModel[
-                                                'goodsPrize']
+                                                'prize']
                                                     .toString())
                                                     .toString(),
                                             textAlign: TextAlign.left,
@@ -401,8 +398,8 @@ class _MallSureStateListPageState extends State<MallSureStateListPage>
                                         textContainer(
                                             color: AppTheme.themeHightColor,
                                             text: 'x' +
-                                                int.parse(listModel[
-                                                'goodsNum']
+                                                double.parse(listModel[
+                                                'prize']
                                                     .toString())
                                                     .toString(),
                                             textAlign: TextAlign.right,
@@ -433,7 +430,7 @@ class _MallSureStateListPageState extends State<MallSureStateListPage>
                                     TextSpan(
                                       text:
                                           '：' +
-                                          listModel['platName'],
+                                          listModel['name'],
                                       style: TextStyle(
                                           fontSize: 12,
                                           color: Colors.grey),
@@ -454,7 +451,7 @@ class _MallSureStateListPageState extends State<MallSureStateListPage>
                                   children: <TextSpan>[
                                     TextSpan(
                                       text: double.parse(
-                                          listModel['prizeReal']
+                                          listModel['prize']
                                               .toString())
                                           .toString(),
                                       style: TextStyle(
@@ -559,7 +556,7 @@ class _MallSureStateListPageState extends State<MallSureStateListPage>
                         ultimatelyLRTxt(
                           textl:  '消耗'.tr,
                           textr:
-                              '${(listModel['goodsPrize'] * (logic.cTxt.value)).toStringAsFixed(1)}',
+                              '${(listModel['prize'] * (logic.cTxt.value)).toStringAsFixed(1)}',
                           textrColor: AppTheme.themeHightColor,
                         ),
                         sizeBoxPadding(w: 0, h: 20),
@@ -572,14 +569,14 @@ class _MallSureStateListPageState extends State<MallSureStateListPage>
                                   ultimatelyLRTxt(
                                       textl: '折算'.tr,
                                       textr:
-                                          '${(listModel['goodsPrize'] * (logic.cTxt.value) / listModel['rebate']).toStringAsFixed(1)}'),
+                                          '${(listModel['prize'] * (logic.cTxt.value) / listModel['prize']).toStringAsFixed(1)}'),
                                   sizeBoxPadding(w: 0, h: 23),
                                   textContainer(
                                       textAlign: TextAlign.left,
                                       continerAlign: Alignment.topLeft,
                                       text: '比例'.tr +
                                           '：' +
-                                          '${listModel['rebate']}',
+                                          '${listModel['prize']}',
                                       fontSize: 12,
                                       color: AppTheme.themeHightColor),
                                   sizeBoxPadding(w: 0, h: 20),
@@ -867,9 +864,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                           // sizeBoxPadding(w: 0, h: 10),
 
                           ExtendedImage.network(
-                            RequestConfig.baseUrl +
-                                RequestConfig.imagePath +
-                                '${listModel['iconImg']}',
+                                '${listModel['iconBig']}',
                             fit: BoxFit.fill,
                             height: itemWidth,
                             width: itemWidth,
@@ -889,7 +884,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.left,
                               text: TextSpan(
-                                text: listModel['goodsName'],
+                                text: listModel['name'],
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 14,
@@ -916,7 +911,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.left,
                               text: TextSpan(
-                                text: '${listModel['goodsPrize']}',
+                                text: '${listModel['prize']}',
                                 style: TextStyle(
                                   color: AppTheme.themeHightColor,
                                   fontSize: 14,

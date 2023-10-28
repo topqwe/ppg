@@ -49,10 +49,23 @@ android {
         applicationId "com.example.liandan_flutter"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 1
-        versionName '1.0.2'
+        versionCode flutterVersionCode.toInteger()//1
+        versionName flutterVersionName//'1.0.2'
+
+        manifestPlaceholders = [
+                applicationName : "io.flutter.app.FlutterApplication",
+                JPUSH_PKGNAME : applicationId,
+                JPUSH_APPKEY : "JPushKey",
+                JPUSH_CHANNEL : "developer-default",
+        ]
+
+        ndk {
+            //选择要添加的对应cpu类型的.so库。
+            abiFilters 'armeabi', 'armeabi-v7a', 'armeabi-v8a', 'arm64-v8a', 'x86', 'x86_64'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+        }
     }
     signingConfigs {
         release {

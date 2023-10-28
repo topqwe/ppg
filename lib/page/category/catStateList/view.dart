@@ -225,8 +225,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
             child: GestureDetector(
                 onTap: () {
                   Get.toNamed('/catDetail',
-                      arguments: listModel['orderId'],
-                      preventDuplicates: false);
+                      arguments: listModel['id']);
                   // if (timer_fun != null) {
                   //   return;
                   // }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../widgets/sizebox_widget.dart';
 import '../widgets/text_widget.dart';
 import 'package:tapped/tapped.dart';
-
 import '../style/theme.dart';
 import 'image_widget.dart';
 Widget ButtonBordor({
@@ -416,6 +415,70 @@ Widget customFootFuncBtn(
       ));
 }
 
+Widget rowImgTxtCheckBox({
+  required String textl,
+  required String textr,
+  required VoidCallback onPressed,
+  required String urlL,
+  required String urlR,
+  double w = 20, //= StandardTextStyle.smallgray,
+
+  bool check = true,
+}) {
+  Widget wcheck = Container();
+  if(check) {
+    wcheck =Icon(Icons.check_box_rounded,
+        color: AppTheme.primary, size: 20);
+  }
+  else {
+    wcheck =Icon(Icons.check_box_outline_blank_rounded,
+        color: AppTheme.themeGreyColor, size: 20);
+  }
+
+  // if (check) {
+  //   wcheck = imageCircular(
+  //     w: 33 / 2,
+  //     h: 26 / 2,
+  //     radius: 0,
+  //     fit: BoxFit.fill,
+  //     image: urlR,
+  //   );
+  // }
+  // else{
+  //   wcheck = Container(
+  //     width: 33 / 2,
+  //     height: 26 / 2,
+  //     color: Colors.cyanAccent,
+  //     // radius: 0,
+  //     // fit: BoxFit.fill,
+  //     // image: urlR,
+  //   );
+  // }
+
+  return Container(
+      padding: EdgeInsets.only(left: 15, right: 15),
+      child: Tapped(
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                child: Row(
+                  children: [
+                    imageCircularNoH(radius: 0, image: urlL, w: 30),
+                    const SizedBox(width: 15),
+                    syText(text: textl, textAlign: TextAlign.left),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 5),
+            wcheck,
+          ],
+        ),
+        onTap: onPressed,
+      ));
+}
+
 Widget rowImgTxtImg({
   required String textl,
   required String textr,
@@ -427,6 +490,15 @@ Widget rowImgTxtImg({
   bool check = true,
 }) {
   Widget wcheck = Container();
+  // if(check) {
+  //   wcheck =Icon(Icons.check_box_rounded,
+  //       color: AppTheme.primary, size: 20);
+  // }
+  // else {
+  //   wcheck =Icon(Icons.check_box_outline_blank_rounded,
+  //       color: AppTheme.themeGreyColor, size: 20);
+  // }
+
   if (check) {
     wcheck = imageCircular(
       w: 33 / 2,
@@ -436,6 +508,17 @@ Widget rowImgTxtImg({
       image: urlR,
     );
   }
+  // else{
+  //   wcheck = Container(
+  //     width: 33 / 2,
+  //     height: 26 / 2,
+  //     color: Colors.cyanAccent,
+  //     // radius: 0,
+  //     // fit: BoxFit.fill,
+  //     // image: urlR,
+  //   );
+  // }
+
   return Container(
       padding: EdgeInsets.only(left: 15, right: 15),
       child: Tapped(

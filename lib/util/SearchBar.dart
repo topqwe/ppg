@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 import '../../../../widgets/button_widget.dart';
 
 /// 搜索页的AppBar
-class SearchBar extends StatefulWidget implements PreferredSizeWidget {
+class SearchingBar extends StatefulWidget implements PreferredSizeWidget {
 
-  const SearchBar({
+  const SearchingBar({
     Key? key,
     this.hintText = '',
     this.backImg = 'assets/images/ic_back_black.png',
@@ -24,7 +24,7 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(48.0);
 }
 
-class _SearchBarState extends State<SearchBar> {
+class _SearchBarState extends State<SearchingBar> {
 
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focus = FocusNode();

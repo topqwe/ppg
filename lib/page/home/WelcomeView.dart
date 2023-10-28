@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
+import '../../services/responseHandle/request.dart';
 import '../../style/theme.dart';
 import '../../../widgets/button_widget.dart';
 import '../../../widgets/text_widget.dart';
 
-import '../../api/request/request.dart';
 
 class WelcomeView extends Dialog {
 //非State，no GetTickerProviderStateMixin,so in Control
@@ -378,7 +378,6 @@ class WelcomeView extends Dialog {
         //       'amount':double.parse(listModel['prize'].toString()).toString()
         //     });
         FToast.toast(Get.context!, msg: '成功'.tr);
-        // eventBus.fire(GrabRefreshHomeEvent("1"));
         Navigator.of(Get.context!).pop();
         Get.offNamed('/succ?path=2');
       });

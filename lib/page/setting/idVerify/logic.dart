@@ -9,22 +9,18 @@ import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../util/LoadingBarrierView.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:ui' as ui;
-import '../../../api/file/HttpUtils.dart';
-
-import '../../../api/request/apis.dart';
-import '../../../api/request/config.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
 import '../../../util/Country/countries.dart';
 import '../../../util/ImageUtils.dart';
 
 class IdVerifyLogic extends GetxController {
   var boolId = 0.obs;
-  var boolCanEdit = 0.obs;
+  var boolCanEdit = 1.obs;
   var boolBank = 0.obs;
   var m_countryiso = "US".obs;
   var cTxt0 = ''.obs;
@@ -42,7 +38,7 @@ class IdVerifyLogic extends GetxController {
   var argu = Get.parameters['type'];
 
   void postCheckInfosStatus() => request(() async {
-        var user = await requestClient.post(APIS.home, data: {});
+        var user = await ApiBasic().home({});
 
         if ('${user['nationality']}' != 'null' &&
             '${user['nationality']}' != '') {
@@ -108,9 +104,9 @@ class IdVerifyLogic extends GetxController {
 
   getImage(int id) async {
     var status = await Permission.photos.status;
-    print('before'); //pod add
+    print('camera before'); //pod add
     print(status); //denied
-    if (!status.isGranted) {
+    if (!status.isGranted||status.isDenied) {
       status = await Permission.photos.request(); //req granted
       if (status.isPermanentlyDenied) {
         status = await Permission.photos.request();
@@ -135,9 +131,8 @@ class IdVerifyLogic extends GetxController {
       //   return;
       // }
 
-      // testCompressAndGetFile(File(image), image.path);
-      cropAndUpload(image, image.path, id);
-      // _upLoadImage(image,id);
+      // cropAndUpload(image, image.path, id);
+      _upLoadImage(image,id);
     }
   }
 
@@ -176,9 +171,8 @@ class IdVerifyLogic extends GetxController {
   }
 
   uploadImage(image, imageName, id) => request(() async {
-        String url = RequestConfig.baseUrl + RequestConfig.uploadImgPath;
         LoadingBarrierView.showLoading(Get.context!);
-        var post = await HttpUtils().postImage(url, image, imageName);
+        var post = await ApiBasic().postImage(image, imageName);
         LoadingBarrierView.hideLoading(Get.context!);
         id == 0
             ? image0.value = post['data']
@@ -190,9 +184,8 @@ class IdVerifyLogic extends GetxController {
       });
 
   _upLoadImage(image, id) => request(() async {
-        String url = RequestConfig.baseUrl + RequestConfig.uploadImgPath;
         LoadingBarrierView.showLoading(Get.context!);
-        var post = await HttpUtils().post(url, image);
+        var post = await ApiBasic().postImage2( image);
         LoadingBarrierView.hideLoading(Get.context!);
         id == 0
             ? image0.value = post['data']
@@ -204,17 +197,14 @@ class IdVerifyLogic extends GetxController {
       });
 
   void session_token_post() => request(() async {
-        var url = APIS.home;
         var data = {};
-        var user = await requestClient.post(url, data: data);
-        print(user);
+        var user = await ApiBasic().home({});
         session_token.value = user['session_token'];
         return;
       });
   void rechargeBlockchain_url_post() => request(() async {
-        var url = APIS.home;
         var data = {};
-        var recharge = await requestClient.post(url, data: data);
+        var recharge = await await ApiBasic().home({});
         print(recharge);
         for (var i = 0; i < recharge.length; i++) {
           if (recharge[i]['coin'] == argu) {
@@ -285,7 +275,6 @@ class IdVerifyLogic extends GetxController {
         // });
         // print(user2);
         // session_token.value = user2['session_token'];
-        var url = APIS.home;
         var data = {
           'nationality': isoCode.toLowerCase(),
           'name': '${controller0.text}',
@@ -309,7 +298,7 @@ class IdVerifyLogic extends GetxController {
         // image0.value=='';
         // image1.value=='';
         // image2.value=='';
-        var recharge = await requestClient.post(url, data: data);
+        var recharge = await ApiBasic().home({}); ;
         // controller0.text=='';
         // controller.text=='';
         // image0.value=='';

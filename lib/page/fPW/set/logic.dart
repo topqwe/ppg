@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../store/AppCacheManager.dart';
 import '../../../store/EventBus.dart';
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
 
 class SetFPWLogic extends GetxController {
   var controller;
@@ -39,12 +38,11 @@ class SetFPWLogic extends GetxController {
   }
 
   postSetFPW(context) => request(() async {
-        var url = APIS.home;
         var data = {
           'safeword': controller.text,
           're_safeword': controller2.text
         };
-        var user = await requestClient.post(url, data: data);
+        var user = await ApiBasic().home({});
         FToast.toast(context, msg: '设置成功'.tr);
         AppCacheManager.instance.setValueForKey('FSW', '1');
         Get.back();

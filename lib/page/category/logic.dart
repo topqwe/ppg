@@ -7,9 +7,6 @@ import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
 import '../../../util/PagingMixin.dart';
 
 class CategoryLogic extends GetxController
@@ -26,6 +23,8 @@ class CategoryLogic extends GetxController
   void onInit() {
 
     super.onInit();
+    headDatas.value = {'a':90000000};
+
   }
 
 

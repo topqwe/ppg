@@ -103,7 +103,7 @@ class SuccPage extends StatelessWidget {
                           path == '0'
                               ? Get.toNamed('/catRecord')
                               : path == '1'
-                                  ? Get.toNamed('/mallRecord')
+                                  ? Get.toNamed('/topupRecord')
                                   : Get.toNamed('/sellRecord');
                           // Get.offNamed('/index');
                           // final logic = Get.put(BottomLogic());

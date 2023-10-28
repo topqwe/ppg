@@ -4,9 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 import '../../../../store/AppCacheManager.dart';
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
+
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../widgets/helpTools.dart';
 import '../../../util/SafeValidWidget.dart';
 
@@ -22,12 +22,15 @@ class RegisterLogic extends GetxController {
     // TODO: implement onInit
     super.onInit();
     controller = TextEditingController();
+    cTxt.value = controller.text;
     controller.addListener(() {cTxt.value = controller.text;
     update();});
     controller2 = TextEditingController();
+    cTxt2.value = controller2.text;
     controller2.addListener(() {cTxt2.value = controller2.text;
     update();});
     controller3 = TextEditingController();
+    cTxt3.value = controller3.text;
     controller3.addListener(() {cTxt3.value = controller3.text;
     update();});
   }
@@ -80,35 +83,47 @@ class RegisterLogic extends GetxController {
     }, () {}));
   }
   void register_phone(context,showLoading)=> request(() async {
-    var url = APIS.registerP;
+
     var data = {
       'phone':controller.text,
       'password':controller2.text,
       'usercode':controller3.text,
     };
-    var user = await requestClient.post(url,data: data);
-    FToast.toast(context, msg: "注册成功".tr);
-    AppCacheManager.instance.setUserToken('${user['token']}');
-    postUserInfo();
-    postCheckFundSW();
-    Get.toNamed('/index');
-    return;
+
+    var response = await ApiBasic().register(data);
+    if (response['code'] == 0){
+      FToast.toast(Get.context!, msg: "注册成功".tr);
+      AppCacheManager.instance.setUserToken('${response['data']['token']}');
+      AppCacheManager.instance.setUserId(response['data']['uid']);
+      postUserInfo();
+      postCheckFundSW();
+      Get.toNamed('/index');
+      return;
+    }else{
+      FToast.toast(Get.context!, msg: '${response['msg']}');
+    }
+
   },showLoading: showLoading);
 
   void register(context,showLoading) => request(() async {
-    var url = APIS.register;
+
     var data = {
       'username':'${controller.text}',
       'password':controller2.text,
       'usercode':controller3.text,
     };
-    var user = await requestClient.post(url,data: data);
-    FToast.toast(context, msg: "注册成功".tr);
-    AppCacheManager.instance.setUserToken('${user['token']}');
-    postUserInfo();
-    postCheckFundSW();
-    Get.toNamed('/index');
-    return;
+    var response = await ApiBasic().register(data);
+    if (response['code'] == 0){
+      FToast.toast(Get.context!, msg: "注册成功".tr);
+      AppCacheManager.instance.setUserToken('${response['data']['token']}');
+      AppCacheManager.instance.setUserId(response['data']['uid']);
+      postUserInfo();
+      postCheckFundSW();
+      Get.toNamed('/index');
+      return;
+    }else{
+      FToast.toast(Get.context!, msg: '${response['msg']}');
+    }
   },showLoading: showLoading);
 
 }

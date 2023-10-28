@@ -7,14 +7,13 @@ import 'package:get/get.dart';
 import '../../../../util/MultiSelectTypeDialog.dart';
 import '../../../../util/OnlySelectTypeDialog.dart';
 import '../../../../util/TFInputDialog.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '/util/SMSVerifyDialog.dart';
 import '/util/SetPWSheet.dart';
 import '/store/AppCacheManager.dart';
 import 'package:pay_pwd/pay_pwd.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
 import '../../../store/EventBus.dart';
 import '../../../util/PagingMixin.dart';
 
@@ -39,15 +38,14 @@ class MallDetailLogic extends GetxController with GetSingleTickerProviderStateMi
   String htmlUrl =
   // '';
   Get.parameters['url'] as String;
-  // '<style>img {width: 100%}</style><p><img src="https://img10.360buyimg.com/cms/jfs/t1/182872/6/133/795112/607f3495Ea178190e/01c683a879c788c5.jpg"></p>';
-
 
   @override
   void onInit() {
     // if(htmlUrl.isNotEmpty)
     html =  Html(data: htmlUrl);
-    // html =  Html(data: htmlUrl);
     easyRefreshController = EasyRefreshController();
+    listDataFirst.addAll(ApiBasic().initCus());
+    listModel.value = listDataFirst.first;
 
     requestData();
     // eventBus.on<BindAddrRefreshTaskDetailEvent>().listen((event){
@@ -63,17 +61,23 @@ class MallDetailLogic extends GetxController with GetSingleTickerProviderStateMi
   }
 
   void postZay() => request(()async {
+//dummy
+//     Get.back();
+//     Get.toNamed('/mallSure',parameters:{"id": listModel['id']});
 
-    var user = await requestClient.post(APIS.home,data: {});//dummy
+    //request
+    var user = await ApiBasic().home({});//success to jump
 
-    Get.offNamed('/mallSure',arguments: listModel['orderId'],parameters: {'url':Get.parameters['url'].toString()});
-    return;
+   Get.toNamed('/mallSure', parameters: {"id": listModel['id']});
+
+    //Get.offNamed('/mallSure',arguments: listModel['id'],parameters: {'url':Get.parameters['url'].toString()});
+    // return;
 
   });
 
   void postCheckFund()=> request(() async {
 
-    if(AppCacheManager.instance.getValueForKey(kFSW)=='1'){
+    // if(AppCacheManager.instance.getValueForKey(kFSW)=='1'){
       // Get.toNamed("/setFPW");
 
       showSetPWSheet(Get.context!, (value) {
@@ -110,18 +114,22 @@ class MallDetailLogic extends GetxController with GetSingleTickerProviderStateMi
       }, () {});
 
 
-    }else{
-      showPzyDialog();
-    }
+    // }else{
+      // showPzyDialog();
+    // }
     return;
   });
 
   showPzyDialog(){
+    // Get.back();
+    // Get.toNamed('/mallSure',parameters:{"id": listModel['id']});
+
     pay(
       context: Get.context!,
       hintText: '密码'.tr,
       onSubmit: (password) async {
         safeword.value = password;
+
         postZay();//must request
       },
     );
@@ -145,10 +153,9 @@ class MallDetailLogic extends GetxController with GetSingleTickerProviderStateMi
 
   Future requestListData(bool isRefresh) => request(()async {
     var params = {
-      'orderId': Get.arguments,
+      'id': Get.parameters['id'],
     };
-    var data = await requestClient.post(APIS.home,
-        data:params);
+    var data = await ApiBasic().dummy({});
 
     // List lst = data['pageList'] ?? [];
     if (data != null) {

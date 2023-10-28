@@ -54,6 +54,7 @@ class MePage extends StatelessWidget {
       child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
         GestureDetector(
           onTap: () {
+            Get.toNamed('/statRecord');
           },
           child: Container(
             width: itemWidth,
@@ -87,10 +88,13 @@ class MePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> titles= ['语言',
-      '下载' ];
+    List<String> titles= [
+      '语言'.tr,
+      '下载',
+    '设置'];
     var icons= [Icon(Icons.language),
       Icon(Icons.downloading),
+      Icon(Icons.settings),
        ];
 
     List<Widget> cellWidgets = [];
@@ -105,7 +109,7 @@ class MePage extends StatelessWidget {
                 :
                 i==1?
                 launchWebURL('')
-                    :launchWebURL('')
+                    : Get.toNamed('/setting')
                 ;
               },
               child: Row(
@@ -482,113 +486,113 @@ class MePage extends StatelessWidget {
                                         //   ),
                                         // )
                                       ])))),
-                      // Container(width: 10, height: 10),
-                      // Expanded(
-                      //     flex: 1,
-                      //     child: Container(
-                      //         child: Container(
-                      //             padding: const EdgeInsets.only(
-                      //                 left: 15, right: 15, top: 15),
-                      //             decoration: const BoxDecoration(
-                      //               gradient: LinearGradient(colors: [
-                      //                 Color(0xffffffff),
-                      //                 Color(0xffffffff),
-                      //                 Color(0xffffffff),
-                      //                 Color(0xffffffff),
-                      //               ]), // 渐变色
-                      //               borderRadius: BorderRadius.all(
-                      //                 Radius.circular(6),
-                      //               ),
-                      //               boxShadow: [
-                      //                 BoxShadow(
-                      //                   blurRadius: 2,
-                      //                   //阴影范围
-                      //                   spreadRadius: 1,
-                      //                   //阴影浓度
-                      //                   offset: Offset(0.0, 5.0),
-                      //                   //阴影y轴偏移量
-                      //                   color:
-                      //                       Color(0xffEAEDF3), //阴影颜色
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //             child:
-                      //
-                      //             Column(
-                      //                 crossAxisAlignment:
-                      //                     CrossAxisAlignment.start,
-                      //                 children: <Widget>[
-                      //                    Text(
-                      //                     ''.tr,
-                      //                     style:
-                      //                         TextStyle(fontSize: 14),
-                      //                   ),
-                      //                   Container(
-                      //                       margin:
-                      //                           const EdgeInsets.only(
-                      //                               top: 16),
-                      //                       padding:
-                      //                           const EdgeInsets.only(
-                      //                               bottom: 15),
-                      //                       child: Row(children: [
-                      //                         Expanded(
-                      //                             flex: 1,
-                      //                             child:
-                      //                             RichText(
-                      //                               text:
-                      //                                    TextSpan(
-                      //                                 children: [
-                      //                                   TextSpan(
-                      //                                       text:
-                      //                                       '${logic.mb.value}',
-                      //                                       style: TextStyle(
-                      //                                           color: Colors
-                      //                                               .black,
-                      //                                           fontSize:
-                      //                                               24)),
-                      //                                   // WidgetSpan(
-                      //                                   //   child: Padding(
-                      //                                   //     padding: EdgeInsets
-                      //                                   //         .symmetric(
-                      //                                   //         horizontal:
-                      //                                   //         2.0),
-                      //                                   //     child: Icon(
-                      //                                   //       Icons.loop,
-                      //                                   //       color: Colors.white,
-                      //                                   //     ),
-                      //                                   //   ),
-                      //                                   // )
-                      //                                 ],
-                      //                               ),
-                      //                             )),
-                      //                       ])),
-                      //                   Container(
-                      //                       width: double.infinity,
-                      //                       padding:
-                      //                           const EdgeInsets.only(
-                      //                               bottom: 15),
-                      //                       child: OutlinedButton(
-                      //                         style: ButtonStyle(
-                      //                             shape: MaterialStateProperty.all(
-                      //                                 RoundedRectangleBorder(
-                      //                                     borderRadius:
-                      //                                         BorderRadius.circular(
-                      //                                             4))),
-                      //                             side: MaterialStateProperty
-                      //                                 .all(BorderSide(
-                      //                                     color: Color(
-                      //                                         0xffFF843E)))),
-                      //                         child:  Text(
-                      //                           '明细'.tr,
-                      //                           style: TextStyle(
-                      //                               color: Color(
-                      //                                   0xffFF843E)),
-                      //                         ),
-                      //                         onPressed: () {
-                      //                           Get.toNamed('/statRecord');
-                      //                         },
-                      //                       ))
-                      //                 ]))))
+                      Container(width: 10, height: 10),
+                      Expanded(
+                          flex: 1,
+                          child: Container(
+                              child: Container(
+                                  padding: const EdgeInsets.only(
+                                      left: 15, right: 15, top: 15),
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(colors: [
+                                      Color(0xffffffff),
+                                      Color(0xffffffff),
+                                      Color(0xffffffff),
+                                      Color(0xffffffff),
+                                    ]), // 渐变色
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(6),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        blurRadius: 2,
+                                        //阴影范围
+                                        spreadRadius: 1,
+                                        //阴影浓度
+                                        offset: Offset(0.0, 5.0),
+                                        //阴影y轴偏移量
+                                        color:
+                                            Color(0xffEAEDF3), //阴影颜色
+                                      ),
+                                    ],
+                                  ),
+                                  child:
+
+                                  Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                         Text(
+                                          ''.tr,
+                                          style:
+                                              TextStyle(fontSize: 14),
+                                        ),
+                                        Container(
+                                            margin:
+                                                const EdgeInsets.only(
+                                                    top: 16),
+                                            padding:
+                                                const EdgeInsets.only(
+                                                    bottom: 15),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 1,
+                                                  child:
+                                                  RichText(
+                                                    text:
+                                                         TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                            text:
+                                                            '${logic.mb.value}',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize:
+                                                                    24)),
+                                                        // WidgetSpan(
+                                                        //   child: Padding(
+                                                        //     padding: EdgeInsets
+                                                        //         .symmetric(
+                                                        //         horizontal:
+                                                        //         2.0),
+                                                        //     child: Icon(
+                                                        //       Icons.loop,
+                                                        //       color: Colors.white,
+                                                        //     ),
+                                                        //   ),
+                                                        // )
+                                                      ],
+                                                    ),
+                                                  )),
+                                            ])),
+                                        Container(
+                                            width: double.infinity,
+                                            padding:
+                                                const EdgeInsets.only(
+                                                    bottom: 15),
+                                            child: OutlinedButton(
+                                              style: ButtonStyle(
+                                                  shape: MaterialStateProperty.all(
+                                                      RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  4))),
+                                                  side: MaterialStateProperty
+                                                      .all(BorderSide(
+                                                          color: Color(
+                                                              0xffFF8888)))),
+                                              child:  Text(
+                                                '🔍'.tr,
+                                                style: TextStyle(
+                                                    color: Color(
+                                                        0xffFF8888)),
+                                              ),
+                                              onPressed: () {
+                                                Get.toNamed('/statRecord');
+                                              },
+                                            ))
+                                      ]))))
                     ],
                   )))
             ])),
@@ -679,25 +683,29 @@ class MePage extends StatelessWidget {
   }
 
   Widget headInfoView(BuildContext context) {
+    var _future = Future.delayed(Duration(seconds: 3), () {
+      return '服务器返回的数据';
+    });
 
     return FutureBuilder<String>(
+      future: _future,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
 
             return Row(crossAxisAlignment: CrossAxisAlignment.start, children: <
                 Widget>[
-              // Obx(() => Container(
-              //     height: 80,
-              //     width: 80,
-              //     padding: const EdgeInsets.symmetric(
-              //         horizontal: 0.5, vertical: 0.5),
-              //     decoration: BoxDecoration(
-              //         border:
-              //             Border.all(color: const Color(0xffffffff), width: 2),
-              //         borderRadius: BorderRadius.circular(40)),
-              //     child: ClipOval(
-              //       child: Image.asset(
-              //           'assets/images/avatar/head_${logic.userInfo['avatar']}.jpg'),
-              //     ))),
+              Obx(() => Container(
+                  height: 80,
+                  width: 80,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 0.5, vertical: 0.5),
+                  decoration: BoxDecoration(
+                      border:
+                          Border.all(color: const Color(0xffffffff), width: 2),
+                      borderRadius: BorderRadius.circular(40)),
+                  child: ClipOval(
+                    child: Image.asset(
+                        'assets/images/avatar/head_${logic.userInfo['avatar']}.jpg'),
+                  ))),
               Expanded(
                 flex: 1,
                 child: Obx(() => Column(
@@ -733,15 +741,18 @@ class MePage extends StatelessWidget {
                               ))
                         ])),
               ),
-              // const SizedBox(
-              //     height: 80,
-              //     width: 25,
-              //     child:
-              //         Icon(Icons.chevron_right, color: Colors.white, size: 30)),
+              const SizedBox(
+                  height: 80,
+                  width: 25,
+                  child:
+                      Icon(Icons.chevron_right, color: Colors.black, size: 30)),
             ]);
 
         });
   }
+
+
+
 }
 
 class _AccountMoney extends StatelessWidget {

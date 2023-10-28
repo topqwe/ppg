@@ -1,14 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../style/theme.dart';
+
 ///代码清单
 class CustomTagWidget extends StatefulWidget {
+  final Color bgColor;
+  final Color selectedBgColor;
+  final Color borderColor;
+  final Color selectedBorderColor;
+  final Color textColor;
+  final Color selectedTextColor;
+  final double setradius;
+
+
   final List  tabTitleList;
   final int select;
   final Function(int index) onTap;
 
   const CustomTagWidget(
       {Key? key,
+        this.bgColor = Colors.transparent,
+        this.selectedBgColor = Colors.transparent,
+        this.borderColor = Colors.transparent,
+        this.selectedBorderColor = Colors.transparent,
+        this.textColor = Colors.grey,
+        this.selectedTextColor= Colors.black,
+        this.setradius = 20.0,
         required this.tabTitleList,
         this.select = 0,
         required this.onTap})
@@ -55,13 +73,18 @@ class CustomTagWidgetState extends State<CustomTagWidget> {
       itemBuilder: (BuildContext context, int index) {
         TabModel _tabModel = _list[index];
 
-        Color bgColor = Colors.grey[200]!;
-        Color borderColor = Colors.grey[200]!;
-        Color textColor = Colors.black;
+        Color bgColor =  widget.bgColor;
+        //Colors.grey[200]!;
+        Color borderColor = widget.borderColor;
+        // Colors.grey[200]!;
+        Color textColor = widget.textColor;
+
         if (_tabModel.select) {
-          bgColor = Colors.white;
-          borderColor = Colors.blueAccent;
-          textColor = Colors.blueAccent;
+          bgColor = widget.selectedBgColor;
+          //Colors.white;
+          borderColor = widget.selectedBorderColor;
+          // Colors.blueAccent;
+          textColor = widget.selectedTextColor;
         }
 
         return Container(
@@ -70,9 +93,9 @@ class CustomTagWidgetState extends State<CustomTagWidget> {
             children: [
               GestureDetector(
                 onTap: () {
-                  if (_tabModel.select) {
-                    return;
-                  }
+                  // if (_tabModel.select) {
+                  //   return;
+                  // }
                   int selectIndex = 0;
                   for (int i = 0; i < _list.length; i++) {
                     TabModel element = _list[i];
@@ -128,7 +151,7 @@ class CustomTagWidgetState extends State<CustomTagWidget> {
                   padding:
                   EdgeInsets.only(left: 12, right: 12, top: 2, bottom: 2),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderRadius: BorderRadius.all(Radius.circular(widget.setradius)),
                     //背景
                     color: bgColor,
                     //边框
@@ -139,7 +162,8 @@ class CustomTagWidgetState extends State<CustomTagWidget> {
                     style: TextStyle(color: textColor),
                   ),
                 ),
-              )
+              ),
+
             ],
           ),
         );

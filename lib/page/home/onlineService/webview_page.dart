@@ -3,11 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:liandan_flutter/main.dart';
 import '../../../../store/AppCacheManager.dart';
 import 'package:webviewx/webviewx.dart';
 
-import '../../../api/request/config.dart';
-import '../../../api/request/request.dart';
+import '../../../services/responseHandle/request.dart';
+
 
 
 class WebViewXPage extends StatefulWidget {
@@ -49,7 +50,7 @@ class _WebViewXPageState extends State<WebViewXPage> {
       lang = 'zh-CN';
     }
     url =
-        RequestConfig.noWapBaseUrl + RequestConfig.chatHome + '?token=${token}&&lang=${lang}';
+         configEnv.onlineWsUrl + '?token=${token}&&lang=${lang}';
 
 
   });
@@ -86,7 +87,7 @@ class _WebViewXPageState extends State<WebViewXPage> {
                     webviewController.loadContent(
                       url,
                       // 'https://flutter.dev',
-                      SourceType.url,
+                      SourceType.URL,
                     );
                   },
 

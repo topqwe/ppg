@@ -5,8 +5,8 @@ import 'package:httpplugin/httpplugin.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:path_provider/path_provider.dart';
 
- const kFSW = 'kFSW';
- const kUserInfo = 'kUserInfo';
+const kFSW = 'kFSW';
+const kUserInfo = 'kUserInfo';
 
 
 
@@ -22,9 +22,10 @@ class AppCacheManager with CacheBase{
     return _instance!;
   }
 
+  final String _currentDomainKey = "currentDomainKey";
   // 用户token
   final String _userToken = "user_token";
-
+  final String _userId = "user_Id";
   final String _isLogin = "false";
 
   // 用户token
@@ -32,6 +33,24 @@ class AppCacheManager with CacheBase{
 
   // app 语言
   final String _appLanguage = "app_language";
+
+
+  void setCurrentDomainKey(String token) async {
+    _storage.write(_currentDomainKey, token);
+  }
+
+  String getCurrentDomainKey() {
+    var value = '';
+    try{
+      value =  _storage.read(_currentDomainKey);
+      // value ??= '';
+      if(value.toString()=='null'||value.toString()=='')value='';
+
+    }catch(e){
+      value = '';
+    }
+    return value;
+  }
 
   void setUserToken(String token) async {
     _storage.write(_userToken, token);
@@ -46,6 +65,23 @@ class AppCacheManager with CacheBase{
 
     }catch(e){
       value = '';
+    }
+    return value;
+  }
+
+  void setUserId(int uid) async {
+    _storage.write(_userId, uid);
+  }
+
+  int getUserId() {
+    var value = 0;
+    try{
+      value =  _storage.read(_userId);
+      // value ??= '';
+      if(value.toString()=='null'||value.toString()=='')value=0;
+
+    }catch(e){
+      value = 0;
     }
     return value;
   }

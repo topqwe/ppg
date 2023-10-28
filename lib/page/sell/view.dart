@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import '../../style/theme.dart';
 
 import '../../../util/DefaultAppBar.dart';
-import '../../api/request/config.dart';
 import '../../util/FrequencyClick.dart';
 import 'logic.dart';
 import '/widgets/noData_Widget.dart';
@@ -183,8 +182,6 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ExtendedImage.network(
-                      RequestConfig.baseUrl +
-                          RequestConfig.imagePath +
                           listModel['iconImg'],
                       fit: BoxFit.fill,
                       width: 40,

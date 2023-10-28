@@ -8,8 +8,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:high_chart/high_chart.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
+import 'package:liandan_flutter/util/SearchTextComponent.dart';
+import '../bottom/logic.dart';
 import 'SearchPage.dart';
-import '/util/CitySelectPage.dart';
+import '../../util/CitySelect/CitySelectPage.dart';
 import 'package:marquee/marquee.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
@@ -56,11 +59,17 @@ class HomePageState extends State<HomePage>
         automaticallyImplyLeading: false,
         centerTitle: false,
         title: Container(
+          //49+， elements in container cant layout by yourself
           color: Colors.transparent,
           child: Row(
             children: [
-              buttonImage(
-                  w: 170, h: 30, imageName: "", text: "", onPressed: () {}),
+             Obx(() => buttonImage(
+                 w: 170, h: 49, imageName: "", text:'${logic.barDatas['name']?? "logo"}', onPressed: () {
+
+               pushCityPage(Get.context!, (value) {
+                 logic.barDatas['name']=value;
+               }, () { });
+             })) ,
               Expanded(child: SizedBox()),
               buttonImage(
                   w: 25, h: 25, imageName: "", text: "", onPressed: () {})
@@ -216,6 +225,71 @@ class HomePageState extends State<HomePage>
         ;
   }
 
+
+  NestedScrollView buildNestedEasyCustomListView() {
+    return NestedScrollView(
+      controller: scrollController,
+      key: const Key('homeNest'),
+      physics: const ClampingScrollPhysics(),
+      headerSliverBuilder: (context, innerScrolled) {
+        return [
+          // SliverToBoxAdapter(
+          //   child: Container(
+          //       margin: EdgeInsets.only(top: 10, bottom: 15),
+          //       child:
+          //       Column(children: [
+          //         // buildHeadImageBgView(),
+          //         HomeBanner(
+          //           isSliver: false,
+          //         ),
+          //         SizedBox(height: 10,),
+          //         HomeAnnounce(),
+          //       ],)
+          //
+          //   ),
+          // ),
+          SliverToBoxAdapter(child: SearchTextComponent(),),
+
+          HomeBanner(
+            isSliver: true,
+          ),
+          const SliverPadding(padding: EdgeInsets.all(5)),
+
+          SliverToBoxAdapter(child:
+          Container(
+            height:50,
+            child: CustomTagWidget(
+              tabTitleList: logic.tags,
+              select: logic.tagsCurrentIndex,
+              onTap: (int index) {
+                setState(() {
+                  logic.tagsCurrentIndex = index;
+                  print("当前选中 $logic.tagsCurrentIndex");
+                  if(logic.tagsCurrentIndex ==2) {
+                    Get.offNamed('/index');
+                    final logicb = Get.put(BottomLogic());
+                    logicb.changePage(1);
+                  }
+                });
+              },
+            ),),),
+
+          HomeAnnounce(
+            isSliver: true,
+          ),
+          const SliverPadding(padding: EdgeInsets.all(10)),
+
+
+        ];
+      },
+      body: EasyRefreshCustom(
+        type: 0,
+      ),
+    )
+    // ),
+        ;
+  }
+
   CustomScrollView buildCustomScrollView() {
     return CustomScrollView(
       controller: scrollController,
@@ -227,11 +301,13 @@ class HomePageState extends State<HomePage>
       // shrinkWrap: true,//晃，Lis need
       scrollDirection: Axis.vertical,
       slivers: <Widget>[
+
         buildSliverAppBar(),
-        // HomeBanner(
-        //   isSliver: true,
-        // ),
-        // const SliverPadding(padding: EdgeInsets.all(5)),
+
+        HomeBanner(
+          isSliver: true,
+        ),
+        const SliverPadding(padding: EdgeInsets.all(5)),
 
         SliverToBoxAdapter(child:
     Container(
@@ -243,26 +319,41 @@ class HomePageState extends State<HomePage>
             setState(() {
               logic.tagsCurrentIndex = index;
               print("当前选中 $logic.tagsCurrentIndex");
+              if(logic.tagsCurrentIndex ==2) {
+                Get.offNamed('/index');
+                final logicb = Get.put(BottomLogic());
+                logicb.changePage(1);
+              }
             });
           },
         ),),),
 
-        // HomeAnnounce(
-        //   isSliver: true,
-        // ),
-        // const SliverPadding(padding: EdgeInsets.all(10)),
+        HomeAnnounce(
+          isSliver: true,
+        ),
+        const SliverPadding(padding: EdgeInsets.all(10)),
         HomeTool(
           isSliver: true,
         ),
-        // SliverPadding(padding: EdgeInsets.all(5)),
+        SliverPadding(padding: EdgeInsets.all(5)),
+        HomeToolSwiper(
+          isSliver: true,
+        ),
+        SliverPadding(padding: EdgeInsets.all(5)),
+
+
+        HomeGridList4InRow(),
+        HomeGridList2InRow(),
+
+
         // Chart(),
         // sliverSectionHeadAction('ProgressHeader'.tr, () {
         //   Get.offNamed('/index');
         //   final logic = Get.put(BottomLogic());
         //   logic.changePage(1);
         // }),
-        SliverPadding(padding: EdgeInsets.all(5)),
-        const HomeRecList(),
+        // SliverPadding(padding: EdgeInsets.all(5)),
+        // const HomeRecList(),
         // sliverSectionHead('Horizontal'.tr),
         // SliverPadding(padding: EdgeInsets.all(5)),
         // HorizontalDataList(),
@@ -271,8 +362,8 @@ class HomePageState extends State<HomePage>
         // sliverSectionHead('EndlessList'.tr),
         // SliverPadding(padding: EdgeInsets.all(5)),
         // const HomeEndlessList(),
-        SliverPadding(padding: EdgeInsets.all(5)),
-        sliverSectionHead(''),
+        // SliverPadding(padding: EdgeInsets.all(5)),
+        // sliverSectionHead(''),
       ],
     );
   }
@@ -317,7 +408,7 @@ class HomePageState extends State<HomePage>
           ),
           HomeAnnounce(),
           const SizedBox(height: 15),
-          const HomeToolSwiper(),
+          HomeToolSwiper(),
 
           const SizedBox(height: 5),
 
@@ -458,7 +549,12 @@ class HomePageState extends State<HomePage>
     super.build(context);
     final logic = Get.put(HomeLogic());
     // logic.up(context);//everytime
-    return WillPopScope(
+    return KeyboardDismisser(
+        gestures: [
+        GestureType.onTap,
+        GestureType.onPanUpdateDownDirection,
+        ],
+        child:WillPopScope(
         onWillPop: () async {
           // Get.offNamed("/");
           return false;
@@ -469,11 +565,13 @@ class HomePageState extends State<HomePage>
           appBar: buildAppBar(),
           body: SafeArea(
             child:
-                // buildEasyRefresh(),
-                buildNestedScrollView(),
-            //     buildCustomScrollView(),
+                // buildEasyRefresh(),//defect
+                // buildNestedScrollView(),
+                // buildCustomScrollView(),
+            buildNestedEasyCustomListView()
           ),
-        ));
+        ))
+    );
   }
 
   @override
@@ -481,10 +579,650 @@ class HomePageState extends State<HomePage>
   bool get wantKeepAlive => true;
 }
 
+class EasyRefreshCustom extends StatefulWidget {
+  int type;
+
+  EasyRefreshCustom({
+    Key? key,
+    this.type = 0,
+  }) : super(key: key);
+
+  @override
+  EasyRefreshCustomState createState() => EasyRefreshCustomState();
+}
+
+class EasyRefreshCustomState extends State<EasyRefreshCustom> {
+  late int type;
+
+  final logic = Get.put(HomeLogic());
+
+  @override
+  void initState() {
+    super.initState();
+    type = widget.type;
+  }
+
+  Widget buildEasyRefreshCustom() {
+    return Obx(() => EasyRefresh.custom(
+      key: PageStorageKey<int>(type),
+      controller: logic.easyRefreshController,
+      emptyWidget: logic.listDataFirst.isEmpty
+          ? noDataWidget(
+          mainAxisAlignment: MainAxisAlignment.start, topPadding: 30)
+          : null,
+      header: ClassicalHeader(
+        infoText: ('下拉刷新'.tr),
+        refreshedText: ('刷新完成'.tr),
+        refreshText: ('刷新中...'.tr),
+        noMoreText: '',
+      ),
+      footer: ClassicalFooter(
+        infoText: ('上拉加载'.tr),
+        loadingText: ('加载中...'.tr),
+        loadedText: ('加载完毕'.tr),
+        noMoreText: '没有更多啦'.tr,
+      ),
+      onRefresh: () async {
+        await logic.dataRefresh();
+        logic.easyRefreshController
+            .finishLoad(success: true, noMore: false);
+      },
+      onLoad: () async {
+        await logic.loadMore();
+        logic.easyRefreshController.finishLoad(
+            success: true, noMore: logic.hasMoreData ? false : true);
+      },
+      slivers: [
+        // SliverOverlapInjector(
+        //     handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
+
+        SliverGrid(
+            delegate: SliverChildBuilderDelegate((_, index) {
+              var model = logic.listDataFirst[index];
+
+              return cellForRow(model, type, index);
+            }, childCount: logic.listDataFirst.length),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                childAspectRatio: .8,//越大越小
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10)),
+
+        // GridView.builder(
+        //   shrinkWrap: true,
+        //   padding: EdgeInsets.only(left: 10, right: 10, bottom: 0), //用 Nest的时候
+        //   // padding: EdgeInsets.symmetric(vertical: 6),
+        //   physics: const NeverScrollableScrollPhysics(),
+        //   //Grids
+        //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        //     crossAxisCount: 2, //Grid按两列显示
+        //     // crossAxisCount: count,
+        //     childAspectRatio: .8,
+        //     crossAxisSpacing: 10,
+        //     mainAxisSpacing: 10,
+        //   ),
+        //   itemBuilder: (context, index) {
+        //     var data = logic.listDataFirst[index];
+        //     return getGrid(context, index);
+        //   },
+        //   itemCount: logic.listDataFirst.length,
+        // ),
+
+      ],
+    ));
+  }
+
+  // List<Widget> getGridList() {
+  //   var tem = logic.lists.map((listModel) {
+  //     return cellForRow(listModel, 0, 0);
+  //   });
+  //   return tem.toList();
+  // }
+
+  Widget getGrid(context, index) {
+    return cellForRow(logic.listDataFirst[index], 0, 0);
+  }
+
+  Widget cellForRow(var listModel, int type, int index) {
+    var size = MediaQuery.of(Get.context!).size;
+    double itemWidth = (size.width - 3 * 15) / 2;
+    // itemWidth = 170;
+
+    return
+      // InkWell(
+      // onTap: () => itemClick(listModel),
+      // child:
+      Container(
+        // height: 180,
+          width: itemWidth,
+          padding:
+          const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
+          margin: const EdgeInsets.only(top: 0),
+          child: GestureDetector(
+              onTap: () {},
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(4),
+                  ),
+                  // image: DecorationImage(
+                  //   image: AssetImage("images/game1.png"),
+                  //   fit: BoxFit.cover,
+                  // ),
+                ),
+                child: Container(
+                    margin: const EdgeInsets.all(0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        // sizeBoxPadding(w: 0, h: 10),
+
+                        ExtendedImage.network(
+                          '${listModel['iconBig']}',
+                          fit: BoxFit.fill,
+                          height: 413/3,//itemWidth413/3
+                          width: 518/3,//518/3
+                          shape: BoxShape.rectangle,
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(4.0)),
+                        ),
+
+                        sizeBoxPadding(w: 0, h: 10),
+                        Container(
+                          width: itemWidth,
+                          padding: EdgeInsets.only(left: 0, right: 0),
+                          height: 35,
+                          alignment: Alignment.topLeft,
+                          child: RichText(
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                            text: TextSpan(
+                              text: '${listModel['name']}',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: AppTheme.themeHightColor),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        sizeBoxPadding(w: 0, h: 10),
+                        Container(
+                          width: itemWidth,
+                          padding: EdgeInsets.only(left: 0, right: 0),
+                          // height: 40,
+                          alignment: Alignment.topLeft,
+                          child: RichText(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                            text: TextSpan(
+                              text:
+                              '￥${listModel['prize'].toStringAsFixed(0)}',
+                              style: TextStyle(
+                                color: AppTheme.themeHightColor,
+                                fontSize: 14,
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // sizeBoxPadding(w: 0, h: 10),
+                      ],
+                    )),
+              )))
+    // )
+        ;
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return buildEasyRefreshCustom();
+  }
+}
+
+
+class HomeGridList2InRow extends StatefulWidget {
+  const HomeGridList2InRow({Key? key}) : super(key: key);
+
+  @override
+  HomeGridList2InRowState createState() => HomeGridList2InRowState();
+}
+
+class HomeGridList2InRowState extends State<HomeGridList2InRow> {
+  final logic = Get.put(HomeLogic());
+  late EasyRefreshController easyRefreshController;
+  @override
+  void initState() {
+    super.initState();
+    easyRefreshController = EasyRefreshController();
+    // requestData();
+  }
+
+
+  // List<Widget> getGridList() {
+  //   var tem = logic.lists.map((listModel) {
+  //     return cellForRow(listModel, 0, 0);
+  //   });
+  //   return tem.toList();
+  // }
+
+  Widget getGrid(context, index) {
+    return cellForRow(logic.lists[index], 0, 0);
+  }
+
+  Widget cellForRow(var listModel, int type, int index) {
+    var size = MediaQuery.of(Get.context!).size;
+    double itemWidth = (size.width - 3 * 15) / 2;
+    // itemWidth = 170;
+
+    return
+      // InkWell(
+      // onTap: () => itemClick(listModel),
+      // child:
+      Container(
+        // height: 180,
+          width: itemWidth,
+          padding:
+          const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
+          margin: const EdgeInsets.only(top: 0),
+          child: GestureDetector(
+              onTap: () {},
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(4),
+                  ),
+                  // image: DecorationImage(
+                  //   image: AssetImage("images/game1.png"),
+                  //   fit: BoxFit.cover,
+                  // ),
+                ),
+                child: Container(
+                    margin: const EdgeInsets.all(0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        // sizeBoxPadding(w: 0, h: 10),
+
+                        ExtendedImage.network(
+                          '${listModel['iconBig']}',
+                          fit: BoxFit.fill,
+                          height: 413/3,//itemWidth413/3
+                          width: 518/3,//518/3
+                          shape: BoxShape.rectangle,
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(4.0)),
+                        ),
+
+                        sizeBoxPadding(w: 0, h: 10),
+                        Container(
+                          width: itemWidth,
+                          padding: EdgeInsets.only(left: 0, right: 0),
+                          height: 35,
+                          alignment: Alignment.topLeft,
+                          child: RichText(
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                            text: TextSpan(
+                              text: '${listModel['name']}',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: AppTheme.themeHightColor),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        sizeBoxPadding(w: 0, h: 10),
+                        Container(
+                          width: itemWidth,
+                          padding: EdgeInsets.only(left: 0, right: 0),
+                          // height: 40,
+                          alignment: Alignment.topLeft,
+                          child: RichText(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                            text: TextSpan(
+                              text:
+                              '￥${listModel['prize'].toStringAsFixed(0)}',
+                              style: TextStyle(
+                                color: AppTheme.themeHightColor,
+                                fontSize: 14,
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // sizeBoxPadding(w: 0, h: 10),
+                      ],
+                    )),
+              )))
+    // )
+        ;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() => SliverToBoxAdapter(
+      child:
+      buildListViewBuilder(),
+    ));
+  }
+
+
+  Widget buildListViewBuilder() {
+    final logic = Get.put(HomeLogic());
+
+    int count = 0;
+    count = (logic.lists.isEmpty) ? 0 : logic.lists.length;
+
+    if (count == 0) {
+      //   return noDataWidget(
+      //       mainAxisAlignment: MainAxisAlignment.start, topPadding: 30);
+      // } else {
+      return noDataWidget();
+    }
+
+    return Container(
+      //WarmingS contain as Column tags
+      // color: Colors.white,//BoxDecoration col
+      width: double.infinity,
+      // height: 50,
+      alignment: Alignment.topCenter,
+      // padding: const EdgeInsets.only(left: 10, right: 10),
+      // padding: EdgeInsets.only(left: padding(), right: padding()),
+      decoration: const BoxDecoration(
+        // color: Colors.white,
+        borderRadius: BorderRadius.only(
+            bottomRight: Radius.circular(20.0),
+            bottomLeft: Radius.circular(20.0)),
+      ),
+      // child: ClipRRect(
+      //   borderRadius: const BorderRadius.all(Radius.circular(20)),
+      child: Column(
+        children: <Widget>[
+          // GridView.count(
+          //   crossAxisCount: 4,
+          //   childAspectRatio: .8,
+          //   mainAxisSpacing: 10,
+          //   crossAxisSpacing: 10,
+          //   padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+          //   children: getGridList(),
+          // )
+          GridView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.only(left: 10, right: 10, bottom: 0), //用 Nest的时候
+            // padding: EdgeInsets.symmetric(vertical: 6),
+            physics: const NeverScrollableScrollPhysics(),
+            //Grids
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, //Grid按两列显示
+              // crossAxisCount: count,
+              childAspectRatio: .8,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            itemBuilder: (context, index) {
+              var data = logic.lists[index];
+              return getGrid(context, index);
+            },
+            itemCount: count,
+          ),
+        ],
+      ),
+    );
+    // ),
+  }
+}
+
+class HomeGridList4InRow extends StatefulWidget {
+  const HomeGridList4InRow({Key? key}) : super(key: key);
+
+  @override
+  HomeGridList4InRowState createState() => HomeGridList4InRowState();
+}
+
+class HomeGridList4InRowState extends State<HomeGridList4InRow> {
+  final logic = Get.put(HomeLogic());
+  @override
+  void initState() {
+    super.initState();
+    // requestData();
+  }
+
+
+  List<Widget> getGridList() {
+    var tem = logic.lists.map((listModel) {
+      return cellForRow(listModel, 0, 0);
+    });
+    return tem.toList();
+  }
+
+  Widget getGrid(context, index) {
+    return cellForRow(logic.lists[index], 0, 0);
+  }
+
+  Widget cellForRow(var listModel, int type, int index) {
+    var size = MediaQuery.of(Get.context!).size;
+    double itemHeight = 40.0;
+    double itemWidth = (size.width - 5 * 10) / 4;
+    // itemWidth = 170;
+
+    return
+      // InkWell(
+      // onTap: () => itemClick(listModel),
+      // child:
+      Container(
+        // height: 100,
+          width: itemWidth,
+          padding:
+          const EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10),
+          // margin: const EdgeInsets.only(top: 0),
+          child: GestureDetector(
+              onTap: () {
+                // Get.toNamed('/mallSure',arguments: listModel['orderId']);
+                // Get.toNamed('/catSure',arguments: listModel['orderId']);
+              },
+              child: Container(
+                // height: 100,
+                width: itemWidth,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                  // image: DecorationImage(
+                  //   image: AssetImage("images/game1.png"),
+                  //   fit: BoxFit.cover,
+                  // ),
+                ),
+                child: Container(
+                    margin: const EdgeInsets.all(0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        // sizeBoxPadding(w: 0, h: 10),
+
+                        // ExtendedImage.network(
+                        //   listModel['iconBig'],
+                        //   fit: BoxFit.fill,
+                        //   height: 40,
+                        //   width: 40,
+                        //   shape: BoxShape.rectangle,
+                        //   borderRadius:
+                        //   BorderRadius.all(Radius.circular(4.0)),
+                        // ),
+
+                        Container(
+                          height: 40,
+                          width: 40,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0.5, vertical: 0.5),
+                          decoration: BoxDecoration(
+                              border:
+                              Border.all(color: const Color(0xffffffff), width: 2),
+                              borderRadius: BorderRadius.circular(40)),
+                          child:   Image.asset(
+                              'assets/images/cates/cate_${listModel['iconBig']}.png'),
+                        ),
+
+                        sizeBoxPadding(w: 0, h: 5),
+                        Container(
+                          width: itemWidth,
+                          padding: EdgeInsets.only(left: 5, right: 5),
+                          height: 25,
+                          alignment: Alignment.topCenter,
+                          child: RichText(
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                            text: TextSpan(
+                              text: listModel['name'],
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: AppTheme.themeHightColor),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        sizeBoxPadding(w: 0, h: 5),
+
+                      ],
+                    )),
+              )))
+    // )
+        ;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() => SliverToBoxAdapter(
+      child: buildListViewBuilder(),
+    ));
+  }
+
+  Widget buildListViewBuilder() {
+    final logic = Get.put(HomeLogic());
+
+    int count = 0;
+    count = (logic.lists.isEmpty) ? 0 : logic.lists.length;
+
+    if (count == 0) {
+      //   return noDataWidget(
+      //       mainAxisAlignment: MainAxisAlignment.start, topPadding: 30);
+      // } else {
+      return noDataListWidget();
+    }
+
+    return Container(
+      //WarmingS contain as Column tags
+      // color: Colors.white,//BoxDecoration col
+      width: double.infinity,
+      // height: 50,
+      alignment: Alignment.topCenter,
+      // padding: const EdgeInsets.only(left: 10, right: 10),
+      // padding: EdgeInsets.only(left: padding(), right: padding()),
+      decoration: const BoxDecoration(
+        // color: Colors.white,
+        borderRadius: BorderRadius.only(
+            bottomRight: Radius.circular(20.0),
+            bottomLeft: Radius.circular(20.0)),
+      ),
+      // child: ClipRRect(
+      //   borderRadius: const BorderRadius.all(Radius.circular(20)),
+      child: Column(
+        children: <Widget>[
+          // GridView.count(
+          //   crossAxisCount: 4,
+          //   childAspectRatio: .8,
+          //   mainAxisSpacing: 10,
+          //   crossAxisSpacing: 10,
+          //   padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+          //   children: getGridList(),
+          // )
+          GridView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.only(left: 10, right: 10, bottom: 10), //用 Nest的时候
+            // padding: EdgeInsets.symmetric(vertical: 6),
+            physics: const NeverScrollableScrollPhysics(),
+            //Grids
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4, //Grid按两列显示
+              // crossAxisCount: count,
+              childAspectRatio: .8,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            itemBuilder: (context, index) {
+              var data = logic.lists[index];
+              return getGrid(context, index);
+            },
+            itemCount: count,
+          ),
+        ],
+      ),
+    );
+    // ),
+  }
+}
 
 
 class HomeToolSwiper extends StatefulWidget {
-  const HomeToolSwiper({Key? key}) : super(key: key);
+  int type;
+  String typeStr;
+  bool isSliver;
+  HomeToolSwiper({
+    Key? key,
+    this.type = 0,
+    this.typeStr = '',
+    this.isSliver = false,
+  }) : super(key: key);
+
 
   @override
   HomeToolSwiperState createState() => HomeToolSwiperState();
@@ -521,7 +1259,7 @@ class HomeToolSwiperState extends State<HomeToolSwiper> {
     switch (model.index) {
       case 0:
         return Get.toNamed(
-          '/index',
+          '/topup',
         );
       case 1:
         return Get.toNamed('/index');
@@ -556,6 +1294,12 @@ class HomeToolSwiperState extends State<HomeToolSwiper> {
 
   @override
   Widget build(BuildContext context) {
+    return widget.isSliver
+        ? SliverToBoxAdapter(child: buildBasicView())
+        : buildBasicView();
+  }
+
+  Widget buildBasicView(){
     int count = lists.length;
     int aver = 8;
     int oddaver = lists.length % aver > 0 ? 1 : 0;
@@ -569,73 +1313,74 @@ class HomeToolSwiperState extends State<HomeToolSwiper> {
     double itemWidth = size.width / count;
     return
 
-        // SliverToBoxAdapter(
-        //
-        //   child:
-        Container(
-            //ConstrainedBox
-            alignment: Alignment.center,
-            // color: Colors.white,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(
-                Radius.circular(4),
-              ),
+      // SliverToBoxAdapter(
+      //
+      //   child:
+      Container(
+        //ConstrainedBox
+          alignment: Alignment.center,
+          // color: Colors.white,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(4),
             ),
-            margin: EdgeInsets.only(left: 15, right: 15),
-            padding: EdgeInsets.only(top: 15),
-            child: Swiper(
-              // autoplay:pageCount>1?true:false,
-              outer: false,
-              itemBuilder: (c, i) {
-                var avaLists = spls[i];
-                return Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  alignment: WrapAlignment.start,
-                  runAlignment: WrapAlignment.start,
-                  runSpacing: 16.0,
-                  children: avaLists.map((b) {
-                    ToolGrid data = b;
-                    return GestureDetector(
-                      child: SizedBox(
-                        width: (MediaQuery.of(context).size.width - 40) / 4,
-                        child: Column(
-                          // mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            imageCircular(
-                                fit: BoxFit.fitWidth,
-                                w: 30,
-                                h: 30,
-                                // MediaQuery.of(context).size.width * 0.12,
-                                radius: 0,
-                                image: data.img),
-                            sizeBoxPadding(w: 0, h: 5),
-                            syText(
-                                height: 20,
-                                text: data.title.tr, //"$i$b"
-                                fontSize: 12,
-                                // color: Colors.black,
-                                fontWeight: FontWeight.normal),
-                          ],
-                        ),
+          ),
+          margin: EdgeInsets.only(left: 15, right: 15),
+          padding: EdgeInsets.only(top: 15),
+          child: Swiper(
+            // autoplay:pageCount>1?true:false,
+            outer: false,
+            itemBuilder: (c, i) {
+              var avaLists = spls[i];
+              return Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                alignment: WrapAlignment.start,
+                runAlignment: WrapAlignment.start,
+                runSpacing: 16.0,
+                children: avaLists.map((b) {
+                  ToolGrid data = b;
+                  return GestureDetector(
+                    child: SizedBox(
+                      width: (MediaQuery.of(context).size.width - 40) / 4,
+                      child: Column(
+                        // mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          imageCircular(
+                              fit: BoxFit.fitWidth,
+                              w: 30,
+                              h: 30,
+                              // MediaQuery.of(context).size.width * 0.12,
+                              radius: 0,
+                              image: data.img),
+                          sizeBoxPadding(w: 0, h: 5),
+                          syText(
+                              height: 20,
+                              text: data.title.tr, //"$i$b"
+                              fontSize: 12,
+                              // color: Colors.black,
+                              fontWeight: FontWeight.normal),
+                        ],
                       ),
-                      onTap: () {
-                        itemClick(data);
-                      },
-                    );
-                  }).toList(),
-                );
-              },
-              pagination: SwiperPagination(
-                  margin: EdgeInsets.all(pageCount > 1 ? 5.0 : 0.0)),
-              itemCount: pageCount,
-            ),
-            constraints: BoxConstraints.loose(Size(
-                MediaQuery.of(context).size.width - 30,
-                pageCount > 1 ? 165 : 145)) //20
-            )
-        // ,)
+                    ),
+                    onTap: () {
+                      itemClick(data);
+                    },
+                  );
+                }).toList(),
+              );
+            },
+            pagination: SwiperPagination(
+                margin: EdgeInsets.all(pageCount > 1 ? 5.0 : 0.0)),
+            itemCount: pageCount,
+          ),
+          constraints: BoxConstraints.loose(Size(
+              MediaQuery.of(context).size.width - 30,
+              pageCount > 1 ? 165 : 145)) //20
+      )
+    // ,)
         ;
+
   }
 }
 
@@ -1323,16 +2068,16 @@ class HomeMultiGridsState extends State<HomeMultiGrids> {
           ),
       // child: ClipRRect(
       //   borderRadius: const BorderRadius.all(Radius.circular(20)),
-      child: Column(
+      child: Column(//2 row
         children: <Widget>[
-          Row(
+          Row(//flex screen width 1/2 left 2 ,flex screen width 1/2 right 3
             // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             // mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Expanded(
                   flex: 1,
                   child: Container(
-                      height: 180,
+                      height: 190,
                       child: ListView(
                         physics: const NeverScrollableScrollPhysics(),
                         children: <Widget>[
@@ -1365,7 +2110,7 @@ class HomeMultiGridsState extends State<HomeMultiGrids> {
               Expanded(
                   flex: 1,
                   child: Container(
-                      height: 180,
+                      height: 190,
                       child: ListView(
                         physics: const NeverScrollableScrollPhysics(),
                         children: <Widget>[
@@ -1380,7 +2125,7 @@ class HomeMultiGridsState extends State<HomeMultiGrids> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(4.0)),
                               )),
-                          SizedBox(height: 10),
+                          SizedBox(height: 5),
                           Container(
                               height: 60,
                               child: ExtendedImage.network(
@@ -1392,7 +2137,7 @@ class HomeMultiGridsState extends State<HomeMultiGrids> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(4.0)),
                               )),
-                          SizedBox(height: 10),
+                          SizedBox(height: 5),
                           Container(
                               height: 60,
                               child: ExtendedImage.network(
@@ -1409,7 +2154,7 @@ class HomeMultiGridsState extends State<HomeMultiGrids> {
             ],
           ),
           SizedBox(height: 10),
-          Row(
+          Row(//flex screen width 2/3 left 1,flex screen width 1/3 right 2
             children: <Widget>[
               Expanded(
                   flex: 2,
@@ -1602,8 +2347,9 @@ class HomeGrid2InRowState extends State<HomeGrid2InRow> {
 
   List<Widget> getGridList() {
     var size = MediaQuery.of(Get.context!).size;
-    double itemWidth = (size.width - 3 * 15) / 2;
-    var tem = logic.listDataFirst.map((listModel) {
+    double itemWidth = (size.width - 3 * 15) / 2;//multiGrids
+    // var tem = logic.listDataFirst.map((listModel) {
+    var tem = logic.multiGrids.map((listModel) {
       return cellForRow(listModel, 0, 0);
       // return InkWell(
       //     onTap:(){print('点击了火爆商品');},
@@ -1616,7 +2362,7 @@ class HomeGrid2InRowState extends State<HomeGrid2InRow> {
       //       child: Column(
       //         children: <Widget>[
       //           ExtendedImage.network(
-      //             RequestConfig.baseUrl+RequestConfig.imagePath+listModel['iconImg'],
+      //             listModel['iconImg'],
       //             fit: BoxFit.fill,
       //             height: itemWidth,
       //             width: itemWidth,
@@ -1654,7 +2400,8 @@ class HomeGrid2InRowState extends State<HomeGrid2InRow> {
 
   Widget buildListViewBuilder() {
     int count = 0;
-    count = (logic.listDataFirst.isEmpty) ? 0 : logic.listDataFirst.length;
+    // count = (logic.listDataFirst.isEmpty) ? 0 : logic.listDataFirst.length;
+    count = (logic.multiGrids.isEmpty) ? 0 : logic.multiGrids.length;
 
     if (count == 0) {
       return noDataListWidget();
@@ -2425,7 +3172,6 @@ class HomeRecListState extends State<HomeRecList> {
 
     final logic = Get.put(HomeLogic());
 
-    bool unLock = listModel['un_lock'];
     return
         // InkWell(
         // onTap: () => itemClick(listModel),
@@ -3042,12 +3788,12 @@ class HomeEndlessListState extends State<HomeEndlessList>
                         height: 45,
                         child: Row(
                           children: <Widget>[
-                            // imageCircular(
-                            //     w: 34, h: 34, radius: 17, image: ''),
+                            imageCircular(
+                                w: 34, h: 34, radius: 17, image: ''),
                             SizedBox(
                               width: 10,
                             ),
-                            syText(text: ''),
+                            syText(text: listModel.title),
                             const Expanded(child: SizedBox()),
 
                             Container(

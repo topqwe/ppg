@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
+import '../../../../services/api/api_basic.dart';
+import '../../../../services/responseHandle/request.dart';
+import '../../../../util/BaseDialog.dart';
 import '/widgets/helpTools.dart';
-import '../../../../api/request/apis.dart';
-import '../../../../api/request/request.dart';
-import '../../../../api/request/request_client.dart';
 import '../../../../store/EventBus.dart';
 import '../../../../util/PagingMixin.dart';
 
@@ -41,10 +41,14 @@ class MallSureStateListLogic extends GetxController
     });
 
     easyRefreshController = EasyRefreshController();
+    listDataFirst.addAll(ApiBasic().initCus());
+    listModel.value = listDataFirst.first;
     requestData();
-    eventBus.on<BindAddrRefreshDetailEvent>().listen((event) {
-      requestData();
-    });
+    mainEventBus.on(EventBusConstants.bindAddrRefreshDetailEvent,
+            (arg) {
+          requestData();
+        });
+
   }
 
   void textFieldChanged(String str) {
@@ -90,9 +94,9 @@ class MallSureStateListLogic extends GetxController
 
   Future requestListData(bool isRefresh) => request(() async {
         var params = {
-          'orderId': Get.arguments,
+          'id': listModel['id'],
         };
-        var data = await requestClient.post(APIS.home, data: params);
+        var data = await ApiBasic().dummy({});
 
         // List lst = data['pageList'] ?? [];
         if (data != null) {
@@ -114,15 +118,35 @@ class MallSureStateListLogic extends GetxController
     super.onClose();
   }
 
+  showExitDialog() {
+    showDialog<void>(
+        context: Get.context!,
+        builder: (_) {
+          return BaseDialog(
+            title: '提示',
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Text('您确定要吗？', style: TextStyle(fontWeight: FontWeight.normal,fontSize: 16,
+                  color: Colors.black)),
+            ),
+            onPressed: () async {
+              sureRequest();
+            },
+          );
+        }
+    );
+  }
+
   void postUnlock() => request(()async {
 
     if(controller.text==''){
       FToast.toast(Get.context!, msg: '请输入'.tr);
       return;
     }
+    showExitDialog();
 
-    showAlertDialog(Get.context!, () { sureRequest();},
-            () { }, '提示'.tr, '确认吗？'.tr);
+    // showAlertDialog(Get.context!, () { sureRequest();},
+    //         () { }, '提示'.tr, '确认吗？'.tr);
 
 
     // showCupertinoDialog(
@@ -155,7 +179,7 @@ class MallSureStateListLogic extends GetxController
 
   void sureRequest() => request(() async {
         var params = {
-          'orderId': listModel['orderId'],
+          'id': listModel['id'],
         };
         Get.offNamed('/succ?path=1');//Get.offNamed('/succ?path=0');
         // Get.offUntil(GetPageRoute(page: ()=>SuccPage(),parameter: {'path':'1'}), (route) => (route as GetPageRoute).routeName == '/index');

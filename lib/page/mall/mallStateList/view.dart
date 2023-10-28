@@ -2,9 +2,13 @@ import 'dart:core';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:get/get.dart';
+import 'package:marquee/marquee.dart';
 import '../../../style/theme.dart';
-import '../../../api/request/config.dart';
+import '../../../util/CustomTagWidget.dart';
+import '../../bottom/logic.dart';
 import 'logic.dart';
 import '/widgets/noData_Widget.dart';
 import '/widgets/sizebox_widget.dart';
@@ -32,10 +36,12 @@ class MallStateListPage extends StatefulWidget {
 class _MallStateListPageState extends State<MallStateListPage>
     with AutomaticKeepAliveClientMixin {
   late final MallStateListLogic logic;
+  late ScrollController scrollController;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    scrollController= ScrollController();
     logic = MallStateListLogic(widget.type);
     Get.put(logic, tag: widget.type.toString());
   }
@@ -55,17 +61,407 @@ class _MallStateListPageState extends State<MallStateListPage>
     return Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false, //解决键盘导致溢出页面
-        body: SafeArea(
-          child: EasyRefreshCustom(
-            type: widget.type,
-            isCustom: false,
-          ),
-        ));
+        body: Scaffold(
+            backgroundColor: Colors.white,
+            resizeToAvoidBottomInset: false, //解决键盘导致溢出页面
+            body: SafeArea(
+                child:
+                buildNestedScrollView()
+
+              // Column(children: [//freeze
+              //   Container(color: Colors.red,width: 99,height: 120,),
+              //
+              //   Expanded(child:
+              //   EasyRefreshCustom(
+              //     type: widget.type,
+              //     isCustom: false,
+              //   ),
+              //   ),
+              // ],)
+
+
+            )));
+  }
+
+  NestedScrollView buildNestedScrollView() {
+    return
+
+      NestedScrollView(
+        //1.head top
+        controller: scrollController,
+        key: const Key('mallstate'),
+        physics: const ClampingScrollPhysics(),
+        headerSliverBuilder: (context, innerScrolled) {
+          return [
+            SliverToBoxAdapter(
+              child: Container(
+                  margin: EdgeInsets.only(top: 10, bottom: 15),
+                  child:
+                  Column(children: [
+                    // SizedBox(width: 0,height: 10,),
+                    //
+                    // SearchTextComponent(),
+
+                    // SizedBox(width: 0,height: 0,),
+                    HomeAnnounce(type: widget.type,),
+
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    HomeBanner(type: widget.type,),
+                    Row(children: [
+                      SizedBox(width: 10,),
+                      Text(
+                        '类别'.tr,
+                        style:  TextStyle(fontSize: 15,color: Colors.black),
+                      ),
+                    ],),
+
+                    Obx(() => SizedBox(
+                        height: 50,
+                        child:
+                        //   GridView.builder(
+                        //   shrinkWrap: true,
+                        //   padding: EdgeInsets.only(left: 10, right: 10, bottom: 0), //用 Nest的时候
+                        //   // padding: EdgeInsets.symmetric(vertical: 6),
+                        //   physics: const NeverScrollableScrollPhysics(),
+                        //   //Grids
+                        //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        //     crossAxisCount: logic.tagsModel.length, //Grid按两列显示
+                        //     // crossAxisCount: count,
+                        //     childAspectRatio: .8,
+                        //     crossAxisSpacing: 10,
+                        //     mainAxisSpacing: 10,
+                        //   ),
+                        //   itemBuilder: (context, index) {
+                        //     var data = logic.tagsModel[index];
+                        //     return _buildGridItem(data,selectId: logic.tagsCurrentIndex);
+                        //   },
+                        //   itemCount: logic.tagsModel.length,
+                        // )
+
+                        ListView.builder(
+                          // padding: EdgeInsets.only(left: 5, right: 0, bottom: 0),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: logic.tagsModel.length,
+                          shrinkWrap: true, itemBuilder: (BuildContext context, int index) {
+                          var item = logic.tagsModel[index];
+                          return  _buildGridItem(item,selectId: logic.tagsCurrentIndex);
+
+                        },
+                        )
+
+                    ),),
+
+
+                    const SizedBox(height: 15),
+                    Obx(() => Container(
+                      height:50,
+                      child:CustomTagWidget(
+                        selectedBgColor: AppTheme.themeHightColor,
+                        selectedTextColor:Colors.white ,
+                        textColor: Colors.black,
+                        tabTitleList: logic.sectags.value,
+                        select: logic.sectagsCurrentIndex,
+                        setradius: 5,
+                        onTap: (int index) {
+                          setState(() {
+                            logic.sectagsCurrentIndex = index;
+                            // print("当前选中 $logic.tagsCurrentIndex");
+                            if(logic.sectagsCurrentIndex ==3) {
+                              Get.offNamed('/index');
+                              final logicb = Get.put(BottomLogic());
+                              logicb.changePage(1);
+                            }
+                          }
+                          );
+                        },
+                      ),
+                    ),),
+
+                    // const SizedBox(height: 5),
+                  ],)
+
+              ),
+            ),
+
+          ];
+        },
+        body: EasyRefreshCustom(
+          type: widget.type,
+          isCustom: false,
+        )
+        ,
+      )
+    // ),
+        ;
+  }
+  _buildGridItem(var item,{required int selectId}) {
+    var itemId = int.parse(item['id']);
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          logic.tagsCurrentIndex = itemId;
+        });
+        //
+      },
+      child:
+      // Row(children: [
+      Container(
+        margin: const EdgeInsets.symmetric(horizontal: 5),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25.0),
+            color: selectId == itemId? AppTheme.themeHightColor:Colors.white),
+        width: 50,
+        height: 50,
+        child: Column(
+          children: [
+            const SizedBox(height: 7,),
+            ExtendedImage.network(
+              item['iconBig'],
+              width: ScreenUtil().setWidth(24),
+              height: ScreenUtil().setWidth(24),
+              fit: BoxFit.fill,
+              cache: true,
+              shape: BoxShape.circle,
+              borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+              //cancelToken: cancellationToken,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(
+                item['name'],
+                style:   TextStyle(fontSize: 11,color: selectId == itemId? Colors.white:AppTheme.hintColor),
+              ),
+            ),
+          ],
+        ),
+      ),
+      // ],),
+
+    );
   }
 
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
+}
+
+class HomeBanner extends StatefulWidget {
+  int type;
+  String typeStr;
+  bool isSliver;
+  HomeBanner({
+    Key? key,
+    this.type = 0,
+    this.typeStr = '',
+    this.isSliver = false,
+  }) : super(key: key);
+
+  @override
+  HomeBannerState createState() => HomeBannerState();
+}
+
+class HomeBannerState extends State<HomeBanner> {
+  // late bool isSliver;
+  late MallStateListLogic logic;
+  @override
+  void initState() {
+    super.initState();
+    logic = Get.find<MallStateListLogic>(tag: widget.type.toString());
+    // isSliver = widget.isSliver;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.isSliver
+        ? Obx(() => SliverToBoxAdapter(child: buildBasicView()))
+        : Obx(() => buildBasicView());
+  }
+
+  Widget buildBasicView() {
+    return Row(children: [
+      Expanded(flex: 1, child: Container()),
+      Container(
+          color: Colors.transparent,
+          // padding: EdgeInsets.only(left: 15,right: 15),
+          // padding: const EdgeInsets.only(left: 15, right: 15),
+          width: ScreenUtil().setWidth(345),
+          height: ScreenUtil().setHeight(170), //
+          child: Container(
+            width: ScreenUtil().setWidth(345),
+            decoration: const BoxDecoration(
+
+              borderRadius: BorderRadius.all(
+                Radius.circular(6),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 20,
+                  //阴影范围
+                  spreadRadius: 1,
+                  //阴影浓度
+                  offset: Offset(0.0, 5.0),
+                  //阴影y轴偏移量
+                  color: Color.fromRGBO(55, 63, 69, 0.1), //阴影颜色
+                ),
+              ],
+            ),
+            child: Swiper(
+              itemBuilder: (BuildContext context, int index) {
+                return
+
+                  logic.banners.isNotEmpty
+                      ?
+                  // (logic.banners[index]['isJump']==1)?
+                  // InkWell(onTap: (){
+                  //   openInAppWebView(Get.context!, [
+                  //     logic.banners[index]['name'],
+                  //     logic.banners[index]['link'],
+                  //   ]);
+                  // },child:
+                  // ExtendedImage.network(
+                  //   logic.banners[index]['bannerImg'],
+                  //   fit: BoxFit.fill,
+                  //   cache: false,
+                  //   // border: Border.all(color: Colors.red, width: 1.0),
+                  //   shape: BoxShape.rectangle,
+                  //   borderRadius:
+                  //   BorderRadius.all(Radius.circular(4.0)),
+                  //
+                  //   // height: 74,
+                  //   // width: 74,
+                  // )
+                  // )
+                  //     :
+                  ExtendedImage.network(
+                    logic.banners[index]['bannerImg'],
+                    fit: BoxFit.fill,
+                    cache: false,
+                    // border: Border.all(color: Colors.red, width: 1.0),
+                    shape: BoxShape.rectangle,
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(4.0)),
+
+                    // height: 74,
+                    // width: 74,
+                  )
+                      :
+                  Image.asset(
+                    ('assets/images/home/banner0.png'), //$index
+                    fit: BoxFit.fill,
+                  )
+
+
+                ;
+              },
+              duration: 1000,
+              scale: 1.00,
+              autoplay: true,
+              itemCount: logic.banners.isNotEmpty ? logic.banners.length : 2,
+            ),
+          )),
+      Expanded(flex: 1, child: Container()),
+    ]);
+  }
+}
+
+
+class HomeAnnounce extends StatefulWidget {
+  int type;
+  String typeStr;
+  bool isSliver;
+  HomeAnnounce({
+    Key? key,
+    this.type = 0,
+    this.typeStr = '',
+    this.isSliver = false,
+  }) : super(key: key);
+
+  @override
+  HomeAnnounceState createState() => HomeAnnounceState();
+}
+
+class HomeAnnounceState extends State<HomeAnnounce> {
+  List texts = [];
+  late MallStateListLogic logic;
+  @override
+  void initState() {
+    super.initState();
+    logic = Get.find<MallStateListLogic>(tag: widget.type.toString());
+    // requestData();
+  }
+
+  String convertStrArrToString(List list) {
+    List tempList = [];
+    String str = '';
+    for (var f in list) {
+      tempList.add(f); //.title
+    }
+
+    for (var f in tempList) {
+      if (str == '') {
+        str = "$f";
+      } else {
+        str = "$str" "  " "$f";
+      }
+    }
+    return str;
+  }
+
+  requestData() async {
+    texts = [
+    ];
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.isSliver
+        ? SliverToBoxAdapter(child: buildBasicView())
+        : buildBasicView();
+  }
+
+  Widget buildBasicView() {
+    return Container(
+      // padding: EdgeInsets.only(top: 10),
+        margin: const EdgeInsets.only(left: 15, right: 15, top: 0),
+        height: 36,
+        decoration: const BoxDecoration(
+          color: Color(0xffffffff),
+          borderRadius: BorderRadius.all(
+            Radius.circular(23),
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 5,
+            ),
+            SizedBox(
+                width: 32,
+                height: 32,
+                child: Center(
+                    child: Image.asset('assets/images/home/homeAnn.png',
+                        width: 17, height: 17))),
+            Expanded(
+              flex: 1,
+              child: Obx(
+                    () => Marquee(text: logic.texts.first),
+              ),
+
+
+            ),
+            SizedBox(
+              width: 15,
+            ),
+          ],
+        ));
+  }
 }
 
 class EasyRefreshCustom extends StatefulWidget {
@@ -152,7 +548,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
 
               GridView.count(
             crossAxisCount: 2,
-            childAspectRatio: .65,
+            childAspectRatio: .65,//越大越小
             mainAxisSpacing: 15,
             crossAxisSpacing: 15,
             padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
@@ -247,7 +643,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                   return cellForRow(model, type, index);
                 }, childCount: logic.listDataFirst.length),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: .8,
+                    childAspectRatio: .8,//越大越小
                     crossAxisCount: 2,
                     mainAxisSpacing: 35,
                     crossAxisSpacing: 0)),
@@ -290,18 +686,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
             margin: const EdgeInsets.only(top: 0),
             child: GestureDetector(
                 onTap: () {
-                  // Get.toNamed('/mallSure',arguments: listModel['orderId']);
-                  // Get.toNamed('/catSure',arguments: listModel['orderId']);
-
-                  Get.toNamed('/mallDetail',
-                      parameters:
-                          // {'url':''},
-                          {
-                        'url':
-                            '<style>img {width: 100%}</style><p><img src="https://img10.360buyimg.com/cms/jfs/t1/182872/6/133/795112/607f3495Ea178190e/01c683a879c788c5.jpg"></p>'
-                      },
-                      arguments: listModel['orderId'],
-                      preventDuplicates: false);
+                  logic.pushNextPage(listModel);
 
                   // if (timer_fun != null) {
                   //   return;
@@ -337,9 +722,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                           // sizeBoxPadding(w: 0, h: 10),
 
                           ExtendedImage.network(
-                            RequestConfig.baseUrl +
-                                RequestConfig.imagePath +
-                                listModel['iconImg'],
+                            '${listModel['iconBig']}',
                             fit: BoxFit.fill,
                             height: itemWidth,
                             width: itemWidth,
@@ -359,7 +742,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.left,
                               text: TextSpan(
-                                text: listModel['goodsName'],
+                                text: '${listModel['name']}',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 14,
@@ -386,7 +769,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.left,
                               text: TextSpan(
-                                text: '${listModel['goodsPrize']}',
+                                text: '${listModel['prize']}',
                                 style: TextStyle(
                                   color: AppTheme.themeHightColor,
                                   fontSize: 14,

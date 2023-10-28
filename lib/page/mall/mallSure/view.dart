@@ -5,11 +5,10 @@ import 'package:container_tab_indicator/container_tab_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../style/theme.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
 import '../../../util/CustomBackButton.dart';
 import '../../../util/DefaultAppBar.dart';
 import '../../../widgets/helpTools.dart';
@@ -42,28 +41,29 @@ class _MallSurePageState extends State<MallSurePage>
   late PageController pageController;
   late final MallSureLogic logic;
 
+  void refreshState(){
+    setState(() {
+      tabController = TabController(
+          initialIndex: selectedIndex,
+          length: tabNames.length,
+          vsync: this); //logic.tabNames.length
+      tabController.addListener(() {
+        if (tabController.index == tabController.animation!.value) {
+          selectedIndex = tabController.index;
+
+        }
+      });
+    });
+  }
   void postRequest() => request(() async {
-        var data = await requestClient.post(APIS.home, data: {});
+        var data = await ApiBasic().dummy({});
 
         for (int i = 0; i < data['l'].length; i++) {
+          tabNames.clear();
           tabNames.add(data['l'][i]);
         }
 
-        setState(() {
-          tabController = TabController(
-              initialIndex: selectedIndex,
-              length: tabNames.length,
-              vsync: this); //logic.tabNames.length
-          tabController.addListener(() {
-            if (tabController.index == tabController.animation!.value) {
-              selectedIndex = tabController.index;
-              // print(selectedIndex);
-              // if(tabController.index ==1){
-              //   getSecData();
-              // }
-            }
-          });
-        });
+        refreshState();
       }, showLoading: true);
   @override
   void initState() {
@@ -98,7 +98,11 @@ class _MallSurePageState extends State<MallSurePage>
         // }
       }
     });
-    // postRequest();
+
+    // tabNames.addAll(ApiBasic().initCus());
+    // refreshState();
+
+    postRequest();
     pageController = PageController(initialPage: 0);
   }
 
@@ -204,7 +208,7 @@ class _MallSurePageState extends State<MallSurePage>
     return
         NestedScrollView(
       controller: scrollController,
-      key: const Key('category'),
+      key: const Key('mallSure'),
       physics: const ClampingScrollPhysics(),
       headerSliverBuilder: (context, innerScrolled) {
         return [
@@ -276,9 +280,10 @@ class _MallSurePageState extends State<MallSurePage>
                 titleStr: 'Ex'.tr,
                 leading: CustomBackButton(
                   onPressed: () {
-                    Get.offNamed('/mallDetail',
-                        arguments: Get.arguments,
-                        parameters: {'url': Get.parameters['url'].toString()});
+                    // Get.toNamed('/mallDetail',
+                    //     arguments: Get.arguments,
+                    //     );
+                    Get.back();
                   },
                 )),
             body: SafeArea(

@@ -15,7 +15,13 @@ class LangSettingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+      WillPopScope(
+        onWillPop: () async {
+      // Get.offNamed("/");
+      return false;
+    },child:
+      Scaffold(
         backgroundColor: Colors.white,
         // resizeToAvoidBottomInset: false, //解决键盘导致溢出页面
         appBar: DefaultAppBar(
@@ -42,7 +48,8 @@ class LangSettingPage extends StatelessWidget {
               sliverSectionHead(''),
             ],
           ),
-        ));
+        ))
+      );
   }
 }
 

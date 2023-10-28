@@ -14,7 +14,7 @@ class LoadingBarrierView {
           // barrierColor: Colors.white, // 背景色
           // barrierLabel: '',
           barrierDismissible: false, // 是否能通过点击空白处关闭
-          transitionDuration: const Duration(milliseconds: 150), // 动画时长
+          transitionDuration: const Duration(milliseconds: 15), // 动画时长
           pageBuilder: (BuildContext context, Animation animation,
               Animation secondaryAnimation) {
             return

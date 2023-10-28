@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import '../../services/responseHandle/request.dart';
 import '../../store/AppCacheManager.dart';
-import '../../../api/request/request.dart';
 import '../../lang/LanguageManager.dart';
+import '../../store/EventBus.dart';
 
 class HomeListItem {
   String title;
@@ -62,7 +63,11 @@ class LangSettingLogic extends GetxController {
         // }
 
         if (AppCacheManager.instance.getUserToken().isNotEmpty) {
-          // eventBus.fire(GrabRefreshHomeEvent('1')); //announce en
+          //announce en
+          mainEventBus.emit(
+            EventBusConstants.grabRefreshHomeEvent,
+            '1',
+          );
         }
 
 

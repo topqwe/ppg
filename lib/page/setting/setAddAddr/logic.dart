@@ -3,18 +3,19 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../store/EventBus.dart';
 import '../../../util/LoadingBarrierView.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
 import '../../../util/FrequencyClick.dart';
 
 class SetAddAddrLogic extends GetxController {
   var timer_fun;
-
+  var area = [].obs;
   var controller0;
+  var controller;
   var controller1;
   var controller2;
   var controller3;
@@ -22,6 +23,7 @@ class SetAddAddrLogic extends GetxController {
   var status0 = 1.obs;
 
   var cTxt = ''.obs;
+  var cTxt1 = ''.obs;
   var cTxt2 = ''.obs;
   var cTxt3 = ''.obs;
 
@@ -30,17 +32,33 @@ class SetAddAddrLogic extends GetxController {
     super.onInit();
     controller0 = TextEditingController();
     controller0.addListener(() {});
+
+
     controller1 = TextEditingController();
     controller1.text =
         Get.arguments == '0' ? '' : Get.arguments['contacts'].toString();
+    cTxt1.value = controller1.text;
     controller1.addListener(() {
-      cTxt.value = controller1.text;
+      cTxt1.value = controller1.text;
       update();
     });
+
+
+    controller = TextEditingController();
+    controller.text =
+    Get.arguments == '0' ? '河北省 廊坊市 三河市' : Get.arguments['area'].toString();
+    cTxt.value = controller.text;
+    controller.addListener(() {
+      cTxt.value = controller.text;
+      update();
+    });
+    area.value =cTxt.value.contains(' ')? cTxt.value.split(" "):[];
+
 
     controller2 = TextEditingController();
     controller2.text =
         Get.arguments == '0' ? '' : Get.arguments['address'].toString();
+    cTxt2.value = controller2.text;
     controller2.addListener(() {
       cTxt2.value = controller2.text;
       update();
@@ -48,7 +66,10 @@ class SetAddAddrLogic extends GetxController {
 
     controller3 = TextEditingController();
     controller3.text =
-        Get.arguments == '0' ? '' : Get.arguments['phone'].toString();
+        Get.arguments == '0' ? '138' :
+        // Get.arguments == '0' ? '' :
+        Get.arguments['phone'].toString();
+    cTxt3.value = controller3.text;
     controller3.addListener(() {
       cTxt3.value = controller3.text;
       update();
@@ -91,7 +112,8 @@ class SetAddAddrLogic extends GetxController {
             timer_fun = null;
           },
         );
-        String url = APIS.addAddress;
+        // LoadingBarrierView.showLoading(Get.context!);
+        var data = {};
         String tostr = '';
         var params = {
           'contacts': controller1.text,
@@ -101,17 +123,18 @@ class SetAddAddrLogic extends GetxController {
         };
         if (Get.arguments != '0') {
           params['id'] = Get.arguments['id'].toString();
-          url = APIS.editAddress;
+          data = await ApiBasic().home({});
           tostr = "修改成功".tr;
         } else {
-          url = APIS.addAddress;
+          data = await ApiBasic().home({});
           tostr = "添加成功".tr;
         }
-        LoadingBarrierView.showLoading(context);
-        var data = await requestClient.post(url, data: params);
-        LoadingBarrierView.hideLoading(context);
+        // LoadingBarrierView.hideLoading(Get.context!);
         FToast.toast(context, msg: tostr);
-        eventBus.fire(GrabRefreshAddrListEvent(data));
+        mainEventBus.emit(
+          EventBusConstants.grabRefreshAddrListEvent,
+          data,
+        );
         // Get.arguments == '0'?Get.back():Get.offNamed('/setAddrList',arguments: Get.arguments);
         // Get.offNamed('/setAddrList',arguments: '0');
         Get.back();
@@ -122,5 +145,5 @@ class SetAddAddrLogic extends GetxController {
         // FToast.toast(context, msg: "添加成功");
         // Get.offNamed('/taskDetail',arguments: Get.arguments);
         update();
-      });
+      },showLoading: true);
 }

@@ -7,9 +7,6 @@ import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
 import '../../../util/PagingMixin.dart';
 
 class MallSureLogic extends GetxController

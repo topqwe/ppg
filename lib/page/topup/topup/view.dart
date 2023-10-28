@@ -13,7 +13,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tapped/tapped.dart';
 
-import '../../../api/request/config.dart';
 import '../../../util/DefaultAppBar.dart';
 import '../../../widgets/text_widget.dart';
 import 'logic.dart';
@@ -409,10 +408,12 @@ String linkString = '${logic.showData['address']}';
                         height: 150,
                         width: 150,
                         color: Colors.white,
-                        child: QrImage(
-                          data:
-                          linkString,
-                          foregroundColor: Colors.black,
+                        child: QrImageView(
+                          data: linkString,
+                          dataModuleStyle:  QrDataModuleStyle(
+                            dataModuleShape: QrDataModuleShape.square,
+                            color: Colors.black,
+                          ),
                           size: 132,
                         ),
                       )),
@@ -445,8 +446,6 @@ String linkString = '${logic.showData['address']}';
         child: Obx(() => logic.image2 == ''
             ? Image.asset(img)
             : ExtendedImage.network(
-                RequestConfig.baseUrl +
-                    RequestConfig.imagePath +
                     '${logic.image2}',
                 fit: BoxFit.cover,
                 height: 88,

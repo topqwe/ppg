@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
+import '../../services/api/api_basic.dart';
+import '../../services/responseHandle/request.dart';
 import '/store/AppCacheManager.dart';
 import '/widgets/helpTools.dart';
-import '../../api/request/apis.dart';
-import '../../api/request/request.dart';
-import '../../api/request/request_client.dart';
 
 class MeLogic extends GetxController with GetSingleTickerProviderStateMixin{
   var boolSafeword = 0.obs;
@@ -43,14 +42,14 @@ class MeLogic extends GetxController with GetSingleTickerProviderStateMixin{
   }
 
   void postCheckInfosStatus()=> request(() async {
-    var user = await requestClient.post(APIS.home,data: {});
-    boolId.value = user['safeword'];
-    boolSafeword.value = user['safeword'];
-    boolCanEdit.value =
-    // 1;
-    (boolId.value!=2||boolSafeword!=1)?1:0;
-
-
+    var user = await ApiBasic().me({});
+    if(user['code']==0) {
+      boolId.value = user['safeword'];
+      boolSafeword.value = user['safeword'];
+      boolCanEdit.value =
+      // 1;
+      (boolId.value != 2 || boolSafeword != 1) ? 1 : 0;
+    }
 
     // (boolId.value == 0||
     //     boolId.value == 3)?
@@ -89,9 +88,8 @@ class MeLogic extends GetxController with GetSingleTickerProviderStateMixin{
     }
 
 
-    var user = await requestClient.post(APIS.getWallet,data: {
-    });
-
+    var user = await ApiBasic().me({});
+    if(user['code']==0){
     if(isRefresh) {
       Timer.periodic(Duration(milliseconds: 2000), (t) async {
         t.cancel(); // 定时器内部触发销毁
@@ -109,6 +107,7 @@ class MeLogic extends GetxController with GetSingleTickerProviderStateMixin{
 
     }
     return;
+    }
   });
 
 }

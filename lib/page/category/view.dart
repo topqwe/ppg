@@ -7,12 +7,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
+import 'package:liandan_flutter/services/api/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../services/api/api_basic.dart';
+import '../../services/responseHandle/request.dart';
 import '../../style/theme.dart';
-import '../../../api/request/config.dart';
-import '../../api/request/apis.dart';
-import '../../api/request/request.dart';
-import '../../api/request/request_client.dart';
 import '../../store/AppCacheManager.dart';
 import '../../util/DefaultAppBar.dart';
 import '../../widgets/helpTools.dart';
@@ -49,25 +48,32 @@ class _CategoryPageState extends State<CategoryPage>
   var selectedIndex = 0;
   late final CategoryLogic logic;
 
+  void refreshState(){
+    setState(() {
+      tabController = TabController(
+          initialIndex: selectedIndex,
+          length: tabNames.length,
+          vsync: this); //logic.tabNames.length
+      tabController.addListener(() {
+        if (tabController.index == tabController.animation!.value) {
+          selectedIndex = tabController.index;
+
+        }
+      });
+    });
+  }
+
+
   void postRequest() => request(() async {
 
-        var data = await requestClient.post(APIS.home, data: {});
-        for (int i = 0; i < data['l'].length; i++) {
-          tabNames.add(data['l'][i]);
+        var data = await ApiBasic().dummy({});
+        if(data['code']==0) {
+          tabNames.clear();
+          for (int i = 0; i < data['l'].length; i++) {
+            tabNames.add(data['l'][i]);
+          }
+          refreshState();
         }
-
-        setState(() {
-          tabController = TabController(
-              initialIndex: selectedIndex,
-              length: tabNames.length,
-              vsync: this); //logic.tabNames.length
-          tabController.addListener(() {
-            if (tabController.index == tabController.animation!.value) {
-              selectedIndex = tabController.index;
-
-            }
-          });
-        });
       });
 
   @override
@@ -105,8 +111,9 @@ class _CategoryPageState extends State<CategoryPage>
       }
     });
 
+    tabNames.addAll(ApiBasic().initCus());
     postRequest();
-
+    refreshState();
     pageController = PageController(initialPage: 0);
   }
 
@@ -156,7 +163,7 @@ class _CategoryPageState extends State<CategoryPage>
                                 textAlign: TextAlign.left,
                                 text: TextSpan(
                                   text: logic.headDatas['a'].toString(),
-                                  style: TextStyle(fontSize: 30, color: Colors.white),
+                                  style: TextStyle(fontSize: 30, color: Colors.black),
                                   children: [
                                     WidgetSpan(
                                         child: GestureDetector(

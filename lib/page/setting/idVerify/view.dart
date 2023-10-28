@@ -10,7 +10,6 @@ import '../../../widgets/text_widget.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tapped/tapped.dart';
 
-import '../../../api/request/config.dart';
 import '../../../util/Country/countryChoosePage.dart';
 import '../../../util/DefaultAppBar.dart';
 import '../../../widgets/image_widget.dart';
@@ -521,7 +520,7 @@ class IdVerifyPage extends StatelessWidget {
     // String strurl = (m_picRecharge)!;
     String strurl = '';
     var pic;
-    String urlPath = RequestConfig.baseUrl + RequestConfig.imagePath;
+    String urlPath = '';
     Widget defImage = Container(
       width: itemWidth,
       height: itemHeight,

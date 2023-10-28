@@ -1,21 +1,29 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
+import 'package:liandan_flutter/services/api/api_basic.dart';
+import 'package:loggy/loggy.dart';
+import 'package:throttling/throttling.dart';
+
+import '../../AppController.dart';
+import '../../router/RouteConfig.dart';
+import '../../services/response/ws_message.dart';
+import '../../services/responseHandle/request.dart';
 import '../../store/AppCacheManager.dart';
 import '../../../page/home/WelcomeView.dart';
 import '../../../page/home/view.dart';
 import '../../../store/EventBus.dart';
 import '../../../util/UpdateView.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../api/request/apis.dart';
-import '../../api/request/request.dart';
-import '../../api/request/request_client.dart';
 import '../../util/FetchContacts.dart';
+import '../../util/HomePopView.dart';
 import '../../util/PagingMixin.dart';
 import '../../util/UpdateVersion.dart';
 import '../../style/theme.dart';
+import '../../vendor/socket/web_socket_utility.dart';
 import '../../widgets/helpTools.dart';
 
 class ToolGrid {
@@ -78,9 +86,13 @@ class HomeLogic extends GetxController
     with PagingMixin, GetTickerProviderStateMixin {
   final Duration duration = const Duration(milliseconds: 600);
   late AnimationController animationController;
+  late EasyRefreshController easyRefreshController;
   // late ScrollController scrollController;
   // late BuildContext context;
   // HomeLogic({required this.context});
+  List<WsMessage> wsMessageQueue = [];
+  final Throttling wsThrottling =
+  Throttling(duration: const Duration(seconds: 2));
 
   var barDatas = {}.obs;
 
@@ -95,6 +107,9 @@ class HomeLogic extends GetxController
   var excels = [].obs;
 
   var listModel = {}.obs;
+
+
+  var customListDatas = [].obs;
 
   var gridsSwiper = [].obs;
   var horScrollList1 = [].obs;
@@ -121,13 +136,13 @@ class HomeLogic extends GetxController
   @override
   void onInit() {
     animationController = AnimationController(vsync: this, duration: duration);
-
+    easyRefreshController = EasyRefreshController();
     barDatas.value = {
       'avatar': '',
       'name': 'select city',
     };
 
-    tags.value  = [
+    tags.value  = [//字符串different，or dont work
       '0',
       'SDK',
       'Android Studio developer',
@@ -140,15 +155,30 @@ class HomeLogic extends GetxController
       ' Stay Tuned ',
     ]; //or no scr
 
-    for (int i = 0; i < 3; i++) {
-      var vv = {'id': '$i', 'iconBig': '$i'};
-      hdls.add(vv);
-    }
-    postCheckRequest();
+    customListDatas.addAll(ApiBasic().initCus());
 
-    eventBus.on<GrabRefreshHomeEvent>().listen((event) {
-      postRequest();
-    });
+    listDataFirst.addAll(customListDatas);
+    lists.addAll(customListDatas);
+    // excels.value = customListDatas;
+    hdls.addAll(customListDatas);
+
+    gridsSwiper.addAll(customListDatas);
+
+    horScrollList1.addAll(customListDatas);
+    horScrollList2.addAll(customListDatas);
+    multiGrids.addAll(customListDatas);
+
+
+    //dummy env
+    postRequest();
+
+    //product env
+    // postCheckRequest();
+
+    mainEventBus.on(EventBusConstants.grabRefreshHomeEvent,
+            (arg) {
+              postRequest();
+        });
 
     // FetchContacts().postUserInfo(context);
 
@@ -156,10 +186,105 @@ class HomeLogic extends GetxController
 
     choseId.value = 1;
     choseChartTypeData();
+
+
+    // Get.find<AppController>().configAudioPlayer();
+    AppController appController = Get.put(AppController());
+    appController.configAudioPlayer();
+    mainEventBus.on(EventBusConstants.handleNotificationTapEvent, (arg) {
+      handleWsResult(arg);
+    });
+
+    WebSocketUtility.getInstance().initWebSocket(
+      onMessage: (data) {
+        wsThrottling.throttle(() {
+          handleWsResult(data);
+        });
+      },
+      onError: (e) {
+        logInfo(e);
+      },
+    );
+
     update();
 
     super.onInit();
   }
+
+  @override
+  void onClose() {
+    // scrollController.dispose();
+    wsThrottling.close();
+    WebSocketUtility.getInstance().closeSocket();
+    mainEventBus.off(EventBusConstants.handleNotificationTapEvent);
+    super.onClose();
+  }
+
+  void handleWsResult(WsMessage data) async {
+    AppController appController = Get.put(AppController());
+    // AppController appController = Get.find<AppController>();
+    logInfo("${Get.currentRoute}${Get.arguments}");
+
+    String? msg = data.msg;
+    int? notifyType = data.notifyType;
+    String? orderId = data.orderId;
+    if (notifyType == 8) {
+      if (Get.arguments == orderId) {
+        if (Get.currentRoute == RouteConfig.mallDetail){
+          //eventBus refresh
+        }else{
+          Get.toNamed(RouteConfig.mallDetail,parameters: {'id':orderId.toString()});
+        }
+        return;
+      }
+
+    }else {
+      appController.playSound();
+      return;
+    }
+    appController.playSound();
+
+    collectWsData(data);
+
+  }
+
+  void collectWsData(WsMessage data) {
+    WsMessage? listD = wsMessageQueue.firstWhereOrNull((element) =>
+        element.orderId == data.orderId);
+    if (listD == null) {
+      wsMessageQueue.add(data);
+    }
+  }
+
+
+  void cleanWsData(WsMessage data) {
+    wsMessageQueue.removeWhere((element) =>
+        element.orderId == data.orderId);
+    // wsMessageQueue = [];
+  }
+  void cleanAllWsData(WsMessage data) {
+    wsMessageQueue = [];
+  }
+
+  void priorHandleWsData(WsMessage data){
+    cleanWsData(data);
+    wsMessageQueue = [];
+    Future.delayed(
+        const Duration(milliseconds: 100),
+            () {
+
+        });
+  }
+
+  void delayHandleLastNewWsData(WsMessage data){
+    cleanWsData(data);
+    if (wsMessageQueue.isNotEmpty) {
+      WsMessage lastNew = wsMessageQueue.first;
+      handleWsResult(lastNew);
+      wsMessageQueue.remove(lastNew);
+    }
+  }
+
 
   choseChartTypeData() {
     var x = choseId.value == 0
@@ -380,11 +505,6 @@ class HomeLogic extends GetxController
     }''';
   }
 
-  @override
-  void onClose() {
-    // scrollController.dispose();
-    super.onClose();
-  }
 
   Future<void> postCheckRequest() async {
     if (AppCacheManager.instance.getUserToken().isEmpty) {
@@ -416,23 +536,57 @@ class HomeLogic extends GetxController
   }
 
   void postRequest() => request(() async {
-        var data = await requestClient.post(APIS.home, data: {});
-        listModel.value = data;
-        banners.value = data['er'];
+    // product env
+    // var data = await requestClient.post(APIS.home, data: <String, dynamic>{});
+
+    // dummy env
+    // type '_Map<dynamic, dynamic>' is not a subtype of type 'Map<String, dynamic>?'
+    //http://192.168.225.156:9090/home
+    //     var data = await HttpUtils().get(RequestConfig.baseUrl+APIS.home,<String, dynamic>{});
+    //request success ,data's valid
+  var response = await ApiBasic().home({});
+  if (response['code'] == 0){
+       FToast.toast(Get.context!, msg: '${response['msg']}');
+       var data = response['data'];
+       listModel.value = data;
+
+        // List bns = data['banner'] ?? [];
+        // if (bns.isNotEmpty) banners.value = data['banner'];
+
+       // List popdatas = data['ann_pop'] ?? [];
+       // if (popdatas.isNotEmpty) {
+       //   for(var popdata in popdatas){
+       //     showHomePopView(popdata);
+       //   }
+       // }
+
         List anns = data['n'] ?? [];
         if (anns.isNotEmpty) texts.value = data['n'];
+
         List lst = data['l'] ?? [];
         if (lst.isNotEmpty) lists.value = data['l'];
         hdls.value = data['l'];
         excels.value = data['l'];
 
+        //remove cache data
+        hdls.clear();
+
+        gridsSwiper.removeRange(0, gridsSwiper.length);
+
+        horScrollList1.removeRange(0, horScrollList1.length);
+        horScrollList2.clear();
+        multiGrids.clear();
+
+
         gridsSwiper.addAll(lst);
+
         horScrollList1.addAll(lst);
         horScrollList2.addAll(lst);
         multiGrids.addAll(lst);
 
-
         update();
+  }
+
       });
 
   void requestData() {
@@ -459,17 +613,21 @@ class HomeLogic extends GetxController
           // // '5',
           // pageSize.toString(),
         };
-        var data = await requestClient.post(APIS.home, data: params);
+        var response = await ApiBasic().dummy({});
+        if (response['code'] == 0) {
+    var data = response['data'];
 
-        List lst = data['l'] ?? []; //'pageList'
 
-        if (isRefresh) {
-          listDataFirst.value = lst;
-        } else {
-          listDataFirst.addAll(lst);
-        }
+    List lst = data['l'] ?? []; //'pageList'
 
-        update();
+    if (isRefresh) {
+      listDataFirst.value = lst;
+    } else {
+      listDataFirst.addAll(lst);
+    }
+
+    update();
+  }
       });
 
   void clickBottomIndex() {

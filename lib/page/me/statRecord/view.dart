@@ -1,3 +1,4 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_pickers/pickers.dart';
@@ -34,7 +35,44 @@ class StatRecordPage extends StatelessWidget {
     );
   }
 
-  Widget buildHeadTabView() {
+
+  Widget buildHeadImageBgView() {
+    var size = MediaQuery.of(Get.context!).size;
+    double itemWidth = (size.width - 4 * 15 - 1) / 2;
+    return
+      // Obx(() =>
+
+      Container(
+          alignment: Alignment.center,
+          // width: size.width - 2*15,
+          padding: const EdgeInsets.only(left: 0, right: 0),
+          child: Column(children: <Widget>[
+            Container(
+              height: 186,
+              alignment: Alignment.center, //search has ed
+              padding: const EdgeInsets.only(left: 0, right: 0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                color: Colors.transparent,
+              ),
+              child: Padding(
+                padding:
+                const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(//boxTopBg
+                        'assets/images/boxes/.png'),
+                  ],
+                ),
+              ),
+            )
+          ]))
+    // )
+        ;
+  }
+
+  Widget buildHeadView() {
     var size = MediaQuery.of(Get.context!).size;
     double itemWidth = (size.width - 4 * 15 - 1) / 2;
     return Obx(() => Container(
@@ -108,7 +146,12 @@ class StatRecordPage extends StatelessWidget {
           SliverToBoxAdapter(
             child: Container(
               margin: EdgeInsets.only(top: 10, bottom: 15),
-              child: buildHeadTabView(),
+              child:
+                  Column(children: [
+                    // buildHeadImageBgView(),
+                    buildHeadView(),
+                  ],)
+
             ),
           ),
         ];
@@ -119,6 +162,59 @@ class StatRecordPage extends StatelessWidget {
     )
     // ),
         ;
+  }
+
+
+  Column buildPinHeaderList() {
+    return Column(//2.injec head no scroll
+        children: <Widget>[
+          const SizedBox(
+            height: 10,
+          ),
+          buildHeadImageBgView(),
+          // buildHeaderView(), //context lead
+
+          Expanded(
+            flex: 1,
+            child: Container(
+              padding: const EdgeInsets.only(left: 0, right: 0),
+              child:
+
+                buildNestedScrollView(),
+
+              // EasyRefreshCustom(
+              // type: 0,
+              //  ),
+
+              //不加这个，留Expand，TabbarView child只写一个widget，样式相同的话可以这样
+              // DefaultTabController(
+              //   length: tabNames.length,
+              //   child: Column(
+              //     children: <Widget>[
+              //       Container(
+              //         // color: AppColors.primaryBackground,
+              //         width: double.infinity,
+              //         child: Container(height: 45, child: buildTab()),
+              //       ),
+              //       Container(
+              //         height: 5,
+              //         // color: AppColors.primaryBackground,
+              //       ),
+              //       Expanded(
+              //         flex: 1,
+              //         child: buildTabView(true),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+
+
+
+
+
+            ),
+          ),
+        ]);
   }
   @override
   Widget build(BuildContext context) {
@@ -142,7 +238,9 @@ class StatRecordPage extends StatelessWidget {
         )
       ]),
       body: SafeArea(
-        child: buildNestedScrollView(),
+        child:
+        // buildPinHeaderList(),
+        buildNestedScrollView(),
       ),
     );
   }
@@ -208,7 +306,10 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
               delegate: SliverChildBuilderDelegate((context, index) {
                 var model = logic.listDataFirst[index];
 
-                return cellForRowPro(model, type, index);
+                return
+                  cellForRowPro2(model, type, index);
+                  // cellForRowPro(model, type, index);
+                // cellForRow(model, type, index);
               }, childCount: logic.listDataFirst.length),
             ),
           ],
@@ -223,7 +324,12 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
           ? Alignment.center
           : Alignment.centerRight,
       child: RichText(
-        textAlign: TextAlign.left,
+        textAlign:
+        i == 0
+            ? TextAlign.left
+            : i == 1
+            ? TextAlign.center
+            : TextAlign.right,
         text: TextSpan(
           text: txt0,
           style: TextStyle(fontSize: 18, height: 2, color: Colors.black),
@@ -240,8 +346,9 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
 
   Widget cellForRowPro(var listModel, int type, int index) {
     var size = MediaQuery.of(Get.context!).size;
-    double itemWidth = (size.width - 4 * 15) / 3;
-
+    double imageWH = 120;
+    double itemWidth = (size.width - 4 * 15 - imageWH) / 3;
+    double valProgress = double.parse(listModel['progress'].toString()) ;
     bool unLock = true;
     //listModel['un_lock'];
     return
@@ -256,27 +363,15 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
           child: GestureDetector(
               onTap: () {
                 Get.toNamed('/',
-                    arguments: listModel['orderId'],
+                    arguments: listModel['id'],
                     preventDuplicates: false);
-                // if (timer_fun != null) {
-                //   return;
-                // }
-                // timer_fun = Timer(
-                //   Duration(milliseconds: FANGDOU.fangdoushu),
-                //       () {
-                //     timer_fun = null;
-                //   },
-                // );
-                // logic.getUserWallet(context,listModel);
-                // logic.handleAlert(context, listModel);
-                // Navigator.of(context)
-                //     .pushReplacementNamed("/hash");
+
               },
               child: Container(
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.all(
-                    Radius.circular(4),
+                    Radius.circular(10),
                   ),
                   // image: DecorationImage(
                   //   image: AssetImage("images/game1.png"),
@@ -284,8 +379,33 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                   // ),
                 ),
                 child: Container(
-                    margin: const EdgeInsets.all(15),
-                    child: Column(
+                  margin: const EdgeInsets.all(10),
+                  child:
+
+                  Row(children: [
+
+                    Expanded(flex:2,child:
+                    Container(
+                      height: imageWH,
+                      width: imageWH,
+                      child: ExtendedImage.network(
+
+                        '${listModel['iconBig']}',
+                        fit: BoxFit.contain,
+                        height: imageWH,
+                        width: imageWH,
+                        shape: BoxShape.rectangle,
+                        border: Border.all(color: AppTheme.themeHightColor, width: 1.0),
+                        borderRadius:
+                        BorderRadius.all(Radius.circular(4.0)),
+                      ),
+                    )),
+
+
+                    sizeBoxPadding(w: 10, h: 0),
+
+
+                    Expanded(flex:5,child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -299,22 +419,22 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                                   // height: 40,
                                   alignment: Alignment.topLeft,
                                   child: RichText(
-                                    maxLines: 2,
+                                    maxLines: 4,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.left,
                                     text: TextSpan(
-                                      text: listModel['id'],
+                                      text: listModel['name'],
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 16,
+                                        fontSize: 18,
                                       ),
                                       children: <TextSpan>[
                                         TextSpan(
-                                          text: '',
+                                          text: '\n\n${listModel['prize']}',
                                           style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey),
+                                              fontSize: 18,
+                                              color: AppTheme.themeHightColor),
                                         ),
                                       ],
                                     ),
@@ -323,7 +443,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                               ],
                             ),
                           ),
-                          sizeBoxPadding(w: 0, h: 15),
+                          sizeBoxPadding(w: 0, h: 5),
                           Container(
                             // margin: const EdgeInsets.only(left: 8, right: 8),
                             child: Row(
@@ -347,21 +467,21 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                                   Container(
                                     width: itemWidth,
                                     child: headItemContainer(
-                                        '${listModel['validDay']}',
+                                        '${listModel['prize']}',
                                         'c'.tr,
                                         2),
                                   ),
                                 ]),
                           ),
-                          sizeBoxPadding(w: 0, h: 20),
+                          sizeBoxPadding(w: 0, h: 10),
                           Container(
                             // margin: const EdgeInsets.only(left: 8, right: 8),
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: <Widget>[
                                   Container(
-                                    width: 140,
-                                    height: 36,
+                                    width: itemWidth*3,//140
+                                    height: 36+45,
                                     color: Colors.transparent,
                                     child: Column(
                                       crossAxisAlignment:
@@ -384,19 +504,20 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                                               mainAxisAlignment:
                                               MainAxisAlignment.start,
                                               totalSteps: 100,
-                                              currentStep: 70,
-                                              //double valProgress = double.parse(listModel['prog'].toString()) ;
-                                              // (valProgress * 100)<1?1: (valProgress * 100).toInt(),
+                                              currentStep:
+                                              // 70,
+                                              //double valProgress = double.parse(listModel['progress'].toString()) ;
+                                              (valProgress * 100)<1?1: (valProgress * 100).toInt(),
                                               size: 8,
                                               padding: 0,
                                               selectedColor:
-                                              // listModel['progress']==1? Colors.transparent:
+                                              listModel['progress']==1? Colors.transparent:
                                               AppTheme.themeHightColor,
                                               unselectedColor:
                                               Color(0xffEEEEEE),
                                               roundedEdges:
-                                              Radius.circular(10),
-                                              // Radius.circular(listModel['progress']==1?0:10),
+                                              // Radius.circular(10),
+                                              Radius.circular(listModel['progress']==1?0:10),
 
                                               // selectedGradientColor: LinearGradient(
                                               //   begin: Alignment.topLeft,
@@ -414,47 +535,375 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                                             textl: 'Progress'.tr,
                                             textlColor: Colors.black,
                                             textr:
-                                            '${(0.22229).toStringAsFixed(1)}%'),
+                                            '${listModel['progress'].toStringAsFixed(1)}%'),
+                                        Expanded(child: SizedBox()),
+
+                                        Container(
+                                          width: 96,
+                                          height: 36,
+                                          child: OutlinedButton(
+                                            style: ButtonStyle(
+                                                backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    !unLock
+                                                        ? AppTheme
+                                                        .themeGreyColor
+                                                        : AppTheme
+                                                        .themeHightColor),
+                                                shape: MaterialStateProperty.all(
+                                                    RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius.circular(
+                                                            4))),
+                                                side: MaterialStateProperty.all(
+                                                    BorderSide(
+                                                        color:
+                                                        Colors.transparent))),
+                                            child: Text(
+                                              unLock ? 'Join'.tr : 'Off'.tr,
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Color(0xffffffff)),
+                                            ),
+                                            onPressed: () {
+                                              // logic.handleAlert(
+                                              //     context, listModel);
+                                            },
+                                          ),
+                                        ),
+
+
                                       ],
                                     ),
                                   ),
                                   Expanded(child: SizedBox()),
-                                  Container(
-                                    width: 96,
-                                    height: 36,
-                                    child: OutlinedButton(
-                                      style: ButtonStyle(
-                                          backgroundColor:
-                                          MaterialStateProperty.all(
-                                              !unLock
-                                                  ? AppTheme
-                                                  .themeGreyColor
-                                                  : AppTheme
-                                                  .themeHightColor),
-                                          shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(
-                                                      4))),
-                                          side: MaterialStateProperty.all(
-                                              BorderSide(
-                                                  color:
-                                                  Colors.transparent))),
-                                      child: Text(
-                                        unLock ? 'Join'.tr : 'Off'.tr,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Color(0xffffffff)),
+
+                                  // Container(
+                                  //   width: 96,
+                                  //   height: 36,
+                                  //   child: OutlinedButton(
+                                  //     style: ButtonStyle(
+                                  //         backgroundColor:
+                                  //         MaterialStateProperty.all(
+                                  //             !unLock
+                                  //                 ? AppTheme
+                                  //                 .themeGreyColor
+                                  //                 : AppTheme
+                                  //                 .themeHightColor),
+                                  //         shape: MaterialStateProperty.all(
+                                  //             RoundedRectangleBorder(
+                                  //                 borderRadius:
+                                  //                 BorderRadius.circular(
+                                  //                     4))),
+                                  //         side: MaterialStateProperty.all(
+                                  //             BorderSide(
+                                  //                 color:
+                                  //                 Colors.transparent))),
+                                  //     child: Text(
+                                  //       unLock ? 'Join'.tr : 'Off'.tr,
+                                  //       style: TextStyle(
+                                  //           fontSize: 14,
+                                  //           color: Color(0xffffffff)),
+                                  //     ),
+                                  //     onPressed: () {
+                                  //       // logic.handleAlert(
+                                  //       //     context, listModel);
+                                  //     },
+                                  //   ),
+                                  // ),
+
+
+                                ]),
+                          ),
+                        ])
+                    )
+
+
+                  ],),
+
+                ),
+              )))
+    // )
+        ;
+  }
+
+  Widget cellForRowPro2(var listModel, int type, int index) {
+    var size = MediaQuery.of(Get.context!).size;
+    double imageWH = 120;
+    double itemWidth = (size.width - 4 * 15 - imageWH) / 3;
+    double valProgress = double.parse(listModel['progress'].toString()) ;
+    bool unLock = true;
+    //listModel['un_lock'];
+    return
+      // InkWell(
+      // onTap: () => itemClick(listModel),
+      // child:
+      Container(
+        // height: 180,
+          width: double.infinity,
+          padding: const EdgeInsets.only(left: 15, right: 15),
+          margin: const EdgeInsets.only(top: 15),
+          child: GestureDetector(
+              onTap: () {
+                Get.toNamed('/',
+                    arguments: listModel['id'],
+                    preventDuplicates: false);
+
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                  // image: DecorationImage(
+                  //   image: AssetImage("images/game1.png"),
+                  //   fit: BoxFit.cover,
+                  // ),
+                ),
+                child: Container(
+                  margin: const EdgeInsets.all(10),
+                  child:
+
+                  Row(children: [
+
+                    Expanded(flex:2,child:
+                    Container(
+                      height: imageWH,
+                      width: imageWH,
+                      child: ExtendedImage.network(
+
+                        '${listModel['iconBig']}',
+                        fit: BoxFit.contain,
+                        height: imageWH,
+                        width: imageWH,
+                        shape: BoxShape.rectangle,
+                        border: Border.all(color: AppTheme.themeHightColor, width: 1.0),
+                        borderRadius:
+                        BorderRadius.all(Radius.circular(4.0)),
+                      ),
+                    )),
+
+
+                    sizeBoxPadding(w: 10, h: 0),
+
+
+                    Expanded(flex:5,child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            alignment: Alignment.topLeft,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  // height: 40,
+                                  alignment: Alignment.topLeft,
+                                  child: RichText(
+                                    maxLines: 4,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.left,
+                                    text: TextSpan(
+                                      text: listModel['name'],
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
                                       ),
-                                      onPressed: () {
-                                        // logic.handleAlert(
-                                        //     context, listModel);
-                                      },
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                          text: '',
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: AppTheme.themeHightColor),
+                                        ),
+                                      ],
                                     ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          sizeBoxPadding(w: 0, h: 5),
+                          Container(
+                            // margin: const EdgeInsets.only(left: 8, right: 8),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    width: itemWidth*3,
+                                    height: 80,
+                                    color: Colors.transparent,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                      children: [
+                                        ultimatelyLRTxt(
+                                            textl: 'Progress'.tr,
+                                            textlColor: Colors.black,
+                                            textr:
+                                            '${listModel['progress'].toStringAsFixed(1)}%'),
+
+                                        Expanded(child: SizedBox()),
+                                        Container(
+                                            alignment: Alignment.center,
+                                            decoration: const BoxDecoration(
+                                              color: AppTheme.themeHightColor,
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0),
+                                              ),
+                                            ),
+                                            child: StepProgressIndicator(
+                                              fallbackLength: 140,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              totalSteps: 100,
+                                              currentStep:
+                                              // 70,
+                                              //double valProgress = double.parse(listModel['progress'].toString()) ;
+                                              (valProgress * 100)<1?1: (valProgress * 100).toInt(),
+                                              size: 8,
+                                              padding: 0,
+                                              selectedColor:
+                                              listModel['progress']==1? Colors.transparent:
+                                              AppTheme.themeHightColor,
+                                              unselectedColor:
+                                              Color(0xffEEEEEE),
+                                              roundedEdges:
+                                              // Radius.circular(10),
+                                              Radius.circular(listModel['progress']==1?0:10),
+
+                                              // selectedGradientColor: LinearGradient(
+                                              //   begin: Alignment.topLeft,
+                                              //   end: Alignment.bottomRight,
+                                              //   colors: [Colors.yellowAccent, Colors.deepOrange],
+                                              // ),
+                                              // unselectedGradientColor: LinearGradient(
+                                              //   begin: Alignment.topLeft,
+                                              //   end: Alignment.bottomRight,
+                                              //   colors: [Colors.black, Colors.blue],
+                                              // ),
+                                            )),
+                                        Expanded(child: SizedBox()),
+
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              // height: 40,
+                                              alignment: Alignment.topLeft,
+                                              child: RichText(
+                                                maxLines: 4,
+                                                overflow: TextOverflow.ellipsis,
+                                                textAlign: TextAlign.left,
+                                                text: TextSpan(
+                                                  text: '${listModel['prize']}',
+                                                  style: TextStyle(
+                                                    color: AppTheme.themeHightColor,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                  ),
+                                                  children: <TextSpan>[
+                                                    TextSpan(
+                                                      text: '',
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: AppTheme.themeHightColor),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(child: SizedBox()),
+                                            Container(
+                                              width: 96,
+                                              height: 36,
+                                              child: OutlinedButton(
+                                                style: ButtonStyle(
+                                                    backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                        !unLock
+                                                            ? AppTheme
+                                                            .themeGreyColor
+                                                            : AppTheme
+                                                            .themeHightColor),
+                                                    shape: MaterialStateProperty.all(
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                            BorderRadius.circular(
+                                                                4))),
+                                                    side: MaterialStateProperty.all(
+                                                        BorderSide(
+                                                            color:
+                                                            Colors.transparent))),
+                                                child: Text(
+                                                  unLock ? 'Now'.tr : 'Now'.tr,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Color(0xffffffff)),
+                                                ),
+                                                onPressed: () {
+                                                  // logic.handleAlert(
+                                                  //     context, listModel);
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+
+                                      ],
+                                    ),
+                                  ),
+                                  // Expanded(child: SizedBox()),
+
+                                ]),
+                          ),
+
+                          sizeBoxPadding(w: 0, h: 5),
+                          Container(
+                            // margin: const EdgeInsets.only(left: 8, right: 8),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    width: itemWidth,
+                                    child: headItemContainer(
+                                        '${listModel['prize']}', 'a'.tr, 0),
+                                  ),
+                                  // Expanded(child: SizedBox()),
+
+                                  Container(
+                                    width: itemWidth,
+                                    child: headItemContainer(
+                                        '${(0.2229).toStringAsFixed(1)}%',
+                                        'b'.tr,
+                                        1),
+                                  ),
+                                  // Expanded(child: SizedBox()),
+                                  Container(
+                                    width: itemWidth,
+                                    child: headItemContainer(
+                                        '${listModel['prize']}',
+                                        'c'.tr,
+                                        2),
                                   ),
                                 ]),
                           ),
-                        ])),
+                        ])
+                    )
+
+
+                  ],),
+
+                ),
               )))
     // )
         ;
@@ -489,7 +938,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                           )),
                           Container(
                               margin: EdgeInsets.only(top: 8),
-                              child: Text(listModel['createTimeStr'],
+                              child: Text(listModel['name'],
                                   style: TextStyle(
                                       fontSize: 12, color: Color(0xff999999))))
                         ])),
@@ -497,7 +946,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                         flex: 1,
                         child: Container(
                           child: Text(
-                            '${listModel['amount']}',
+                            '${listModel['prize']}',
                             style: TextStyle(
                                 color:  Color(0xff0F4141)),
                             textAlign: TextAlign.right,

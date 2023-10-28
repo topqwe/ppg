@@ -1,9 +1,8 @@
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 import 'package:package_info/package_info.dart';
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
+import '../../services/api/api_basic.dart';
+import '../../services/responseHandle/request.dart';
 import '../../store/AppCacheManager.dart';
 import '../../store/CacheUtil.dart';
 import '../../util/UpdateVersion.dart';
@@ -44,7 +43,7 @@ class SettingLogic extends GetxController {
   }
 
   Future<void> postCheckInfosStatus()=> request(() async {
-    var user = await requestClient.post(APIS.home,data: {});
+    var user = await ApiBasic().home({});
     boolSafeword.value = user['safeword'];
     if(boolSafeword.value==0){
 

@@ -5,14 +5,12 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
+import '../../services/api/api_basic.dart';
+import '../../services/responseHandle/request.dart';
 import '../../style/theme.dart';
-
-import '../../../api/request/config.dart';
-import '../../api/request/apis.dart';
-import '../../api/request/request.dart';
-import '../../api/request/request_client.dart';
 import '../../store/AppCacheManager.dart';
 import 'logic.dart';
 import '/widgets/noData_Widget.dart';
@@ -90,40 +88,40 @@ class MallPage extends StatefulWidget {
 
 class _MallPageState extends State<MallPage>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  var tabNames = [
-    {'id': 3, 'name': 'void'}
-  ];
+  var tabNames = [];
 
   late PageController pageController;
   late ScrollController scrollController;
   late TabController tabController;
   // =  TabController(initialIndex: 0, length: 10, vsync: this);
   var selectedIndex = 0;
+  var sortType = 0;
   late final MallLogic logic;
 
+  void refreshState(){
+    setState(() {
+      tabController = TabController(
+          initialIndex: selectedIndex,
+          length: tabNames.length,
+          vsync: this); //logic.tabNames.length
+      tabController.addListener(() {
+        if (tabController.index == tabController.animation!.value) {
+          selectedIndex = tabController.index;
+
+        }
+      });
+    });
+  }
   void postRequest() => request(() async {
 
-        var data = await requestClient.post(APIS.home, data: {});
-
+        var data = await ApiBasic().dummy({});
+        tabNames.clear();
         for (int i = 0; i < data['l'].length; i++) {
           tabNames.add(data['l'][i]);
         }
 
-        setState(() {
-          tabController = TabController(
-              initialIndex: selectedIndex,
-              length: tabNames.length,
-              vsync: this); //logic.tabNames.length
-          tabController.addListener(() {
-            if (tabController.index == tabController.animation!.value) {
-              selectedIndex = tabController.index;
-              // print(selectedIndex);
-              // if(tabController.index ==1){
-              //   getSecData();
-              // }
-            }
-          });
-        });
+        refreshState();
+
       }, showLoading: true);
   @override
   void initState() {
@@ -148,7 +146,10 @@ class _MallPageState extends State<MallPage>
         // }
       }
     });
-    // postRequest();
+    tabNames.addAll(ApiBasic().initCus());
+    refreshState();
+    postRequest();
+
     pageController = PageController(initialPage: 0);
   }
 
@@ -160,15 +161,71 @@ class _MallPageState extends State<MallPage>
   }
 
 
-  TabBar buildTab() {
-    return TabBar(
+  TabBar buildTabBar() {
+    return
+    //   TabBar(
+    //   onTap: (index) {
+    //     setState(() {
+    //       selectedIndex = index;
+    //     });
+    //     if (selectedIndex == index) {
+    //
+    //     }
+    //   },
+    //   isScrollable: true,
+    //   controller: tabController,
+    //   labelColor: AppTheme.themeHightColor,
+    //   unselectedLabelColor: Colors.grey,
+    //   // indicatorWeight: 3,
+    //   // indicatorSize: TabBarIndicatorSize.label,
+    //   // isScrollable: false,
+    //   labelStyle: const TextStyle(
+    //       fontSize: 14, fontWeight: FontWeight.normal), //height: 1.0,
+    //   tabs: tabNames
+    //       .asMap()
+    //       .keys
+    //       .toList()
+    //       .map((index) =>
+    //   // index==2?
+    //   // Text('VV${tabNames[index]['name']}',
+    //   //     style: TextStyle(fontSize: 14.0)):
+    //   Text('${tabNames[index]['name']}',
+    //           style: TextStyle(fontSize: 14.0))
+    //
+    //   )
+    //       .toList(),
+    //
+    //   // logic.tabNames.map((tab) => Text(tab, style: TextStyle(fontSize: 14.0))).toList(),
+    //   indicator: ContainerTabIndicator(
+    //     widthFraction: 0.6,
+    //     height: 2,
+    //     width: 1,
+    //     color: selectedIndex == 2? Colors.red:AppTheme.themeHightColor,
+    //     padding: const EdgeInsets.only(top: 23),
+    //   ),
+    //
+    // );
+
+    TabBar(
       onTap: (index) {
+        setState(() {
+          selectedIndex = index;
+        });
         if (selectedIndex == index) {
+
         }
+        if(index <2){
+          sortType = index;
+        }else if(index == 2){
+          sortType = sortType ==2? 3:2;
+        }
+        print('sortType');
+        print(sortType);
+        // logic.sortRequest(sortType);
       },
       isScrollable: true,
       controller: tabController,
-      labelColor: AppTheme.themeHightColor,
+      labelColor: Colors.white,
       unselectedLabelColor: Colors.grey,
       // indicatorWeight: 3,
       // indicatorSize: TabBarIndicatorSize.label,
@@ -179,19 +236,44 @@ class _MallPageState extends State<MallPage>
           .asMap()
           .keys
           .toList()
-          .map((index) => Text('${tabNames[index]['name']}',
-              style: TextStyle(fontSize: 14.0)))
+          .map((index) =>
+          index == 2?
+          Padding(
+            padding: const EdgeInsets.only(top: 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('${tabNames[index]['name']}',style: TextStyle(color:   AppTheme.hintColor,fontSize: 14)),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset('assets/images/ic_up.svg',width: 24,height: 9,colorFilter: ColorFilter.mode(sortType == 2?AppTheme.themeHightColor:AppTheme.hintColor, BlendMode.srcIn),),
+                    SvgPicture.asset('assets/images/ic_down.svg',width: 24,height: 9,colorFilter: ColorFilter.mode(sortType == 3?AppTheme.themeHightColor:AppTheme.hintColor, BlendMode.srcIn),),
+                  ],
+                ),
+              ],
+            ),
+          )
+
+              :
+
+          Text('${tabNames[index]['name']}',
+          style: TextStyle(fontSize: 14.0))
+
+
+      )
           .toList(),
 
       // logic.tabNames.map((tab) => Text(tab, style: TextStyle(fontSize: 14.0))).toList(),
-      indicator: ContainerTabIndicator(
-        widthFraction: 0.6,
-        height: 2,
-        width: 1,
-        color: AppTheme.themeHightColor,
-        padding: const EdgeInsets.only(top: 23),
-      ),
+
+      indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: selectedIndex == 2? null: AppTheme.themeHightColor),
     );
+
+
+
   }
 
   buildTabSubViews() {
@@ -251,20 +333,23 @@ class _MallPageState extends State<MallPage>
         NestedScrollView(
       //1.head top
       controller: scrollController,
-      key: const Key('category'),
+      key: const Key('mall'),
       physics: const ClampingScrollPhysics(),
       headerSliverBuilder: (context, innerScrolled) {
         return [
           SliverToBoxAdapter(
             child: Container(
               margin: EdgeInsets.only(top: 10),
-              child: buildHeadTabView(),
+              child: buildHeadImageBgView()
+              // buildHeadView(),
             ),
           ),
 
         ];
       },
-      body: buildTabView(true)
+      body:
+      // buildTabView(true)
+      buildPinHeaderAndTabBarList()
       // buildPageView()
       ,
     )
@@ -272,13 +357,13 @@ class _MallPageState extends State<MallPage>
         ;
   }
 
-  Column buildNoScrollHeaderList() {
+  Column buildPinHeaderAndTabBarList() {
     return Column(//2.injec head no scroll
         children: <Widget>[
       const SizedBox(
         height: 10,
       ),
-      buildHeadTabView(), //context lead
+      buildHeadView(), //context lead
 
       Expanded(
         flex: 1,
@@ -293,7 +378,7 @@ class _MallPageState extends State<MallPage>
                 Container(
                   // color: AppColors.primaryBackground,
                   width: double.infinity,
-                  child: Container(height: 45, child: buildTab()),
+                  child: Container(height: 45, child: buildTabBar()),
                 ),
                 Container(
                   height: 5,
@@ -320,8 +405,9 @@ class _MallPageState extends State<MallPage>
          body: SafeArea(
             child: SizedBox(
           width: double.infinity,
-          child: buildNestedScrollView(),
-          // buildNoScrollHeaderList(),
+          child:
+          buildNestedScrollView(),//has header,no TabBar
+          // buildPinHeaderAndTabBarList(),
         )));
   }
 
@@ -349,7 +435,7 @@ Widget headItemContainer(String txt0, String txt1) {
   );
 }
 
-Widget buildHeadTabView() {
+Widget buildHeadView() {
   var size = MediaQuery.of(Get.context!).size;
   double itemWidth = (size.width - 4 * 15) / 3;
   final logic = Get.put(MallLogic());
@@ -387,8 +473,8 @@ Widget buildHeadTabView() {
                         child: RichText(
                           textAlign: TextAlign.left,
                           text: TextSpan(
-                            text: logic.headDatas['points'].toString(),
-                            style: TextStyle(fontSize: 30, color: Colors.white),
+                            text: '${logic.headDatas['points']}' ,
+                            style: TextStyle(fontSize: 30, color: AppTheme.primary),
                             children: [
                               WidgetSpan(
                                   child: GestureDetector(
@@ -402,7 +488,7 @@ Widget buildHeadTabView() {
                                                 horizontal: 3.0, vertical: 7),
                                             child: Icon(
                                               Icons.loop,
-                                              color: Colors.white,
+                                              color: AppTheme.primary,
                                               size: 20,
                                             ),
                                           )))),
@@ -411,7 +497,7 @@ Widget buildHeadTabView() {
                                 style: TextStyle(
                                     height: 1.5,
                                     fontSize: 12,
-                                    color: Colors.white),
+                                    color: AppTheme.primary),
                               ),
                             ],
                           ),
@@ -461,4 +547,41 @@ Widget buildHeadTabView() {
           ),
         )
       ])));
+}
+
+
+Widget buildHeadImageBgView() {
+  var size = MediaQuery.of(Get.context!).size;
+  double itemWidth = (size.width - 4 * 15 - 1) / 2;
+  return
+    // Obx(() =>
+
+    Container(
+        alignment: Alignment.center,
+        // width: size.width - 2*15,
+        padding: const EdgeInsets.only(left: 0, right: 0),
+        child: Column(children: <Widget>[
+          Container(
+            height: 186,
+            alignment: Alignment.center, //search has ed
+            padding: const EdgeInsets.only(left: 0, right: 0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              color: Colors.transparent,
+            ),
+            child: Padding(
+              padding:
+              const EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(//boxTopBg
+                      'assets/images/boxes/.png'),
+                ],
+              ),
+            ),
+          )
+        ]))
+  // )
+      ;
 }

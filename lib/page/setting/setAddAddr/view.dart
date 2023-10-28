@@ -2,8 +2,11 @@ import 'package:container_tab_indicator/container_tab_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_pickers/pickers.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
+import 'package:liandan_flutter/util/TextFieldView.dart';
 import '../../../widgets/text_widget.dart';
 
 import '../../../util/DefaultAppBar.dart';
@@ -175,10 +178,11 @@ class SetAddAddrPage extends StatelessWidget {
                                       suffixIcon: IconButton(
                                           icon: Icon(Icons.cancel,
                                               size: 18,
-                                              color: logic.cTxt.value.isNotEmpty
+                                              color: logic.cTxt1.value.isNotEmpty
                                                   ? Color(0xffCCCCCC)
                                                   : Colors.transparent),
                                           onPressed: () {
+                                            logic.cTxt1.value = '';
                                             logic.controller1.text = '';
                                           })),
                                   style: const TextStyle(color: Colors.black),
@@ -187,6 +191,59 @@ class SetAddAddrPage extends StatelessWidget {
                                   autofocus: false,
                                 )),
                           ),
+
+                          Obx(() => TextFieldView(
+                            key: const ValueKey('area'),
+                            // isRTextField: false,
+                            // keyboardType: TextInputType.phone,
+                            readOnly: true,
+                            isViviEdit: false,
+                            title: '所在地区'.tr,
+                            // hintText:'请输入手机号'.tr,
+                            // initValue:logic.cTxt.value,
+                            inputFormatters: [
+                              // LengthLimitingTextInputFormatter(30),//11
+                              // FilteringTextInputFormatter.allow(RegExp("[0-9]")),//数字
+                            ],
+                            // onChanged: (value){
+                            //   logic.textFieldChanged;
+                            //   logic.cTxt.value = value;
+                            //   logic.controller.text = value;
+                            //   // setState(() {
+                            //   // });
+                            // },
+                            onTap: (){
+                              print('dddddddd');
+                              // List area =logic.cTxt.value.contains(' ')? logic.cTxt.value.split(" "):[];
+var city = logic.area.value.isNotEmpty?logic.area.value[0]: "";
+var province = logic.area.length>1?logic.area[1]: "";
+var town =logic.area.length>2?logic.area[2]: "";
+                              print(city);
+                              print(province);
+                              print(town);
+                              Pickers.showAddressPicker(
+                                context,
+                                initCity:city,
+                                initProvince: province,
+                                initTown:town,
+                                onConfirm: (p, c, t) {
+                                  // setState(() {
+
+                                    var  area = '$p $c ${t??''}';
+                                    logic.textFieldChanged;
+                                    logic.cTxt.value = area;
+                                    logic.controller.text = area;
+                                    print(logic.cTxt.value);
+                                  // });
+                                },
+                              );
+                            },
+                            endChild:  Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                              child: Text(logic.cTxt.value.trim().isNotEmpty?logic.cTxt.value:'省、市、区',style:  TextStyle(fontSize: 12, color:logic.cTxt.value.isNotEmpty?Colors.black:AppTheme.hintColor ),),
+                            ),
+                          ),),
+
                           SizedBox(
                             height: 15,
                           ),
@@ -243,6 +300,47 @@ class SetAddAddrPage extends StatelessWidget {
                           SizedBox(
                             height: 15,
                           ),
+
+
+                          Obx(() => TextFieldView(
+                            key: const ValueKey('mobile'),
+                            title: '手机号'.tr,
+                            hintText:'请输入手机号'.tr,
+                            isRTextField: true,
+                            keyboardType: TextInputType.phone,
+                            initValue:logic.cTxt3.value,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(30),//11
+                              FilteringTextInputFormatter.allow(RegExp("[0-9]")),//数字
+                            ],
+                            onChanged: (value){
+                              logic.textFieldChanged;
+                              logic.cTxt3.value = value;
+                              logic.controller3.text = value;
+                              // setState(() {
+                              // });
+                            },),),
+
+                          Obx(() => TextFieldView(
+                            key: const ValueKey('mobile2'),
+                            // isRTextField: false,
+                            // keyboardType: TextInputType.phone,
+                            title: '手机号'.tr,
+                            hintText:'请输入手机号'.tr,
+                            initValue:logic.cTxt3.value,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(30),//11
+                              FilteringTextInputFormatter.allow(RegExp("[0-9]")),//数字
+                            ],
+                            onChanged: (value){
+                              logic.textFieldChanged;
+                              logic.cTxt3.value = value;
+                              logic.controller3.text = value;
+                              // setState(() {
+                              // });
+                            },),),
+
+
                           syText(text: '手机号'.tr),
                           SizedBox(
                             height: 10,

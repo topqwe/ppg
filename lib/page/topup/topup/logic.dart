@@ -9,16 +9,13 @@ import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:liandan_flutter/services/api/api_basic.dart';
+import '../../../services/request/http_utils.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../util/LoadingBarrierView.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:ui' as ui;
-import '../../../api/file/HttpUtils.dart';
-
-import '../../../api/request/apis.dart';
-import '../../../api/request/config.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
 import '../../../util/ImageUtils.dart';
 
 class TopupLogic extends GetxController {
@@ -52,9 +49,9 @@ class TopupLogic extends GetxController {
 
   getImage() async {
     var status = await Permission.photos.status;
-    print('before'); //pod add
+    print('camera before'); //pod add
     print(status); //denied
-    if (!status.isGranted) {
+    if (!status.isGranted||status.isDenied) {
       status = await Permission.photos.request(); //req granted
       if (status.isPermanentlyDenied) {
         status = await Permission.photos.request();
@@ -68,6 +65,7 @@ class TopupLogic extends GetxController {
         .pickImage(imageQuality: 100, source: ImageSource.gallery);
     if (image != null) {
 
+      // cropAndUpload(image, image.path);
       _upLoadImage(image);
     }
   }
@@ -95,9 +93,8 @@ class TopupLogic extends GetxController {
   }
 
   uploadImage(image, imageName) => request(() async {
-        String url = RequestConfig.baseUrl + RequestConfig.uploadImgPath;
         LoadingBarrierView.showLoading(Get.context!);
-        var post = await HttpUtils().postImage(url, image, imageName);
+        var post = await ApiBasic().postImage( image, imageName);
         LoadingBarrierView.hideLoading(Get.context!);
         image2.value = post['data'];
 
@@ -105,27 +102,24 @@ class TopupLogic extends GetxController {
       });
 
   _upLoadImage(image) => request(() async {
-        String url = RequestConfig.baseUrl + RequestConfig.uploadImgPath;
-        LoadingBarrierView.showLoading(Get.context!);
-        var postf = await HttpUtils().post(url, image);
-        LoadingBarrierView.hideLoading(Get.context!);
+        // LoadingBarrierView.showLoading(Get.context!);
+        var postf = await ApiBasic().postImage2(image);
+        // LoadingBarrierView.hideLoading(Get.context!);
         image2.value = postf['data'];
 
         update();
       });
 
   void postSession() => request(() async {
-        var url = APIS.home;
         var data = {};
-        var user = await requestClient.post(url, data: data);
+        var user = await ApiBasic().home({});
         print(user);
         session_token.value = user['session_token'];
         return;
       });
   void postTopUrl() => request(() async {
-        var url = APIS.home;
         var data = {};
-        var recharge = await requestClient.post(url, data: data);
+        var recharge = await ApiBasic().home({});
         print(recharge);
         for (var i = 0; i < recharge.length; i++) {
           if (recharge[i]['coin'] == argu) {
@@ -186,10 +180,9 @@ class TopupLogic extends GetxController {
           return;
         }
 
-        var user2 = await requestClient.post(APIS.home, data: {});
+        var user2 = await ApiBasic().home({});
         print(user2);
         session_token.value = user2['session_token'];
-        var url = APIS.home;
         var data = {
           'session_token': '${session_token.value}',
           'amount': '${controller.text}',
@@ -203,7 +196,7 @@ class TopupLogic extends GetxController {
         };
         controller.text == '';
         image2.value == '';
-        var recharge = await requestClient.post(url, data: data);
+        var recharge = await ApiBasic().home({});
         controller.text == '';
         image2.value == '';
         print(recharge);

@@ -3,12 +3,11 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../store/EventBus.dart';
 import '../../../util/LoadingBarrierView.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
 import '../../../util/FrequencyClick.dart';
 
 class AddBankLogic extends GetxController {
@@ -95,7 +94,7 @@ class AddBankLogic extends GetxController {
             timer_fun = null;
           },
         );
-        String url = APIS.addAddress;
+        var data = {};
         String tostr = '';
         var params = {
           'contacts': controller1.text,
@@ -103,19 +102,23 @@ class AddBankLogic extends GetxController {
           'phone': controller3.text,
           'use': status0.value
         };
+        LoadingBarrierView.showLoading(context);
+
         if (Get.arguments != '0') {
           params['id'] = Get.arguments['id'].toString();
-          url = APIS.editAddress;
+          data = await ApiBasic().home({});
           tostr = "修改成功".tr;
         } else {
-          url = APIS.addAddress;
+          data = await ApiBasic().home({});
           tostr = "添加成功".tr;
         }
-        LoadingBarrierView.showLoading(context);
-        var data = await requestClient.post(url, data: params);
+
         LoadingBarrierView.hideLoading(context);
         FToast.toast(context, msg: tostr);
-        eventBus.fire(GrabRefreshBkListEvent(data));
+        mainEventBus.emit(
+          EventBusConstants.grabRefreshBkListEvent,
+          data,
+        );
         // Get.arguments == '0'?Get.back():Get.offNamed('/setAddrList',arguments: Get.arguments);
         // Get.offNamed('/setAddrList',arguments: '0');
         Get.back();

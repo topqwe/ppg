@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:liandan_flutter/services/api/api_basic.dart';
+import '../services/responseHandle/request.dart';
 import '../style/theme.dart';
 // import 'package:native_updater/native_updater.dart';
 import 'package:package_info/package_info.dart';
@@ -15,9 +17,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:throttling/throttling.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../api/request/apis.dart';
-import '../api/request/request.dart';
-import '../api/request/request_client.dart';
 import '../lang/LanguageManager.dart';
 import '../store/AppCacheManager.dart';
 import '../widgets/helpTools.dart';
@@ -43,8 +42,8 @@ class UpdateVersion {
         } else {
           pl = '1';
         }
-        var data = await requestClient
-            .post(APIS.getConfig, data: {'plantform': pl});
+        var res = await ApiBasic().config({'plantform': pl});
+        var data = res['data'];
         String downloadlink = data['downloadlink'].toString();
         String version = data['latestVersion'].toString();
         String latestContent = data['content'].toString();

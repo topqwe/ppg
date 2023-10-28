@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../services/api/api_basic.dart';
 import '../../store/AppCacheManager.dart';
-import '../../../api/request/apis.dart';
-import '../../../api/request/request_client.dart';
 import '../../../util/PagingMixin.dart';
 
 class MallLogic extends GetxController
@@ -27,8 +26,8 @@ class MallLogic extends GetxController
 
 
     headDatas.value = {
-      'points': 0,
-    }.obs;
+      'points': '88888',
+    };
 
     clickBottomIndex();
 
@@ -69,7 +68,7 @@ class MallLogic extends GetxController
 
   Future<void> requestHeaderData(bool isAnimationDelay) async {
 
-    var data = await requestClient.post(APIS.home, data: {});
+    var data = await ApiBasic().dummy({});
     if (isAnimationDelay) {
       Timer.periodic(Duration(milliseconds: 2000), (t) {
         headDatas.value = data;

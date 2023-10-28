@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 class LoginPWModifyLogic extends GetxController {
   late TextEditingController controller;
   late TextEditingController controller2;
@@ -28,13 +27,13 @@ class LoginPWModifyLogic extends GetxController {
     print(src);
   }
   void resetLPW (context)=>request(() async{
-    var url = APIS.home;
     var data = {
       'old_password':controller.text,
       'password':controller2.text,
       'confirm_password':controller3.text
     };
-    var user = await requestClient.post(url,data: data);
+
+    var user = await ApiBasic().home({});
     FToast.toast(context, msg: '修改成功'.tr);
     Get.back();
     return;

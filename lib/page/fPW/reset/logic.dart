@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
+
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 class ResetFPWLogic extends GetxController {
   var controller;
   var controller2;
@@ -28,13 +28,12 @@ class ResetFPWLogic extends GetxController {
     print(src);
   }
   void shezhimima_post (context)=>request(() async{
-    var url = APIS.home;
     var data = {
       'old_safeword':controller.text,
       'safeword':controller2.text,
       're_safeword':controller3.text
     };
-    var user = await requestClient.post(url,data: data);
+    var user = await ApiBasic().home({});
     print(user);
     FToast.toast(context, msg: '修改成功'.tr);
     Get.back();

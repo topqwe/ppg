@@ -16,7 +16,8 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SearchBar(
+      appBar:
+      SearchingBar(
         hintText: '请输入查询',
         onPressed: (text) => FToast.toast(context, msg:'搜索内容：$text'),
       ),

@@ -9,12 +9,13 @@ class AppTheme {
   static const primary =  Color(0xff1552F0);
   static const themebtnColor  = themeHightColor;
   static const ScaffoldBackgroundColor  =Color(0xffEFF2F6);
+  static const hintColor  =Color(0Xff7B8593);
   // Color(0xfff3f5f9);
   //ThemeData.light().scaffoldBackgroundColor
   static ThemeData theme() {
     return ThemeData(
       primaryColor: themeHightColor,
-      buttonColor: themeHightColor,
+      // buttonColor: themeHightColor,
       brightness:  Brightness.light,
       hoverColor: Colors.transparent,
       highlightColor: Colors.transparent,

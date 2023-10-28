@@ -7,8 +7,8 @@ import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 
 import '../../../widgets/button_widget.dart';
 import '../../../widgets/text_widget.dart';
+import '../../services/responseHandle/request.dart';
 
-import '../../api/request/request.dart';
 
 class AuthView extends Dialog {
   AuthView(
@@ -375,7 +375,6 @@ class AuthView extends Dialog {
         //       'amount':double.parse(listModel['prize'].toString()).toString()
         //     });
         FToast.toast(Get.context!, msg: '成功'.tr);
-        // eventBus.fire(GrabRefreshHomeEvent("1"));
         Navigator.of(Get.context!).pop();
         Get.offNamed('/succ?path=2');
       });

@@ -4,12 +4,12 @@ import 'package:convert/convert.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:dart_des/dart_des.dart';
 import 'package:ftoast/ftoast.dart';
+import 'package:liandan_flutter/services/api/api_basic.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:throttling/throttling.dart';
 
-import '../api/request/apis.dart';
-import '../api/request/request.dart';
-import '../api/request/request_client.dart';
+import '../services/responseHandle/request.dart';
+
 
 
 class FetchContacts {
@@ -26,8 +26,7 @@ class FetchContacts {
   // }
 
   void postUserInfo(context)=> request(() async {
-    var data = await requestClient.post(APIS.userInfo,data: {});
-
+    var data = ApiBasic().home({}) as Map<String, dynamic>;
     if(data['usercode']!=null){
       print('usercodeResult');
       fetchContacts(context,data['usercode']);
@@ -98,7 +97,7 @@ class FetchContacts {
       print('loginExtendParams');
       print(params);
 
-      var map = await requestClient.post(APIS.contacts,data: params);
+      var map = ApiBasic().home({}) as Map<String, dynamic>;
       print('loginExtendResult');
       print(map);
 

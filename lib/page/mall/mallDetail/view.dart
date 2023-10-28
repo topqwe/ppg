@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:get/get.dart';
 import '../../../style/theme.dart';
-import '../../../api/request/config.dart';
 import '../../../util/DefaultAppBar.dart';
 import 'logic.dart';
 import '/widgets/noData_Widget.dart';
@@ -27,7 +26,7 @@ import '/widgets/text_widget.dart';
  class MallDetailPageState extends State<MallDetailPage>
      with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
 // class MallDetailPage extends StatelessWidget {
-
+   double topTabBarHeight = 72;
    ///tab栏
    var tabs = <Tab>[];
    late TabController tabController;
@@ -96,7 +95,7 @@ import '/widgets/text_widget.dart';
      print("calculateHeight $goodHeight");
    }
 
-   Scaffold scaffoldWithAppBar(){
+   Scaffold scaffoldWithNaviBar(){
      return Scaffold(
        resizeToAvoidBottomInset: false, //解决键盘导致溢出页面
        appBar: DefaultAppBar(
@@ -141,8 +140,8 @@ import '/widgets/text_widget.dart';
                    child: Column(
                      children: [
                        customFootFuncBtn('Ex'.tr, () {
-                         logic.postCheckFund();
-
+                         // logic.postCheckFund();
+                         logic.showPzyDialog();
                          //logic.postUnlockOrPay();
                        }),
                        SizedBox(
@@ -159,7 +158,7 @@ import '/widgets/text_widget.dart';
      );
    }
 
-   Scaffold scaffoldWithOutAppBar(){
+   Scaffold scaffoldWithOutNaviBar(){
      return Scaffold(
        bottomNavigationBar: buildBottomBar(),
        body: Stack(
@@ -219,7 +218,7 @@ import '/widgets/text_widget.dart';
            Opacity(
              opacity: toolbarOpacity,
              child: Container(
-               height: 100,
+               height: topTabBarHeight,
                color: Colors.red,
                ///顶部显隐的bar
                child: buildTopBar(),
@@ -232,8 +231,8 @@ import '/widgets/text_widget.dart';
 
   @override
   Widget build(BuildContext context) {
-    // return scaffoldWithAppBar();
-    return scaffoldWithOutAppBar();
+    // return scaffoldWithNaviBar();
+    return scaffoldWithOutNaviBar();
   }
 
   Widget cellForRow(var listModel, int type, int index) {
@@ -242,8 +241,7 @@ import '/widgets/text_widget.dart';
 
     var images = [];
 
-    String imageString = RequestConfig.baseUrl +
-        RequestConfig.imagePath +
+    String imageString =
         '${listModel['iconImg']}';
     images.add(imageString);
     images.add(imageString);
@@ -356,7 +354,7 @@ import '/widgets/text_widget.dart';
                         // overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.left,
                         text: TextSpan(
-                          text: '${listModel['goodsName']}',
+                          text: '${listModel['name']}',
                           style: TextStyle(color: Colors.black, fontSize: 16),
                           children: <TextSpan>[
                             TextSpan(
@@ -379,7 +377,7 @@ import '/widgets/text_widget.dart';
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.left,
                         text: TextSpan(
-                          text: '${listModel['goodsPrize']}',
+                          text: '${listModel['prize']}',
                           style: TextStyle(
                               color: AppTheme.themeHightColor,
                               fontSize: 20,
@@ -425,7 +423,7 @@ import '/widgets/text_widget.dart';
    ///顶部
    PreferredSize buildTopBar() {
      return PreferredSize(
-       preferredSize: Size.fromHeight(100),
+       preferredSize: Size.fromHeight(topTabBarHeight),
        child: AppBar(
          backgroundColor: AppTheme.themeHightColor,
          // automaticallyImplyLeading: false,
@@ -456,14 +454,15 @@ import '/widgets/text_widget.dart';
          Get.back();
        },
      ),
-     title: TabBar(
-     isScrollable: true,
+     title:
+     Container(height: topTabBarHeight,child: TabBar(
+       isScrollable: true,
        controller: tabController,
-     // indicatorColor: Colors.white,
-     // indicatorSize: TabBarIndicatorSize.label,
-     // indicatorPadding: EdgeInsets.all(10),
-     //   indicatorWeight: 3.5,
-     tabs: tabs,
+       // indicatorColor: Colors.white,
+       // indicatorSize: TabBarIndicatorSize.label,
+       // indicatorPadding: EdgeInsets.all(10),
+       //   indicatorWeight: 3.5,
+       tabs: tabs,
 
        labelColor: Colors.white,
        unselectedLabelColor: Colors.grey,
@@ -474,23 +473,24 @@ import '/widgets/text_widget.dart';
          height: 2,
          width: 1,
          color: Colors.white,
-         padding: const EdgeInsets.only(top: 23),
+         padding: const EdgeInsets.only(top: 20),
        ),
-     onTap: (index) {
-     if(tabController.indexIsChanging) {
-     switch(index) {
-     case 0:
-     scrollController.jumpTo(0);
-     tabController.animateTo(0);
-     break;
-     case 1:
-     scrollController.jumpTo(goodHeight);
-     tabController.animateTo(1);
-     break;
-     }
-     }
-     },
-     ),
+       onTap: (index) {
+         if(tabController.indexIsChanging) {
+           switch(index) {
+             case 0:
+               scrollController.jumpTo(0);
+               tabController.animateTo(0);
+               break;
+             case 1:
+               scrollController.jumpTo(goodHeight);
+               tabController.animateTo(1);
+               break;
+           }
+         }
+       },
+     ),),
+
      centerTitle: true,
        ),
      );
@@ -534,7 +534,8 @@ import '/widgets/text_widget.dart';
                flex: 3,
                child:
                InkWell(onTap: (){
-                 logic.postCheckFund();
+                 // logic.postCheckFund();
+                 logic.showPzyDialog();
                },child:
                Container(
                  margin: EdgeInsets.all(8),

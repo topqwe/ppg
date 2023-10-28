@@ -4,9 +4,8 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request.dart';
-import '../../../api/request/request_client.dart';
+import '../../../services/api/api_basic.dart';
+import '../../../services/responseHandle/request.dart';
 import '../../../store/AppCacheManager.dart';
 import '../../../store/EventBus.dart';
 import '../../../util/PagingMixin.dart';
@@ -25,6 +24,8 @@ class CatStateListLogic extends GetxController with GetSingleTickerProviderState
    void onInit() {
      super.onInit();
      easyRefreshController = EasyRefreshController();
+     listDataFirst.value.addAll(ApiBasic().initCus());
+     update();
      requestData();
 
    }
@@ -52,8 +53,7 @@ class CatStateListLogic extends GetxController with GetSingleTickerProviderState
        'pageSize': pageSize,
        'status': type.toString(),
      };
-     var data = await requestClient.post(APIS.home,
-         data:params);
+     var data = await ApiBasic().dummy({});
 
      List lst = data['pageList'] ?? [];
      if(isRefresh){
@@ -74,8 +74,7 @@ class CatStateListLogic extends GetxController with GetSingleTickerProviderState
      var params = {
        'orderId': listModel['orderId'],
      };
-     var data = await requestClient.post(APIS.home,
-         data:params);
+     var data = await ApiBasic().home({});
      FToast.toast(context, msg: '成功！'.tr);
      // eventBus.fire(GrabRefreshTaskEvent(listModel));
      requestData();

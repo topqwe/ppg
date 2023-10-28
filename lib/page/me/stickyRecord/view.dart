@@ -249,7 +249,12 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
           ? Alignment.center
           : Alignment.centerRight,
       child: RichText(
-        textAlign: TextAlign.left,
+        textAlign:
+        i == 0
+        ? TextAlign.left
+            : i == 1
+        ? TextAlign.center
+        : TextAlign.right,
         text: TextSpan(
           text: txt0,
           style: TextStyle(fontSize: 18, height: 2, color: Colors.black),
@@ -282,7 +287,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
           child: GestureDetector(
               onTap: () {
                 Get.toNamed('/',
-                    arguments: listModel['orderId'],
+                    arguments: listModel['id'],
                     preventDuplicates: false);
               },
               child: Container(
@@ -343,7 +348,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                             right: 0.0,
                             child: Text(index.isEven ? '+10.00' : '-10.00',
                               style:  TextStyle(
-                                color: index.isEven ? Theme.of(context).errorColor:Colors.green,
+                                color: index.isEven ? Colors.red:Colors.green,
                                 fontWeight: FontWeight.bold,
                               ) ,
                             ),
@@ -395,7 +400,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                           )),
                           Container(
                               margin: EdgeInsets.only(top: 8),
-                              child: Text(listModel['createTimeStr'],
+                              child: Text(listModel['name'],
                                   style: TextStyle(
                                       fontSize: 12, color: Color(0xff999999))))
                         ])),
@@ -403,7 +408,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
                         flex: 1,
                         child: Container(
                           child: Text(
-                            '${listModel['amount']}',
+                            '${listModel['prize']}',
                             style: TextStyle(
                                 color:  Color(0xff0F4141)),
                             textAlign: TextAlign.right,

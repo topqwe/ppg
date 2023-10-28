@@ -5,8 +5,7 @@ import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
-import '../../../api/request/apis.dart';
-import '../../../api/request/request_client.dart';
+import '../../../services/api/api_basic.dart';
 
 
 
@@ -64,8 +63,7 @@ class ChatServiceLogic extends GetxController  {
     String messageId = isNew == true ? "" : chatList.last.id ?? "";
     Map<String, dynamic> params = {'message_id': messageId, "show_img": true};
 
-    var data = await requestClient.post(APIS.chatList,
-        data:params);
+    var data = await ApiBasic().home({});
     var list = [];
     list.addAll(data);
     if (isNew == true) {
@@ -90,8 +88,7 @@ class ChatServiceLogic extends GetxController  {
       'type': isText ? "text" : "img",
       "content": content
     };
-    var data = await requestClient.post(APIS.chatSend,
-        data:params);
+    var data = await ApiBasic().home({});
 
     // chatList.insert(0, data);
     textController.text = "";
