@@ -62,7 +62,10 @@ class TopupLogic extends GetxController {
     }
 
     var image = await ImagePicker()
-        .pickImage(imageQuality: 100, source: ImageSource.gallery);
+        .pickImage(source: ImageSource.gallery);
+    //imageQuality: 100,
+    //Base from the error,
+    // image_picker doesn't support png when compressing or changing the image quality. You can use flutter_image_compress plugin which has support for PNG format.
     if (image != null) {
 
       // cropAndUpload(image, image.path);

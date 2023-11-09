@@ -256,23 +256,32 @@ class HomePageState extends State<HomePage>
           const SliverPadding(padding: EdgeInsets.all(5)),
 
           SliverToBoxAdapter(child:
-          Container(
-            height:50,
-            child: CustomTagWidget(
-              tabTitleList: logic.tags,
-              select: logic.tagsCurrentIndex,
-              onTap: (int index) {
-                setState(() {
-                  logic.tagsCurrentIndex = index;
-                  print("当前选中 $logic.tagsCurrentIndex");
-                  if(logic.tagsCurrentIndex ==2) {
-                    Get.offNamed('/index');
-                    final logicb = Get.put(BottomLogic());
-                    logicb.changePage(1);
-                  }
-                });
-              },
-            ),),),
+
+          Row(children: [
+            Expanded(child:
+            Obx(() =>  Container(
+              height:50,
+              child: CustomTagWidget(
+                tabTitleList: logic.tags.value,
+                select: logic.tagsCurrentIndex,
+                onTap: (int index) {
+                  setState(() {
+                    logic.tagsCurrentIndex = index;
+                    print("当前选中 $logic.tagsCurrentIndex");
+                    if(logic.tagsCurrentIndex ==2) {
+                      Get.offNamed('/index');
+                      final logicb = Get.put(BottomLogic());
+                      logicb.changePage(1);
+                    }
+                  });
+                },
+              ),),),
+            ),
+
+            Container(color: Colors.red,width: 60,height: 20,),
+          ],),
+
+         ),
 
           HomeAnnounce(
             isSliver: true,
@@ -543,7 +552,7 @@ class HomePageState extends State<HomePage>
     //
     // });
   }
-
+  DateTime? _lastPressedAt; //上次点击时间
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -560,6 +569,30 @@ class HomePageState extends State<HomePage>
           return false;
         },
         child: Scaffold(
+          floatingActionButton:Container(
+              width: 60,
+              height: 60,
+              margin: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
+              child: FloatingActionButton(
+                onPressed: () {
+                  if (_lastPressedAt == null ||
+                      DateTime.now().difference(_lastPressedAt!) > Duration(milliseconds: 1500)) {
+                    //两次点击间隔超过5秒则重新计时
+                    _lastPressedAt = DateTime.now();
+                    return ;
+                  }
+                  final logicb = Get.put(BottomLogic());
+                  logicb.changePage(1);
+
+                },
+                backgroundColor: AppTheme.themeHightColor,
+                elevation: 0,
+                tooltip: 'Refresh'.tr,
+                // child: RotationTransition(turns: logic.turns,
+                //     child: Obx(() =>Container(child: Image.asset(
+                //         !logic.playing.value?'assets/images/bottom/normal.png':'assets/images/bottom/toggling.png',width: 45,
+                //         height: 50)))),
+              )),
           resizeToAvoidBottomInset: false, //解决键盘导致溢出页面
           backgroundColor: Colors.transparent,
           appBar: buildAppBar(),

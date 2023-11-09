@@ -6,6 +6,8 @@ PODS:
     - ReachabilitySwift
   - contacts_service (0.2.2):
     - Flutter
+  - device_info (0.0.1):
+    - Flutter
   - device_info_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
@@ -80,6 +82,8 @@ PODS:
     - FlutterMacOS
   - permission_handler_apple (9.1.1):
     - Flutter
+  - platform_device_id (0.0.1):
+    - Flutter
   - r_upgrade (0.0.1):
     - Flutter
   - ReachabilitySwift (5.0.0)
@@ -109,6 +113,7 @@ DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - contacts_service (from `.symlinks/plugins/contacts_service/ios`)
+  - device_info (from `.symlinks/plugins/device_info/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_custom_dialog (from `.symlinks/plugins/flutter_custom_dialog/ios`)
@@ -127,6 +132,7 @@ DEPENDENCIES:
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - platform_device_id (from `.symlinks/plugins/platform_device_id/ios`)
   - r_upgrade (from `.symlinks/plugins/r_upgrade/ios`)
   - scan (from `.symlinks/plugins/scan/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
@@ -156,6 +162,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/connectivity_plus/ios"
   contacts_service:
     :path: ".symlinks/plugins/contacts_service/ios"
+  device_info:
+    :path: ".symlinks/plugins/device_info/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
@@ -192,6 +200,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  platform_device_id:
+    :path: ".symlinks/plugins/platform_device_id/ios"
   r_upgrade:
     :path: ".symlinks/plugins/r_upgrade/ios"
   scan:
@@ -211,6 +221,7 @@ SPEC CHECKSUMS:
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   connectivity_plus: bf0076dd84a130856aa636df1c71ccaff908fa1d
   contacts_service: 849e1f84281804c8bfbec1b4c3eedcb23c5d3eca
+  device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   device_info_plus: 7545d84d8d1b896cb16a4ff98c19f07ec4b298ea
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_custom_dialog: c0d222a3c35af5b57581e54ef8784c94037cd2ec
@@ -235,6 +246,7 @@ SPEC CHECKSUMS:
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
+  platform_device_id: 81b3e2993881f87d0c82ef151dc274df4869aef5
   r_upgrade: 44d715c61914cce3d01ea225abffe894fd51c114
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   scan: aea35bb4aa59ccc8839c576a18cd57c7d492cc86

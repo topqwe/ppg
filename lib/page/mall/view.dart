@@ -98,7 +98,7 @@ class _MallPageState extends State<MallPage>
   var sortType = 0;
   late final MallLogic logic;
 
-  void refreshState(){
+  void refreshTabIndexState(){
     setState(() {
       tabController = TabController(
           initialIndex: selectedIndex,
@@ -106,11 +106,28 @@ class _MallPageState extends State<MallPage>
           vsync: this); //logic.tabNames.length
       tabController.addListener(() {
         if (tabController.index == tabController.animation!.value) {
-          selectedIndex = tabController.index;
-
+          // selectedIndex = tabController.index;
+          actionTabIndexState(tabController.index);
         }
       });
     });
+  }
+
+  void actionTabIndexState(int index){
+    setState(() {//⚠️
+      selectedIndex = index;
+    });
+    if (selectedIndex == index) {
+
+    }
+    if(index <2){
+      sortType = index;
+    }else if(index == 2){
+      sortType = sortType ==2? 3:2;
+    }
+    print('sortType');
+    print(sortType);
+    // logic.sortRequest(sortType);
   }
   void postRequest() => request(() async {
 
@@ -120,7 +137,7 @@ class _MallPageState extends State<MallPage>
           tabNames.add(data['l'][i]);
         }
 
-        refreshState();
+        refreshTabIndexState();
 
       }, showLoading: true);
   @override
@@ -139,7 +156,9 @@ class _MallPageState extends State<MallPage>
         vsync: this); //logic.tabNames.length
     tabController.addListener(() {
       if (tabController.index == tabController.animation!.value) {
-        selectedIndex = tabController.index;
+        setState(() {//⚠️
+          selectedIndex = tabController.index;
+        });
         // print(selectedIndex);
         // if(tabController.index ==1){
         //   getSecData();
@@ -147,7 +166,7 @@ class _MallPageState extends State<MallPage>
       }
     });
     tabNames.addAll(ApiBasic().initCus());
-    refreshState();
+    refreshTabIndexState();
     postRequest();
 
     pageController = PageController(initialPage: 0);
@@ -163,69 +182,13 @@ class _MallPageState extends State<MallPage>
 
   TabBar buildTabBar() {
     return
-    //   TabBar(
-    //   onTap: (index) {
-    //     setState(() {
-    //       selectedIndex = index;
-    //     });
-    //     if (selectedIndex == index) {
-    //
-    //     }
-    //   },
-    //   isScrollable: true,
-    //   controller: tabController,
-    //   labelColor: AppTheme.themeHightColor,
-    //   unselectedLabelColor: Colors.grey,
-    //   // indicatorWeight: 3,
-    //   // indicatorSize: TabBarIndicatorSize.label,
-    //   // isScrollable: false,
-    //   labelStyle: const TextStyle(
-    //       fontSize: 14, fontWeight: FontWeight.normal), //height: 1.0,
-    //   tabs: tabNames
-    //       .asMap()
-    //       .keys
-    //       .toList()
-    //       .map((index) =>
-    //   // index==2?
-    //   // Text('VV${tabNames[index]['name']}',
-    //   //     style: TextStyle(fontSize: 14.0)):
-    //   Text('${tabNames[index]['name']}',
-    //           style: TextStyle(fontSize: 14.0))
-    //
-    //   )
-    //       .toList(),
-    //
-    //   // logic.tabNames.map((tab) => Text(tab, style: TextStyle(fontSize: 14.0))).toList(),
-    //   indicator: ContainerTabIndicator(
-    //     widthFraction: 0.6,
-    //     height: 2,
-    //     width: 1,
-    //     color: selectedIndex == 2? Colors.red:AppTheme.themeHightColor,
-    //     padding: const EdgeInsets.only(top: 23),
-    //   ),
-    //
-    // );
-
-    TabBar(
+      TabBar(
       onTap: (index) {
-        setState(() {
-          selectedIndex = index;
-        });
-        if (selectedIndex == index) {
-
-        }
-        if(index <2){
-          sortType = index;
-        }else if(index == 2){
-          sortType = sortType ==2? 3:2;
-        }
-        print('sortType');
-        print(sortType);
-        // logic.sortRequest(sortType);
+        actionTabIndexState(index);
       },
       isScrollable: true,
       controller: tabController,
-      labelColor: Colors.white,
+      labelColor: AppTheme.themeHightColor,
       unselectedLabelColor: Colors.grey,
       // indicatorWeight: 3,
       // indicatorSize: TabBarIndicatorSize.label,
@@ -237,40 +200,78 @@ class _MallPageState extends State<MallPage>
           .keys
           .toList()
           .map((index) =>
-          index == 2?
-          Padding(
-            padding: const EdgeInsets.only(top: 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('${tabNames[index]['name']}',style: TextStyle(color:   AppTheme.hintColor,fontSize: 14)),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset('assets/images/ic_up.svg',width: 24,height: 9,colorFilter: ColorFilter.mode(sortType == 2?AppTheme.themeHightColor:AppTheme.hintColor, BlendMode.srcIn),),
-                    SvgPicture.asset('assets/images/ic_down.svg',width: 24,height: 9,colorFilter: ColorFilter.mode(sortType == 3?AppTheme.themeHightColor:AppTheme.hintColor, BlendMode.srcIn),),
-                  ],
-                ),
-              ],
-            ),
-          )
-
-              :
-
-          Text('${tabNames[index]['name']}',
-          style: TextStyle(fontSize: 14.0))
-
+      // index==2?
+      // Text('VV${tabNames[index]['name']}',
+      //     style: TextStyle(fontSize: 14.0)):
+      Text('${tabNames[index]['name']}',
+              style: TextStyle(fontSize: 14.0))
 
       )
           .toList(),
 
       // logic.tabNames.map((tab) => Text(tab, style: TextStyle(fontSize: 14.0))).toList(),
+      indicator: ContainerTabIndicator(
+        widthFraction: 0.6,
+        height: 2,
+        width: 1,
+        color: selectedIndex == 2? Colors.red:AppTheme.themeHightColor,
+        padding: const EdgeInsets.only(top: 23),
+      ),
 
-      indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0),
-          color: selectedIndex == 2? null: AppTheme.themeHightColor),
     );
+
+    // TabBar(
+    //   onTap: (index) {
+    //     actionTabIndexState(index);
+    //   },
+    //   isScrollable: true,
+    //   controller: tabController,
+    //   labelColor: Colors.white,
+    //   unselectedLabelColor: Colors.grey,
+    //   // indicatorWeight: 3,
+    //   // indicatorSize: TabBarIndicatorSize.label,
+    //   // isScrollable: false,
+    //   labelStyle: const TextStyle(
+    //       fontSize: 14, fontWeight: FontWeight.normal), //height: 1.0,
+    //   tabs: tabNames
+    //       .asMap()
+    //       .keys
+    //       .toList()
+    //       .map((index) =>
+    //       index == 2?
+    //       Padding(
+    //         padding: const EdgeInsets.only(top: 0),
+    //         child: Row(
+    //           mainAxisAlignment: MainAxisAlignment.center,
+    //           children: [
+    //             Text('${tabNames[index]['name']}',style: TextStyle(color:   AppTheme.hintColor,fontSize: 14)),
+    //             Column(
+    //               crossAxisAlignment: CrossAxisAlignment.center,
+    //               mainAxisAlignment: MainAxisAlignment.center,
+    //               children: [
+    //                 SvgPicture.asset('assets/images/ic_up.svg',width: 24,height: 9,colorFilter: ColorFilter.mode(sortType == 2?AppTheme.themeHightColor:AppTheme.hintColor, BlendMode.srcIn),),
+    //                 SvgPicture.asset('assets/images/ic_down.svg',width: 24,height: 9,colorFilter: ColorFilter.mode(sortType == 3?AppTheme.themeHightColor:AppTheme.hintColor, BlendMode.srcIn),),
+    //               ],
+    //             ),
+    //           ],
+    //         ),
+    //       )
+    //
+    //           :
+    //
+    //       Text('${tabNames[index]['name']}',
+    //       style: TextStyle(fontSize: 14.0))
+    //
+    //
+    //   )
+    //       .toList(),
+    //
+    //   // logic.tabNames.map((tab) => Text(tab, style: TextStyle(fontSize: 14.0))).toList(),
+    //
+    //   indicator: BoxDecoration(
+    //       borderRadius: BorderRadius.circular(8.0),
+    //       color: selectedIndex == 2? null: AppTheme.themeHightColor),
+    // );
 
 
 
@@ -301,7 +302,7 @@ class _MallPageState extends State<MallPage>
   TabBarView buildTabView(bool isCustomSli) {
     return isCustomSli
         ? TabBarView(
-            physics: const NeverScrollableScrollPhysics(),
+            // physics: const NeverScrollableScrollPhysics(),
             controller: tabController,
             children: tabNames
                 .asMap()
@@ -318,7 +319,7 @@ class _MallPageState extends State<MallPage>
                     }))
                 .toList())
         : TabBarView(
-            physics: const NeverScrollableScrollPhysics(),
+            // physics: const NeverScrollableScrollPhysics(),
             //The provided ScrollController is currently attached to more than one ScrollPosition.
             controller: tabController,
             children: buildTabSubViews()

@@ -4,7 +4,7 @@ import '../../vendor/socket/web_socket_utility.dart';
 import '../response/basic_info_entity.dart';
 import '../response/response_info_user.dart';
 
-
+const String kDeviceId = "kDeviceId";
 const String userInfoKey = "userInfoKey";
 const String uidKey = "uidKey";
 const String tokenKey = "tokenKey";

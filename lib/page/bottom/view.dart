@@ -9,11 +9,26 @@ class BottomPage extends StatelessWidget {
   var freTimer;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Obx(() => IndexedStack(
-              index: logic.currentIndex.value,
-              children: logic.pages.value,
-            )),
+    return Obx(() =>Scaffold(
+        body:
+            // IndexedStack(
+            //   index: logic.currentIndex.value,
+            //   children: logic.pages.value,
+            // ),
+
+          PageView(
+            key: const Key('001'),
+            // physics: const NeverScrollableScrollPhysics(),
+          controller: logic.pageController,
+          children: logic.pages.value,
+            onPageChanged: (value) {
+              logic.currentIndex.value = value;
+              // setState(() {});
+            },
+          ),
+
+
+
         // floatingActionButton:Container(
         //     width: 60,
         //     height: 60,
@@ -39,12 +54,17 @@ class BottomPage extends StatelessWidget {
         //       !logic.playing.value?'assets/images/bottom/normal.png':'assets/images/bottom/toggling.png',width: 45,
         //       height: 50)))),
         // )),
-        bottomNavigationBar: Obx(() => BottomNavigationBar(
+        bottomNavigationBar: BottomNavigationBar(
+          // fixedColor: Colors.red,
           currentIndex: logic.currentIndex.value,
           iconSize: 25.0,
           type: BottomNavigationBarType.fixed,
           onTap: (index) {
             logic.changePage(index);
+            // setState(() {
+              logic.currentIndex.value = index;
+              logic.pageController.jumpToPage(logic.currentIndex.value);
+            // });
           },
           items:[
             BottomNavigationBarItem(
@@ -73,8 +93,9 @@ class BottomPage extends StatelessWidget {
               label: 'Me'.tr,
             ),
           ],
-        )),
+        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked
+    ),
     );
   }
 }

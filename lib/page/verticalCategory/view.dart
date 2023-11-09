@@ -56,6 +56,7 @@ class _VerticalCategoryPageState extends State<VerticalCategoryPage>
   //右侧数据：
   _getRightCateData(pid) {
     setState(() {
+      if(categoryList.isEmpty)return;
       if (categoryList[pid]["children"] != null) {
         rightCateList = categoryList[pid]["children"];
       } else {

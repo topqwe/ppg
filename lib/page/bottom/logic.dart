@@ -20,6 +20,7 @@ class BottomLogic extends GetxController
   final categoryLogic = Get.put(CategoryLogic());
   final meLogic = Get.put(MeLogic());
   final currentIndex = 0.obs;
+  late final PageController pageController;
   final pages = [
     HomePage(),
     VerticalCategoryPage(),
@@ -36,7 +37,10 @@ class BottomLogic extends GetxController
   var freTimer;
   void onInit() {
     super.onInit();
+
     currentIndex.value = 0;
+    pageController = PageController(initialPage: currentIndex.value);
+
     animationInit();
     statusToken();
   }

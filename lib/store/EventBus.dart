@@ -2,6 +2,7 @@
 import 'package:event_bus/event_bus.dart';
 
 class EventBusConstants {
+  static const String scrollToTopEvent = "scrollToTopEvent";
   static const String loginSuccessEvent = "loginSuccessEvent";
   static const String grabRefreshHomeEvent = "grabRefreshHomeEvent";
   static const String grabRefreshBkListEvent = "grabRefreshBkListEvent";

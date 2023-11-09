@@ -4,6 +4,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:get/get.dart';
+import '../../../store/EventBus.dart';
 import '../../../style/theme.dart';
 import '../../../util/DefaultAppBar.dart';
 import 'logic.dart';
@@ -86,6 +87,10 @@ import '/widgets/text_widget.dart';
      super.dispose();
      scrollController.dispose();
      tabController.dispose();
+     mainEventBus.emit(
+       EventBusConstants.scrollToTopEvent,
+       '1',
+     );
    }
 
    ///计算商品信息页的高度

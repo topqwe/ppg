@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:math';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:get/get.dart';
 import 'package:marquee/marquee.dart';
+import '../../../store/EventBus.dart';
 import '../../../style/theme.dart';
 import '../../../util/CustomTagWidget.dart';
 import '../../bottom/logic.dart';
@@ -41,9 +43,15 @@ class _MallStateListPageState extends State<MallStateListPage>
   void initState() {
     // TODO: implement initState
     super.initState();
-    scrollController= ScrollController();
+    scrollController = ScrollController();
     logic = MallStateListLogic(widget.type);
     Get.put(logic, tag: widget.type.toString());
+
+    mainEventBus.on(EventBusConstants.scrollToTopEvent, (arg) {
+      // logic.dataRefresh();
+      scrollController.animateTo(.0,
+          duration: Duration(milliseconds: 200), curve: Curves.ease);
+    });
   }
 
   @override
@@ -109,13 +117,17 @@ class _MallStateListPageState extends State<MallStateListPage>
                       height: 5,
                     ),
                     HomeBanner(type: widget.type,),
-                    Row(children: [
-                      SizedBox(width: 10,),
-                      Text(
-                        '类别'.tr,
-                        style:  TextStyle(fontSize: 15,color: Colors.black),
-                      ),
-                    ],),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          '类别'.tr,
+                          style: TextStyle(fontSize: 15, color: Colors.black),
+                        ),
+                      ],
+                    ),
 
                     Obx(() => SizedBox(
                         height: 50,
@@ -153,31 +165,41 @@ class _MallStateListPageState extends State<MallStateListPage>
 
                     ),),
 
-
                     const SizedBox(height: 15),
-                    Obx(() => Container(
-                      height:50,
-                      child:CustomTagWidget(
-                        selectedBgColor: AppTheme.themeHightColor,
-                        selectedTextColor:Colors.white ,
-                        textColor: Colors.black,
-                        tabTitleList: logic.sectags.value,
-                        select: logic.sectagsCurrentIndex,
-                        setradius: 5,
-                        onTap: (int index) {
-                          setState(() {
-                            logic.sectagsCurrentIndex = index;
-                            // print("当前选中 $logic.tagsCurrentIndex");
-                            if(logic.sectagsCurrentIndex ==3) {
-                              Get.offNamed('/index');
-                              final logicb = Get.put(BottomLogic());
-                              logicb.changePage(1);
-                            }
-                          }
-                          );
-                        },
-                      ),
-                    ),),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Obx(
+                            () => Container(
+                              height: 50,
+                              child: CustomTagWidget(
+                                selectedBgColor: AppTheme.themeHightColor,
+                                selectedTextColor: Colors.white,
+                                textColor: Colors.black,
+                                tabTitleList: logic.sectags.value,
+                                select: logic.sectagsCurrentIndex,
+                                setradius: 5,
+                                onTap: (int index) {
+                                  setState(() {
+                                    logic.sectagsCurrentIndex = index;
+                                    // print("当前选中 $logic.tagsCurrentIndex");
+                                    if (logic.sectagsCurrentIndex == 3) {
+                                      Get.offNamed('/index');
+                                      final logicb = Get.put(BottomLogic());
+                                      logicb.changePage(1);
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(color: Colors.red,width: 60,height: 20,),
+                    ],),
+
+
+
 
                     // const SizedBox(height: 5),
                   ],)
@@ -502,6 +524,7 @@ class EasyRefreshCustomState extends State<EasyRefreshCustom> {
   Widget buildEasyRefresh() {
     return Obx(() => EasyRefresh(
           key: PageStorageKey<int>(type),
+          controller: logic.easyRefreshController,
           emptyWidget: logic.listDataFirst.isEmpty
               ? noDataWidget(
                   mainAxisAlignment: MainAxisAlignment.start, topPadding: 30)

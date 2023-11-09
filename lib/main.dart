@@ -20,6 +20,7 @@ import '../router/RouteConfig.dart';
 import 'style/theme.dart';
 import 'lang/LanguageManager.dart';
 import 'lang/translation_service.dart';
+import 'package:platform_device_id/platform_device_id.dart';
 import '../vendor/platform/platform_universial.dart'
 if (dart.library.io) '../vendor/platform/platform_native.dart'
 if (dart.library.html) '../vendor/platform/platform_web.dart'
@@ -55,7 +56,8 @@ Future<void> main() async {
   await GetStorage.init();
   await SpUtil().init();
   SpUtil().getLocalStorage();
-
+  String? result = await PlatformDeviceId.getDeviceId;
+  SpUtil().setString(kDeviceId, result.toString());
   // if (configEnv.autoChangeDomain) {
   //   String? localUrl = AppCacheManager.instance.getCurrentDomainKey();
   //   //SpUtil().getString(currentDomainKey);

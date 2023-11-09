@@ -76,6 +76,7 @@ class ApiBasic extends Api {
       }
 
       var name = path.substring(path.lastIndexOf("/") + 1, path.length);
+      var suffix = name.substring(name.lastIndexOf(".") + 1, name.length);
       print(path);
       // Map<String, dynamic> formMap = {};
       // var fileass = await MultipartFile.fromFile(path,
@@ -85,13 +86,15 @@ class ApiBasic extends Api {
 
       FormData formData = FormData.fromMap({
         "file": MultipartFile.fromBytes(sbyets,
-            filename: name, contentType: MediaType('image', "jpg")),
+            filename: name, contentType: MediaType('image', suffix)),
         'folder': folder,
         'type': "image",
       });
 
       final Options options =
-      await getOptionsHeader(contentType: Headers.jsonContentType);
+      await getOptionsHeader(contentType:"multipart/form-data" );
+      //Headers.jsonContentType
+      //Headers.multipartFormDataContentType
       var result = await wrapE(() => dio.post<Map<String, dynamic>>(
           apiBaseUrl() + Api_uploadImage,
           options: options,
@@ -141,6 +144,7 @@ class ApiBasic extends Api {
       }
 
       var name = path.substring(path.lastIndexOf("/") + 1, path.length);
+      var suffix = name.substring(name.lastIndexOf(".") + 1, name.length);
       print(path);
       // Map<String, dynamic> formMap = {};
       // var fileass = await MultipartFile.fromFile(path,
@@ -150,12 +154,14 @@ class ApiBasic extends Api {
 
       FormData formData = FormData.fromMap({
         "file": MultipartFile.fromBytes(sbyets,
-            filename: name, contentType: MediaType('image', "jpg")),
+            filename: name, contentType: MediaType('image', suffix)),//
         'folder': folder,
         'type': "image",
       });
       final Options options =
-      await getOptionsHeader(contentType: Headers.jsonContentType);
+      await getOptionsHeader(contentType:"multipart/form-data" );
+      //Headers.multipartFormDataContentType
+      //Headers.jsonContentType
       var result = await wrapE(() => dio.post<Map<String, dynamic>>(
           apiBaseUrl() + Api_uploadImage,
           options: options,

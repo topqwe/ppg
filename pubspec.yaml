@@ -127,6 +127,7 @@ dependencies:
   just_audio: ^0.9.35
   protobuf: ^3.1.0
   yaml: ^3.1.2
+  platform_device_id: ^1.0.1
     # 侧滑删除 https://github.com/letsar/flutter_slidable
   #flutter_slidable
   #vibration: ^1.7.6
