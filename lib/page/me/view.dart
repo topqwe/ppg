@@ -88,55 +88,7 @@ class MePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> titles= [
-      '语言'.tr,
-      '下载',
-    '设置'];
-    var icons= [Icon(Icons.language),
-      Icon(Icons.downloading),
-      Icon(Icons.settings),
-       ];
 
-    List<Widget> cellWidgets = [];
-    for(int i=0;i<titles.length;i++){
-      cellWidgets.add(Container(
-          padding: const EdgeInsets.only(top: 15, bottom: 15),
-          child: InkWell(
-            hoverColor: Colors.transparent,
-              onTap: () {
-                i==0?
-                Get.offNamed('/langSetting', parameters: {'path': '1'})
-                :
-                i==1?
-                launchWebURL('')
-                    : Get.toNamed('/setting')
-                ;
-              },
-              child: Row(
-                  children: <Widget>[
-                Expanded(
-                    flex: 1,
-                    child: Row(children: <Widget>[
-                      SizedBox(
-                          width: 18,
-                          height: 18,
-                          child:icons[i]
-                        // Image.asset(
-                        //     'assets/images/me/feedback.png')
-                      ),
-                      Expanded(
-                          child: Container(
-                            alignment: Alignment.centerLeft,
-                              margin: const EdgeInsets.only(left: 10,top: 5),
-                              child: Text(
-                                titles[i].tr,
-                                style: TextStyle(),
-                              )))
-                    ])),
-                arrowForward()
-              ])))
-      );
-    }
     var size = MediaQuery.of(Get.context!).size;
     double itemWidth = (size.width - 2 * 15 - 10) / 2;
     return Scaffold(
@@ -144,8 +96,14 @@ class MePage extends StatelessWidget {
       body:
           // SafeArea(
           //     child:
-          SingleChildScrollView(
-              child: Column(children: [
+
+
+          // SingleChildScrollView(
+          //     child:
+
+      ListView(children: [
+
+        Column(children: [
         Container(
             width: double.infinity,
             // height: 287,
@@ -666,20 +624,84 @@ class MePage extends StatelessWidget {
               ],
             )),
 
-        Container(
-            margin: const EdgeInsets.only(top: 15, left: 15, right: 15),
-            child: Column(children:
-              cellWidgets,
-            )
-        ),
-        Container(
-          width: double.infinity,
-          height: 50,
-        )
-      ]))
+
+        // Expanded(flex: 1,
+        //        child:
+        //            Column(children: [
+
+
+               ListView.builder(
+                 padding: const EdgeInsets.only(
+                     left: 15, right: 15),
+                 //  padding: EdgeInsets.all(5),
+                 physics: const NeverScrollableScrollPhysics(),
+                 itemExtent: 50,
+                 shrinkWrap: true,
+                 itemCount: logic.listModels.length,
+                 itemBuilder: (BuildContext context, int index) {
+                   var data = logic.listModels[index];
+                   return listCellForRow(data, index);
+                 },
+               ),
+
+
+                 //   ],),
+                 //
+                 // ) ,
+
+
+    ]
+
+          )
       // )
-      ,
+
+      ],)
+
+
+
     );
+  }
+
+  Widget listCellForRow(var listModel, int index) {
+    final logic = Get.put(MeLogic());
+    return
+      Container(
+          padding: const EdgeInsets.only(top: 0, bottom: 0),
+          child: InkWell(
+              hoverColor: Colors.transparent,
+              onTap: () {
+                index==0?
+                Get.offNamed('/langSetting', parameters: {'path': '1'})
+                    :
+                index==1?
+                launchWebURL('')
+                    : Get.toNamed('/setting')
+                ;
+              },
+              child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        flex: 1,
+                        child: Row(children: <Widget>[
+                          SizedBox(
+                              width: 18,
+                              height: 18,
+                              child:listModel['icon']
+                            // Image.asset(
+                            //     'assets/images/me/feedback.png')
+                          ),
+                          Expanded(
+                              child: Container(
+                                  alignment: Alignment.centerLeft,
+                                  margin: const EdgeInsets.only(left: 10,top: 5),
+                                  child: Text(
+                                    listModel['name'],
+                                    style: TextStyle(),
+                                  )))
+                        ])),
+                    arrowForward()
+                  ])))
+        ;
   }
 
   Widget headInfoView(BuildContext context) {
