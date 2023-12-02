@@ -29,8 +29,20 @@ as platformutil;
 const bool currentEnvIsProd = true;
 ConfigEnv configEnv = currentEnvIsProd ? ConfigEnv() : ConfigEnv.dev();
 String? latestServerTime;
-
+// class MyHttpOverrides extends HttpOverrides {
+//   @override
+//   HttpClient createHttpClient(SecurityContext? context) {
+//     var http = super.createHttpClient(context);
+//     http.findProxy = (uri) {
+//       return 'PROXY ';
+//     };
+//     http.badCertificateCallback =
+//         (X509Certificate cert, String host, int port) => true;
+//     return http;
+//   }
+// }
 Future<void> main() async {
+  // HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   Loggy.initLoggy(
     logPrinter: const PrettyPrinter(showColors: true),

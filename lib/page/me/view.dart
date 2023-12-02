@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:liandan_flutter/util/CustomDialog.dart';
 import '../../../router/RouteConfig.dart';
 import '../../../widgets/sizebox_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -704,6 +705,34 @@ class MePage extends StatelessWidget {
         ;
   }
 
+  void showCustomDialog(){
+    ShowCustomDialog(
+      title: "Title",
+      detail:
+      "content",
+      secondaryTitle: "取消",
+      primaryTitle: "确定",
+
+      bottomWidget:
+
+      Container(
+          padding:  EdgeInsets.only(left:20,right:20,top: 18,bottom: 18),
+          child:  Text(
+            '温馨',
+            style: TextStyle(
+              fontWeight: FontWeight.w200,
+              fontSize: 13,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.left,
+          ) ),
+      detailTextAlign: TextAlign.start,
+      primaryAction: () async {
+
+      },
+    );
+  }
+
   Widget headInfoView(BuildContext context) {
     var _future = Future.delayed(Duration(seconds: 3), () {
       return '服务器返回的数据';
@@ -715,19 +744,30 @@ class MePage extends StatelessWidget {
 
             return Row(crossAxisAlignment: CrossAxisAlignment.start, children: <
                 Widget>[
-              Obx(() => Container(
+              Obx(() =>
+              InkWell(onTap: (){
+                showCustomDialog();
+              },
+
+              child: Container(
                   height: 80,
                   width: 80,
                   padding: const EdgeInsets.symmetric(
                       horizontal: 0.5, vertical: 0.5),
                   decoration: BoxDecoration(
                       border:
-                          Border.all(color: const Color(0xffffffff), width: 2),
+                      Border.all(color: const Color(0xffffffff), width: 2),
                       borderRadius: BorderRadius.circular(40)),
                   child: ClipOval(
                     child: Image.asset(
                         'assets/images/avatar/head_${logic.userInfo['avatar']}.jpg'),
-                  ))),
+                  ))
+
+                ,
+              )
+
+
+              ),
               Expanded(
                 flex: 1,
                 child: Obx(() => Column(
