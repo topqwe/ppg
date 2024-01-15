@@ -11,6 +11,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:liandan_flutter/MainApp.dart';
 import 'package:liandan_flutter/services/cache/storage.dart';
 import 'package:liandan_flutter/services/env/configEnv.dart';
+import 'package:liandan_flutter/services/newReq/http.dart';
 import 'package:liandan_flutter/services/request/http_utils.dart';
 import 'package:liandan_flutter/widgets/helpTools.dart';
 import 'package:loggy/loggy.dart';
@@ -70,19 +71,21 @@ Future<void> main() async {
   SpUtil().getLocalStorage();
   String? result = await PlatformDeviceId.getDeviceId;
   SpUtil().setString(kDeviceId, result.toString());
-  // if (configEnv.autoChangeDomain) {
-  //   String? localUrl = AppCacheManager.instance.getCurrentDomainKey();
-  //   //SpUtil().getString(currentDomainKey);
-  //   if ((localUrl ?? "").isNotEmpty) {
-  //     configEnv.appBaseUrl = localUrl ?? configEnv.appBaseUrl;
-  //   }
-  // }
+  if (configEnv.autoChangeDomain) {
+    String? localUrl = AppCacheManager.instance.getCurrentDomainKey();
+    SpUtil().getString(currentDomainKey);
+    if ((localUrl ?? "").isNotEmpty) {
+      configEnv.appBaseUrl = localUrl ?? configEnv.appBaseUrl;
+    }
+  }
   // HttpUtil.init(baseUrl: configEnv.appBaseUrl);
+  HttpV1().init(baseUrl: configEnv.appBaseUrl);
+
 
   platformutil.PlatformUtils.configServiceAfterAppLaunch();
-  Future.delayed(const Duration(milliseconds: 200), () {
-    fetchOSSDomainList();
-  });
+  // Future.delayed(const Duration(milliseconds: 200), () {
+  //   fetchOSSDomainList();
+  // });
 
 
   // runApp(MyApp());

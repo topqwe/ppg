@@ -120,6 +120,44 @@ void fetchOSSDomainList() async {
   }
 }
 
+Future<bool> testLinkCorrect(String link) async {
+  String url =
+
+      link
+  ;
+  bool isCorrect = false;
+
+
+
+  try {
+    final response = await Dio().get(
+      url,
+      options: Options(responseType: ResponseType.plain),
+    );
+    // String? result = response.data as String?;
+
+    print('test link''${response.realUri}');
+    // if (response['code'] == 200){
+    if (response.statusCode == 200){
+      isCorrect = true;
+      // String? result = response.data as String?;
+
+      try {
+
+      } catch (error) {
+        // print('er');
+        // rethrow;
+      }
+    }
+  } catch (e) {
+    print('eeee');
+    isCorrect = false;
+    // The request was made and the server responded with a status code
+    // that falls out of the range of 2xx and is also not 304.
+  }
+  return isCorrect;
+}
+
 void checkAppUpdate(var res) async {
   if (res != null) {
     var v = res['version'];
@@ -234,6 +272,79 @@ JCHub.showmsg("不可使用连续数字或6位相同的数字", Get.context!);
 return !result;
 }
 
+bool validateMobile(String value) {
+
+  RegExp regExp = RegExp(
+      r"^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$");
+  if (value.isNotEmpty) {
+    if (!regExp.hasMatch(value)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+// https://cloud.tencent.com/developer/article/1456584
+bool validateEmail(String value) {
+  return RegExp(
+      r"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$")
+      .hasMatch(value);
+}
+
+
+String anonymizeString(String? input) {
+
+  if ((input ?? "").length <= 7) {
+    return input ?? "";
+  }
+  int len = input!.length;
+  String result = input.replaceRange(3, len-4, '*' * (len - 7));
+  return result;
+}
+
+List<String> trimPicsDomain(List<String> pics) {
+List<String> newPics = [];
+
+if (pics.isNotEmpty) {
+for (var i = 0; i < pics.length; i++) {
+
+if(pics[i].isNotEmpty) {
+var arr = pics[i].split('.com');
+String str2 = arr.last;
+String str3 = '';
+str3 = configEnv.appBaseUrl + str2;
+newPics.add(str3);
+}
+
+}
+}
+return newPics;
+}
+
+String trimPicDomain(String pic) {
+  String newPic = '';
+      if(pic.isNotEmpty) {
+        var arr = pic.split('.com');
+        String str2 = arr.last;
+        String str3 = '';
+        str3 = configEnv.appBaseUrl + str2;
+        newPic = str3;
+      }
+
+  return newPic;
+}
+
+Color enumTypeColor({required int type}) {
+  if (type>0&&type<100) {
+    return Colors.green;
+  } else if (type>101&&type<600) {
+    return Colors.yellow;
+  } else if (type>600&&type!=1000000) {
+    return Colors.red;
+  }
+  return Colors.grey;
+}
+
 String enumType({required String type}) {
   if (type == "1") {
     return '1';
@@ -244,6 +355,8 @@ String enumType({required String type}) {
   }
   return '0';
 }
+
+
 /**
  * 字符串转为double
  */

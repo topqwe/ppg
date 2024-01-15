@@ -25,6 +25,14 @@ class TextFieldView extends StatefulWidget {
   bool isObscureType ;
   bool isObscureText ;
   Function? onObscured;
+
+  final Widget? rightWidget;
+
+  final ValueChanged<bool>? onSave;
+  final bool isSaveType;
+
+  final bool isShowBorder;
+  final VoidCallback? handleUnFocus;
    TextFieldView({Key? key,
      this.keyboardType,
     this.onChanged,
@@ -38,6 +46,14 @@ class TextFieldView extends StatefulWidget {
      this.isObscureType = false,
      this.isObscureText = false,
      this.onObscured,
+
+     this.rightWidget,
+
+     this.isSaveType = false,
+     this.onSave,
+     this.handleUnFocus,
+
+     this.isShowBorder = true,
    })
       : super(key: key);
 
@@ -48,13 +64,21 @@ class TextFieldView extends StatefulWidget {
 class _TextFieldViewState extends State<TextFieldView> {
   late TextEditingController _inputController;
   String text = "";
-
+  bool _isSave = false;
+  FocusNode focusNode = FocusNode();
   @override
   void initState() {
     super.initState();
     _inputController = widget.inputController??TextEditingController(text: widget.initValue??'');
     _inputController.text = widget.initValue;
     _inputController.addListener(search);
+
+    _isSave = widget.isSaveType;
+    focusNode.addListener(() {
+      if (!focusNode.hasFocus) {
+        widget.handleUnFocus?.call();
+      }
+    });
   }
 
   //搜索当前
@@ -68,6 +92,8 @@ class _TextFieldViewState extends State<TextFieldView> {
   void dispose() {
     _inputController.removeListener(search);
     _inputController.dispose();
+
+    focusNode.dispose();
     super.dispose();
   }
   @override
@@ -79,6 +105,23 @@ class _TextFieldViewState extends State<TextFieldView> {
     return GestureDetector(
       onTap: widget.onTap,
       child:
+
+    //     Container(
+    //     // margin: widget.margin??const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+    //     height:widget.height?? 100,
+    //     decoration:widget.decoration??  BoxDecoration(
+    //     color: Colors.white,
+    //     border:
+    //     Border.all(width: 1, color:widget.isRTextField?Color(0xffDDDDDD):Colors.white ),
+    // //
+    // // shape: const RoundedRectangleBorder(
+    // //   borderRadius: BorderRadius.all(Radius.circular(2)),
+    // // )
+    // borderRadius: BorderRadius.all(Radius.elliptical(5.0, 5.0),),
+    // ),
+    // child:
+
+
       Column(children: [
         widget.isRTextField?SizedBox.shrink():
         Column(children: [
@@ -90,12 +133,12 @@ class _TextFieldViewState extends State<TextFieldView> {
 
         Container(
           // margin: widget.margin??const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-          height: 44,
+          height:widget.height?? 44,
           decoration:widget.decoration??  BoxDecoration(
-            color: Colors.white,
+            color: Colors.transparent,
             border:
-            Border.all(width: 1, color:widget.isRTextField?Color(0xffDDDDDD):Colors.white ),
-            //
+            Border.all(width: 1, color:widget.isShowBorder?Color(0xffDDDDDD):Colors.transparent),
+            //!widget.isRTextField?Color(0xffDDDDDD):Colors.white
             // shape: const RoundedRectangleBorder(
             //   borderRadius: BorderRadius.all(Radius.circular(2)),
             // )
@@ -117,6 +160,7 @@ class _TextFieldViewState extends State<TextFieldView> {
                   readOnly: widget.readOnly,
                   inputFormatters: widget.inputFormatters,
                   onChanged: widget.onChanged,
+                  focusNode: focusNode,
                   decoration: InputDecoration(
                     isCollapsed: true,
                     // contentPadding: EdgeInsets.all(10),
@@ -125,50 +169,25 @@ class _TextFieldViewState extends State<TextFieldView> {
                         vertical: 12.0, horizontal: 10),
                     // fillColor: Color(0xff2F375B),
                     // filled: true,
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color:widget.isRTextField? Colors.white
-                          :
-                          AppTheme.themeHightColor,
-                          width: 1.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: widget.isRTextField? Colors.white
-                              :Color(0xffDDDDDD),
-                          width: 1.0),
-                    ),
+                    // focusedBorder: OutlineInputBorder(
+                    //   borderSide: BorderSide(
+                    //       color:widget.isRTextField? Colors.white
+                    //       :
+                    //       AppTheme.themeHightColor,
+                    //       width: 1.0),
+                    // ),
+                    // enabledBorder: OutlineInputBorder(
+                    //   borderSide: BorderSide(
+                    //       color: widget.isRTextField? Colors.white
+                    //           :Color(0xffDDDDDD),
+                    //       width: 1.0),
+                    // ),
                     hintText: widget.hintText,
                     hintStyle: TextStyle(
                         color: AppTheme.themeGreyColor),
                     border: InputBorder.none,
                     counterText: '',
                     suffixIcon:
-                    widget.isObscureType?
-
-                    IconButton(
-                        icon: Icon(!widget.isObscureText?Icons.visibility
-                          :Icons.visibility_off,
-                            size: 18,
-                            color:!widget.isObscureText?
-                                 Color(0xffCCCCCC)
-                                : AppTheme.themeHightColor
-                        ),
-                        onPressed: () {
-                          widget.onObscured!();
-
-                          widget.isObscureText = ! widget.isObscureText;
-
-                          setState(() {
-
-                          });
-
-                          // widget.initValue = '';
-                          // _inputController.text = '';
-                        })
-
-                        :
-
                     IconButton(
                         icon: Icon(Icons.cancel,
                             size: 18,
@@ -178,18 +197,104 @@ class _TextFieldViewState extends State<TextFieldView> {
                         onPressed: () {
                           widget.initValue = '';
                           _inputController.text = '';
+                          widget.onChanged!(widget.initValue);
                         }),
+
                   ),
                   // autofocus: false,
 
                 ),
               ),
+              if (widget.rightWidget != null) widget.rightWidget!,
+              const SizedBox(
+                width: 10,
+              ),
+
+              widget.isObscureType?
+
+              GestureDetector(
+                onTap: () {
+                  widget.onObscured!();
+
+                  widget.isObscureText = ! widget.isObscureText;
+
+                  setState(() {
+
+                  });
+
+                },
+                child:
+                Image.asset(
+                  !widget.isObscureText
+                      ? 'assets/images/public/eyesopen.png' :
+                  'assets/images/public/eyesclose.png',
+                  width: 18,
+                  height: 18,
+                ),
+              )
+
+              // IconButton(
+              //   alignment: Alignment.center,
+              //   // iconSize: 9,
+              //     icon: Icon(!widget.isObscureText?Icons.visibility
+              //         :Icons.visibility_off,
+              //         size: 18,
+              //
+              //         color:!widget.isObscureText?
+              //         Color(0xffCCCCCC)
+              //             : AppTheme.themeHightColor
+              //     ),
+              //     onPressed: () {
+              //       widget.onObscured!();
+              //
+              //       widget.isObscureText = ! widget.isObscureText;
+              //
+              //       setState(() {
+              //
+              //       });
+              //
+              //       // widget.initValue = '';
+              //       // _inputController.text = '';
+              //     })
+
+                  :
+
+
+              widget.isSaveType
+                  ?
+
+                  GestureDetector(
+                onTap: () {
+                  _isSave = !_isSave;
+                  setState(() {
+                    widget.onSave!(_isSave);
+                  });
+
+                },
+                child:
+                Image.asset(
+                  _isSave
+                      ? 'assets/images/public/selectedJ.png' :
+                  'assets/images/public/unselectedJ.png',
+                  width: 18,
+                  height: 18,
+                ),
+              )
+
+                  :
+
+              SizedBox(),
+
+              SizedBox(width: 10,),
+
+
               if(widget.endChild != null) widget.endChild!,
             ],
           ),
         ),
       ],)
 
+        // )
 
     );
   }

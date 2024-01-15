@@ -9,7 +9,9 @@ const String userInfoKey = "userInfoKey";
 const String uidKey = "uidKey";
 const String tokenKey = "tokenKey";
 const String currentDomainKey = "currentDomainKey";
+const String currentDomainIndex = "currentDomainIndex";
 
+const String saveTFNameKey = "saveTFNameKey";
 
 ResInfoUser? publicUserInfo() => SpUtil().getUserInfo();
 BasicInfoEntity? publicAppConfig() => SpUtil().appConfig;

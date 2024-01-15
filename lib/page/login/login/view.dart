@@ -4,8 +4,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ftoast/ftoast.dart';
 import 'package:get/get.dart';
+import 'package:liandan_flutter/main.dart';
+import 'package:liandan_flutter/services/request/http_utils.dart';
+import '../../../services/cache/storage.dart';
+import '../../../services/newReq/http.dart';
 import '../../../style/theme.dart';
+import '../../../util/FunTextButton.dart';
+import '../../../util/RouteSelectDialog.dart';
+import '../../../util/SMSTFDialog.dart';
 import '../../../util/TextFieldView.dart';
+import '../../../widgets/helpTools.dart';
 import 'logic.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import '../../../vendor/platform/platform_universial.dart'
@@ -136,114 +144,161 @@ class LoginPage extends StatelessWidget {
                                                     )
                                                   ],
                                                 )),
-                                            Obx(() => Container(
-                                                  margin: EdgeInsets.only(
-                                                      top: 20, bottom: 10),
-                                                  child: Text(
-                                                    logic.tab_show.value == 1
-                                                        ? '账号'.tr
-                                                        : '手机号'.tr,
-                                                  ),
-                                                )),
-                                            Obx(() => Container(
-                                                height: 44,
-                                                child: TextField(
-                                                  inputFormatters: [
-                                                    if (logic.tab_show.value !=
-                                                        1)
-                                                      FilteringTextInputFormatter
-                                                          .allow(
-                                                              RegExp('[0-9]')),
-                                                  ],
-                                                  controller: logic.controller,
-                                                  keyboardType:
-                                                      logic.tab_show.value == 1
-                                                          ? TextInputType.text
-                                                          : TextInputType.phone,
-                                                  decoration: InputDecoration(
-                                                    contentPadding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 10),
-                                                    hintText:
-                                                        logic.tab_show.value ==
-                                                                1
-                                                            ? '请输入账号'.tr
-                                                            : '请输入手机号'.tr,
-                                                    hintStyle: TextStyle(
-                                                        color:
-                                                            Color(0xff999999)),
-                                                    counterText: '',
-                                                    suffixIcon: IconButton(
-                                                        icon: Icon(Icons.cancel,
-                                                            size: 18,
-                                                            color: logic
-                                                                    .cTxt
-                                                                    .value
-                                                                    .isNotEmpty
-                                                                ? Color(
-                                                                    0xffCCCCCC)
-                                                                : Colors
-                                                                    .transparent),
-                                                        onPressed: () {
-                                                          logic.controller
-                                                              .text = '';
-                                                        }),
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  5)),
-                                                    ),
+                                            // Obx(() => Container(
+                                            //       margin: EdgeInsets.only(
+                                            //           top: 20, bottom: 10),
+                                            //       child: Text(
+                                            //         logic.tab_show.value == 1
+                                            //             ? '账号'.tr
+                                            //             : '手机号'.tr,
+                                            //       ),
+                                            //     )),
+                                            // Obx(() => Container(
+                                            //     height: 44,
+                                            //     child: TextField(
+                                            //       inputFormatters: [
+                                            //         if (logic.tab_show.value !=
+                                            //             1)
+                                            //           FilteringTextInputFormatter
+                                            //               .allow(
+                                            //                   RegExp('[0-9]')),
+                                            //       ],
+                                            //       controller: logic.controller,
+                                            //       keyboardType:
+                                            //           logic.tab_show.value == 1
+                                            //               ? TextInputType.text
+                                            //               : TextInputType.phone,
+                                            //       decoration: InputDecoration(
+                                            //         contentPadding:
+                                            //             EdgeInsets.symmetric(
+                                            //                 horizontal: 8,
+                                            //                 vertical: 10),
+                                            //         hintText:
+                                            //             logic.tab_show.value ==
+                                            //                     1
+                                            //                 ? '请输入账号'.tr
+                                            //                 : '请输入手机号'.tr,
+                                            //         hintStyle: TextStyle(
+                                            //             color:
+                                            //                 Color(0xff999999)),
+                                            //         counterText: '',
+                                            //         suffixIcon: IconButton(
+                                            //             icon: Icon(Icons.cancel,
+                                            //                 size: 18,
+                                            //                 color: logic
+                                            //                         .cTxt
+                                            //                         .value
+                                            //                         .isNotEmpty
+                                            //                     ? Color(
+                                            //                         0xffCCCCCC)
+                                            //                     : Colors
+                                            //                         .transparent),
+                                            //             onPressed: () {
+                                            //               logic.controller
+                                            //                   .text = '';
+                                            //             }),
+                                            //         border: OutlineInputBorder(
+                                            //           borderRadius:
+                                            //               BorderRadius.all(
+                                            //                   Radius.circular(
+                                            //                       5)),
+                                            //         ),
+                                            //
+                                            //         ///设置输入框可编辑时的边框样式
+                                            //         enabledBorder:
+                                            //             OutlineInputBorder(
+                                            //           ///设置边框四个角的弧度
+                                            //           borderRadius:
+                                            //               BorderRadius.all(
+                                            //                   Radius.circular(
+                                            //                       5)),
+                                            //
+                                            //           ///用来配置边框的样式
+                                            //           borderSide: BorderSide(
+                                            //             ///设置边框的颜色
+                                            //             color:
+                                            //                 Color(0xffDDDDDD),
+                                            //
+                                            //             ///设置边框的粗细
+                                            //             width: 1.0,
+                                            //           ),
+                                            //         ),
+                                            //
+                                            //         ///用来配置输入框获取焦点时的颜色
+                                            //         focusedBorder:
+                                            //             OutlineInputBorder(
+                                            //           ///设置边框四个角的弧度
+                                            //           borderRadius:
+                                            //               BorderRadius.all(
+                                            //                   Radius.circular(
+                                            //                       5)),
+                                            //
+                                            //           ///用来配置边框的样式
+                                            //           borderSide: BorderSide(
+                                            //             ///设置边框的颜色
+                                            //             color: AppTheme
+                                            //                 .themeHightColor,
+                                            //
+                                            //             ///设置边框的粗细
+                                            //             width: 1.0,
+                                            //           ),
+                                            //         ),
+                                            //       ),
+                                            //       style: const TextStyle(
+                                            //           color: Colors.black,
+                                            //           fontSize: 14),
+                                            //       maxLength: 20,
+                                            //       onChanged:
+                                            //           logic.textFieldChanged,
+                                            //       autofocus: false,
+                                            //     ))),
 
-                                                    ///设置输入框可编辑时的边框样式
-                                                    enabledBorder:
-                                                        OutlineInputBorder(
-                                                      ///设置边框四个角的弧度
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  5)),
+                                            Obx(() => TextFieldView(
+                                              key: const ValueKey('acc'),
+                                              title:  logic.tab_show.value == 1
+                                                  ? '账号'.tr
+                                                  : '手机号'.tr,
+                                              hintText: logic.tab_show.value ==
+                                                  1
+                                                  ? '请输入账号'.tr
+                                                  : '请输入手机号'.tr,
+                                              isSaveType: true,
+                                              // isRTextField: false,
+                                              // isObscureText: logic.isObscureText.value,
+                                              // isRTextField: true,
+                                              keyboardType: logic.tab_show.value == 1
+                                                  ? TextInputType.text
+                                                  : TextInputType.phone,
+                                              initValue:logic.cTxt.value,
+                                              inputFormatters: [
 
-                                                      ///用来配置边框的样式
-                                                      borderSide: BorderSide(
-                                                        ///设置边框的颜色
-                                                        color:
-                                                            Color(0xffDDDDDD),
+                                                LengthLimitingTextInputFormatter(
+                                                    logic.tab_show.value !=
+                                                        1?11:30),
+                                                // FilteringTextInputFormatter
+                                                //       .allow(
+                                                //       RegExp('[0-9]')),
 
-                                                        ///设置边框的粗细
-                                                        width: 1.0,
-                                                      ),
-                                                    ),
+                                              ],
+                                              onSave: (bool isSave){
+                                                logic.isSaveTFName.value = isSave;
+                                                SpUtil().setString(saveTFNameKey,logic.isSaveTFName.value==true? logic.cTxt.value:'');
 
-                                                    ///用来配置输入框获取焦点时的颜色
-                                                    focusedBorder:
-                                                        OutlineInputBorder(
-                                                      ///设置边框四个角的弧度
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  5)),
+                                                },
+                                              handleUnFocus: () {
+                                                //request
+                                              },
+                                              onChanged: (value){
+                                                logic.textFieldChanged;
+                                                logic.cTxt.value = value;
+                                                logic.controller.text = value;
+                                                  if (logic.isSaveTFName.value) {
+                                                  SpUtil().setString(saveTFNameKey, logic.cTxt.value);
+                                                  }
 
-                                                      ///用来配置边框的样式
-                                                      borderSide: BorderSide(
-                                                        ///设置边框的颜色
-                                                        color: AppTheme
-                                                            .themeHightColor,
-
-                                                        ///设置边框的粗细
-                                                        width: 1.0,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 14),
-                                                  maxLength: 20,
-                                                  onChanged:
-                                                      logic.textFieldChanged,
-                                                  autofocus: false,
-                                                ))),
+                                                // setState(() {
+                                                // });
+                                              },),),
 
 
                                             // Container(
@@ -413,6 +468,62 @@ class LoginPage extends StatelessWidget {
                                                 ),
                                               ),
                                             ),
+
+
+
+                                            // Container(
+                                            //   margin:
+                                            //   EdgeInsets.only(top: 20),
+                                            // // SizedBox(
+                                            //   width: MediaQuery.of(Get.context!).size.width-20,
+                                            //   height: 50,
+                                            //   child:
+                                            //   FunTextButton(
+                                            //     type: FunTextButtonType.primary,
+                                            //     title: "登录",
+                                            //     borderRadius: 6,
+                                            //     onPressed: (){
+                                            //       // if(!isNot)return;
+                                            //
+                                            //       if (logic.tab_show.value ==
+                                            //           1) {
+                                            //         if (logic.controller
+                                            //             .text ==
+                                            //             '') {
+                                            //           FToast.toast(context,
+                                            //               msg: "请输入账号".tr);
+                                            //           return;
+                                            //         }
+                                            //         if (logic.controller2
+                                            //             .text ==
+                                            //             '') {
+                                            //           FToast.toast(context,
+                                            //               msg: "请输入密码".tr);
+                                            //           return;
+                                            //         }
+                                            //       } else {
+                                            //         showmsDialog();
+                                            //         if (logic.controller
+                                            //             .text ==
+                                            //             '') {
+                                            //           FToast.toast(context,
+                                            //               msg: "请输入手机号".tr);
+                                            //           return;
+                                            //         }
+                                            //         if (logic.controller2
+                                            //             .text ==
+                                            //             '') {
+                                            //           FToast.toast(context,
+                                            //               msg: "请输入密码".tr);
+                                            //           return;
+                                            //         }
+                                            //       }
+                                            //       // CaptchaPage().show(context);
+                                            //       logic.postSubmit();
+                                            //     },
+                                            //   ),
+                                            // ),
+                                            //
                                             // Container(
                                             //     margin:
                                             //         EdgeInsets.only(top: 20),
@@ -471,6 +582,8 @@ class LoginPage extends StatelessWidget {
                                             //         )),
                                             //       ),
                                             //     )),
+
+
                                             Container(
                                               margin: EdgeInsets.only(top: 25),
                                               child: Row(
@@ -506,20 +619,202 @@ class LoginPage extends StatelessWidget {
                                                   ScreenUtil().setHeight(100),
                                             )
                                           ])))))),
+                  // Stack(children: [
+                  //   Obx(() =>
+                  //   Container(
+                  //     // width: double.infinity,
+                  //     // width: 130,
+                  //     // height: 56.0,
+                  //     alignment: Alignment.topCenter,
+                  //     padding: const EdgeInsets.only(top: 50.0,left: 20),
+                  //     child:
+                  //
+                  //     GestureDetector(
+                  //       onTap: () async {
+                  //         if(logic.selRates.value.isNotEmpty) {
+                  //           showRouteSelectDialog(context, (index, type) {
+                  //
+                  //             // setState(() {
+                  //               logic.selIndex = index;
+                  //               SpUtil().setInt(currentDomainIndex, logic.selIndex);
+                  //
+                  //               String localUrl = logic.selRoutes[logic.selIndex];
+                  //               SpUtil().setString(currentDomainKey, localUrl);
+                  //               if ((localUrl ?? "").isNotEmpty) {
+                  //                 configEnv.appBaseUrl =
+                  //                     localUrl  ;
+                  //               }
+                  //
+                  //               // HttpUtil.init(baseUrl: configEnv.appBaseUrl);
+                  //               HttpV1().init(baseUrl: configEnv.appBaseUrl);
+                  //
+                  //               logic.curR.value = '${logic.selArr[logic.selIndex]}';
+                  //               logic.curRate.value = int.parse(logic.selRates[logic.selIndex]);
+                  //               if(logic.curRate.value==1000000){
+                  //                 logic.curRIn.value = '(测速中)';
+                  //               }else{
+                  //                 logic.curRIn.value = '(${logic.selRates[logic.selIndex]} ms)';
+                  //               }
+                  //
+                  //             // });
+                  //
+                  //           }, () {}, logic.selIndex, logic.selArr, logic.selRates); //selRoutes
+                  //         }
+                  //
+                  //       },
+                  //       child:  Padding(
+                  //           padding: EdgeInsets.only(left:0,top: 0.0, right: 0.0),
+                  //           child:
+                  //
+                  //           Row(children: [
+                  //
+                  //             const SizedBox(
+                  //               width: 3,
+                  //             ),
+                  //             Text(
+                  //               logic.curR.value,
+                  //               style: TextStyle(
+                  //                 color: Color(0xFF666666),
+                  //                 fontWeight: FontWeight.normal,
+                  //                 fontSize: 14,
+                  //                 // inherit: true,
+                  //               ),
+                  //
+                  //             ),
+                  //
+                  //             Text(
+                  //               logic.curRIn.value,
+                  //               style: TextStyle(
+                  //                 color:enumTypeColor(type: logic.curRate.value)
+                  //                 ,
+                  //                 fontWeight: FontWeight.normal,
+                  //                 fontSize: 14,
+                  //                 // decoration: TextDecoration.underline,
+                  //               ),
+                  //               textAlign: TextAlign.center,
+                  //             ),
+                  //
+                  //           ],)
+                  //       ),
+                  //     ),
+                  //
+                  //
+                  //   ),
+                  //   ),
+                  // ],),
+
                   Positioned(
-                      top: 30,
-                      right: 8,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.language,
-                          color: Color(0xff333333),
-                          size: 25,
+                        top: 30,
+                        right: 8,
+                        child:
+                        Column(children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.language,
+                              color: Color(0xff333333),
+                              size: 25,
+                            ),
+                            onPressed: () {
+                              Get.offNamed('/langSetting',
+                                  parameters: {'path': '0'});
+                            },
+                          ),
+
+
+
+
+
+                        ],)
                         ),
-                        onPressed: () {
-                          Get.offNamed('/langSetting',
-                              parameters: {'path': '0'});
-                        },
-                      )),
+
+                  // Positioned(
+                  //     top: 90,
+                  //     right: 20,
+                  //     child:
+                  //     Obx(() =>
+                  //         Container(
+                  //           // color: Colors.red,
+                  //           // width: double.infinity,
+                  //           // width: 130,
+                  //           // height: 26.0,
+                  //           alignment: Alignment.centerRight,
+                  //           padding: const EdgeInsets.only(top: 0.0,right: 0),
+                  //           child:
+                  //
+                  //           GestureDetector(
+                  //             onTap: () async {
+                  //               if(logic.selRates.value.isNotEmpty) {
+                  //                 showRouteSelectDialog(context, (index, type) {
+                  //
+                  //                   // setState(() {
+                  //                   logic.selIndex = index;
+                  //                   SpUtil().setInt(currentDomainIndex, logic.selIndex);
+                  //
+                  //                   String localUrl = logic.selRoutes[logic.selIndex];
+                  //                   SpUtil().setString(currentDomainKey, localUrl);
+                  //                   if ((localUrl ?? "").isNotEmpty) {
+                  //                     configEnv.appBaseUrl =
+                  //                         localUrl  ;
+                  //                   }
+                  //
+                  //                   // HttpUtil.init(baseUrl: configEnv.appBaseUrl);
+                  //                   HttpV1().init(baseUrl: configEnv.appBaseUrl);
+                  //
+                  //                   logic.curR.value = '${logic.selArr[logic.selIndex]}';
+                  //                   logic.curRate.value = int.parse(logic.selRates[logic.selIndex]);
+                  //                   if(logic.curRate.value==1000000){
+                  //                     logic.curRIn.value = '(测速中)';
+                  //                   }else{
+                  //                     logic.curRIn.value = '(${logic.selRates[logic.selIndex]} ms)';
+                  //                   }
+                  //
+                  //                   // });
+                  //
+                  //                 }, () {}, logic.selIndex, logic.selArr, logic.selRates); //selRoutes
+                  //               }
+                  //
+                  //             },
+                  //             child:  Padding(
+                  //                 padding: EdgeInsets.only(left:0,top: 0.0, right: 0.0),
+                  //                 child:
+                  //
+                  //                 Row(children: [
+                  //
+                  //                   const SizedBox(
+                  //                     width: 3,
+                  //                   ),
+                  //                   Text(
+                  //                     logic.curR.value,
+                  //                     style: TextStyle(
+                  //                       color: Color(0xFF666666),
+                  //                       fontWeight: FontWeight.normal,
+                  //                       fontSize: 14,
+                  //                       // inherit: true,
+                  //                     ),
+                  //
+                  //                   ),
+                  //
+                  //                   Text(
+                  //                     logic.curRIn.value,
+                  //                     style: TextStyle(
+                  //                       color:enumTypeColor(type: logic.curRate.value)
+                  //                       ,
+                  //                       fontWeight: FontWeight.normal,
+                  //                       fontSize: 14,
+                  //                       // decoration: TextDecoration.underline,
+                  //                     ),
+                  //                     textAlign: TextAlign.center,
+                  //                   ),
+                  //
+                  //                 ],)
+                  //             ),
+                  //           ),
+                  //
+                  //
+                  //         ),
+                  //     ),
+                  // ),
+
                   Positioned(
                       bottom: 0,
                       right: 20,
@@ -546,5 +841,17 @@ class LoginPage extends StatelessWidget {
                         ),
                       )),
                 ]))));
+  }
+
+  void showmsDialog(){
+    showSMSVerifyDialog(Get.context!,
+            (p,i) async {
+
+        },
+            (p,m) async {
+
+            },
+
+         () {});
   }
 }

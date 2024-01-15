@@ -11,10 +11,11 @@ import 'package:tuple/tuple.dart';
 
 import 'cache/storage.dart';
 
-const kDomainEncryptKey = "Q1#xpzu&F4Rh4Jz0";
-const testUrl = "/operator/noauth/baseInfo";
+const kDomainEncryptKey = "fgdfgdfdf";
+const testUrl = "/aa/bb";
 
 class NetworkTestModel {
+  final dio = Dio();
   String? url;
   int? speed;
   NetworkTestModel({this.url, this.speed});
@@ -33,11 +34,24 @@ class NetworkTestModel {
     String path = "$finalUrl$testUrl";
     try {
       Stopwatch stopwatch = Stopwatch()..start();
-      await HttpUtil.get(
+      // final response = await HttpUtils.get(
+      //   path,
+      // );
+      final response = await dio.get(
         path,
+        options: Options(responseType: ResponseType.plain),
       );
-      stopwatch.stop();
-      speed = stopwatch.elapsed.inMilliseconds;
+      print('speed''${response.realUri}');
+      print(response);
+      // if (response['code'] == 200){
+      if (response.statusCode == 200){
+        stopwatch.stop();
+        speed = stopwatch.elapsed.inMilliseconds;
+      }else{
+        stopwatch.stop();
+        speed = 0;
+      }
+
       return null;
     } on DioError {
       return null;

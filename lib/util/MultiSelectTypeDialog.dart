@@ -61,10 +61,10 @@ class _MultiSelectTypeDialog extends State<MultiSelectTypeDialog> {
         ),
         onTap: () {
           if (mounted) {
-            if (index == 0) {
-              FToast.toast(context, msg:'A为必选项');
-              return;
-            }
+            // if (index == 0) {
+            //   FToast.toast(context, msg:'A为必选项');
+            //   return;
+            // }
             setState(() {
               if (_selectValue.contains(index)) {
                 _selectValue.remove(index);
