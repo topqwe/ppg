@@ -631,36 +631,35 @@ class LoginPage extends StatelessWidget {
                   //
                   //     GestureDetector(
                   //       onTap: () async {
-                  //         if(logic.selRates.value.isNotEmpty) {
-                  //           showRouteSelectDialog(context, (index, type) {
+                  //         // if(logic.selRates.value.isNotEmpty) {
+                  //         showRouteSelectDialog(context, (index, type) {
                   //
-                  //             // setState(() {
-                  //               logic.selIndex = index;
-                  //               SpUtil().setInt(currentDomainIndex, logic.selIndex);
+                  //           // setState(() {
+                  //           logic.selIndex = index;
+                  //           SpUtil().setInt(currentDomainIndex, logic.selIndex);
                   //
-                  //               String localUrl = logic.selRoutes[logic.selIndex];
-                  //               SpUtil().setString(currentDomainKey, localUrl);
-                  //               if ((localUrl ?? "").isNotEmpty) {
-                  //                 configEnv.appBaseUrl =
-                  //                     localUrl  ;
-                  //               }
+                  //           String localUrl = logic.selRoutes.value[logic.selIndex];
+                  //           SpUtil().setString(currentDomainKey, localUrl);
+                  //           if ((localUrl ?? "").isNotEmpty) {
+                  //             configEnv.appBaseUrl =
+                  //                 localUrl  ;
+                  //           }
                   //
-                  //               // HttpUtil.init(baseUrl: configEnv.appBaseUrl);
-                  //               HttpV1().init(baseUrl: configEnv.appBaseUrl);
+                  //           // HttpUtil.init(baseUrl: configEnv.appBaseUrl);
+                  //           HttpV1().init(baseUrl: configEnv.appBaseUrl);
                   //
-                  //               logic.curR.value = '${logic.selArr[logic.selIndex]}';
-                  //               logic.curRate.value = int.parse(logic.selRates[logic.selIndex]);
-                  //               if(logic.curRate.value==1000000){
-                  //                 logic.curRIn.value = '(测速中)';
-                  //               }else{
-                  //                 logic.curRIn.value = '(${logic.selRates[logic.selIndex]} ms)';
-                  //               }
+                  //           logic.curR.value = '${logic.selArr.value[logic.selIndex]}';
+                  //           logic.curRate.value = int.parse(logic.selRates.value[logic.selIndex]);
+                  //           if(logic.curRate.value==1000000){
+                  //             logic.curRIn.value = '(测速中)';
+                  //           }else{
+                  //             logic.curRIn.value = '(${logic.selRates.value[logic.selIndex]} ms)';
+                  //           }
                   //
-                  //             // });
+                  //           // });
                   //
-                  //           }, () {}, logic.selIndex, logic.selArr, logic.selRates); //selRoutes
-                  //         }
-                  //
+                  //         }, () {}, logic.selIndex, logic.selArr.value, logic.selRates.value); //selRoutes
+                  //         // }
                   //       },
                   //       child:  Padding(
                   //           padding: EdgeInsets.only(left:0,top: 0.0, right: 0.0),
@@ -743,14 +742,14 @@ class LoginPage extends StatelessWidget {
                   //
                   //           GestureDetector(
                   //             onTap: () async {
-                  //               if(logic.selRates.value.isNotEmpty) {
+                  //               // if(logic.selRates.value.isNotEmpty) {
                   //                 showRouteSelectDialog(context, (index, type) {
                   //
                   //                   // setState(() {
                   //                   logic.selIndex = index;
                   //                   SpUtil().setInt(currentDomainIndex, logic.selIndex);
                   //
-                  //                   String localUrl = logic.selRoutes[logic.selIndex];
+                  //                   String localUrl = logic.selRoutes.value[logic.selIndex];
                   //                   SpUtil().setString(currentDomainKey, localUrl);
                   //                   if ((localUrl ?? "").isNotEmpty) {
                   //                     configEnv.appBaseUrl =
@@ -760,18 +759,18 @@ class LoginPage extends StatelessWidget {
                   //                   // HttpUtil.init(baseUrl: configEnv.appBaseUrl);
                   //                   HttpV1().init(baseUrl: configEnv.appBaseUrl);
                   //
-                  //                   logic.curR.value = '${logic.selArr[logic.selIndex]}';
-                  //                   logic.curRate.value = int.parse(logic.selRates[logic.selIndex]);
+                  //                   logic.curR.value = '${logic.selArr.value[logic.selIndex]}';
+                  //                   logic.curRate.value = int.parse(logic.selRates.value[logic.selIndex]);
                   //                   if(logic.curRate.value==1000000){
                   //                     logic.curRIn.value = '(测速中)';
                   //                   }else{
-                  //                     logic.curRIn.value = '(${logic.selRates[logic.selIndex]} ms)';
+                  //                     logic.curRIn.value = '(${logic.selRates.value[logic.selIndex]} ms)';
                   //                   }
                   //
                   //                   // });
                   //
-                  //                 }, () {}, logic.selIndex, logic.selArr, logic.selRates); //selRoutes
-                  //               }
+                  //                 }, () {}, logic.selIndex, logic.selArr.value, logic.selRates.value); //selRoutes
+                  //               // }
                   //
                   //             },
                   //             child:  Padding(

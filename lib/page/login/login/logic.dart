@@ -14,6 +14,7 @@ import '../../../services/newReq/http.dart';
 import '../../../services/responseHandle/request.dart';
 import '../../../store/AppCacheManager.dart';
 import '../../../store/EventBus.dart';
+import '../../../store/EventBusNew.dart';
 import '../../../widgets/helpTools.dart';
 import '../../../util/SafeValidWidget.dart';
 
@@ -58,8 +59,13 @@ class LoginLogic extends GetxController {
   ].obs
   ;
 
-  var selRates = <String>[].obs;
-
+  var selRates = configEnv.env==1?
+  <String>[
+    '1000000','1000000','1000000','1000000','1000000','1000000','1000000'
+  ].obs:
+  <String>[
+    '1000000','1000000'
+  ].obs;
 
   void startTest() async {
 
@@ -74,6 +80,7 @@ class LoginLogic extends GetxController {
       await e.testSpeed();
       return e;
     }).toList());
+    List<String> temselRates = [];
     List<NetworkTestModel> assembleNoNullModels = [];
     List<NetworkTestModel> noNullModels = testModelList;
     testModelList.where((element) => element.speed != null).toList();
@@ -95,8 +102,16 @@ class LoginLogic extends GetxController {
       }
 
       assembleNoNullModels.add(mod);
-      selRates.add(bs);
+      temselRates.add(bs);
     }
+
+    // setState(() {
+    if(temselRates.isNotEmpty){
+      selRates.value = [];
+      selRates.value = temselRates.obs;
+      update();
+    }
+    // });
 
     // if(selRates.isNotEmpty&&
     // selIndex<selRates.length){
@@ -126,7 +141,8 @@ class LoginLogic extends GetxController {
           // print('dfdfdfdf');
           // print(ss+'$i');
           SpUtil().setInt(currentDomainIndex, selIndex);
-
+          EventBusNew.eventBus.fire(RouteChangedEvent(
+              arr: selRates,index: selIndex));
 
 
           // setState(() {

@@ -9,6 +9,7 @@ import 'package:liandan_flutter/main.dart';
 import 'package:liandan_flutter/util/FunTextButton.dart';
 
 import '../../services/request/api_response.dart';
+import '../store/EventBusNew.dart';
 import '../widgets/helpTools.dart';
 
 
@@ -137,7 +138,16 @@ class _RouteSelectDialogState extends State<RouteSelectDialog> {
     _value = widget.selIndex ?? 0;
     _list = widget.selArr?? [];
     _rlist = widget.selRoutes?? [];
-
+    EventBusNew.eventBus.on<RouteChangedEvent
+    >().listen((event) {
+      List? arr = event.arr;
+      if (arr!.isNotEmpty) {
+        setState(() {
+          _rlist = arr;
+          _value = event.index!;
+        });
+      }
+    });
   }
   
   @override
